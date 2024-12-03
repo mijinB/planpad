@@ -10,5 +10,11 @@ public class UserRequestDto {
     @NotEmpty
     private String userName;
 
+    @NotEmpty
+    private String email;
+
     private String avatar;
+
+    @NotEmpty
+    private String code;
 }
