@@ -16,6 +16,8 @@ public class User {
 
     @Column(name = "user_name")
     private String userName;
+
+    private String email;
     private String avatar;
 
     public void setUserName(String userName) {
