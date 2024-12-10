@@ -14,7 +14,4 @@ public class UserRequestDto {
     private String email;
 
     private String avatar;
-
-    @NotEmpty
-    private String code;
 }
