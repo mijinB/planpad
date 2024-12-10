@@ -26,6 +26,12 @@ public class User {
         this.userName = userName;
     }
 
+    public void setEmail(String email) {
+        // validation 추가 예정
+
+        this.email = email;
+    }
+
     public void setAvatar(String avatar) {
         this.avatar = avatar;
     }
