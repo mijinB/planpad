@@ -25,27 +25,26 @@ public class UserService {
         WebClient webClient = WebClient.create();
         ObjectMapper objectMapper = new ObjectMapper();
 
-        String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-        String CLIENT_ID = "97106bc8684af5584543581289cfd304";
-        String REDIRECT_URI = "http://localhost:3000/api/auth/kakao";
-        String code = request.getCode();
-
-        String response = webClient.post()
-                .uri(TOKEN_URL)
-                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                .bodyValue("grant_type=authorization_code" +
-                        "&client_id=" + CLIENT_ID +
-                        "&redirect_uri=" + REDIRECT_URI +
-                        "&code=" + code)
-                .retrieve()
-                .bodyToMono(String.class)
-                .block();       // 동기적으로 응답 값을 반환
-
         try {
+            String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
+            String CLIENT_ID = "97106bc8684af5584543581289cfd304";
+            String REDIRECT_URI = "http://localhost:3000/api/auth/kakao";
+            String code = request.getCode();
+
+            String response = webClient.post()
+                    .uri(TOKEN_URL)
+                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                    .bodyValue("grant_type=authorization_code" +
+                            "&client_id=" + CLIENT_ID +
+                            "&redirect_uri=" + REDIRECT_URI +
+                            "&code=" + code)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();       // 동기적으로 응답 값을 반환
+
             return objectMapper.readValue(response, TokenResponseDto.class);
-        } catch (JsonProcessingException e) {
-            log.info("(log) JSON 처리 중 오류 발생: {}", e.getMessage());
-            throw new RuntimeException("JSON 처리 중 오류 발생: " + e.getMessage(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("getAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
