@@ -34,8 +34,12 @@ public class UserController {
     @Operation(summary = "사용자 생성", description = "새 사용자를 생성합니다.")
     public void kakaoLogIn(@RequestBody @Valid UserRequestDto request) {
 
-        TokenResponseDto tokenResponse = userService.getAccessToken(request);
-        log.info("access_token = {}", tokenResponse.getAccess_token());
+        try {
+            TokenResponseDto tokenResponse = userService.getAccessToken(request);
+            log.info("access_token = {}", tokenResponse.getAccess_token());
+        } catch (Exception e) {
+            log.info("exception = {}", e.getMessage());
+        }
 
         /*User user = new User();
         user.setUserName(request.getUserName());
