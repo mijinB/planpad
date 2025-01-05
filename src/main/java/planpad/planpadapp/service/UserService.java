@@ -1,6 +1,5 @@
 package planpad.planpadapp.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.user.TokenResponseDto;
+import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
+import planpad.planpadapp.dto.user.kakao.TokenResponseDto;
 import planpad.planpadapp.dto.user.UserRequestDto;
 import planpad.planpadapp.repository.UserRepository;
 
@@ -45,6 +45,28 @@ public class UserService {
             return objectMapper.readValue(response, TokenResponseDto.class);
         } catch (Exception e) {
             throw new RuntimeException("getAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    public KakaoUserInfoDto getUserInfo(String accessToken) {
+
+        WebClient webClient = WebClient.create();
+        ObjectMapper objectMapper = new ObjectMapper();
+
+        try {
+            String INFO_URL = "https://kapi.kakao.com/v2/user/me";
+
+            String response = webClient.get()
+                    .uri(INFO_URL)
+                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+            return objectMapper.readValue(response, KakaoUserInfoDto.class);
+        } catch (Exception e) {
+            throw new RuntimeException("getUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
