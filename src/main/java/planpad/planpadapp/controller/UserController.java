@@ -5,13 +5,19 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
 import planpad.planpadapp.service.UserService;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -23,20 +29,40 @@ public class UserController {
 
     @PostMapping("/users")
     @Operation(summary = "소셜 로그인", description = "소셜 로그인을 진행합니다.")
-    public void SocialLogIn(@RequestBody @Valid KakaoUserRequestDto request) {
+    public ResponseEntity<Map<String, Object>> SocialLogIn(@RequestBody @Valid KakaoUserRequestDto request) {
+
+        Map<String, Object> responseBody = new HashMap<>();
 
         try {
-            KakaoTokenResponseDto tokenResponse = userService.kakaoGetAccessToken(request);
-            KakaoUserInfoDto kakaoUserInfoDto = userService.kakaoGetUserInfo(tokenResponse.getAccess_token());
+            KakaoTokenResponseDto kakaoTokenResponse = userService.kakaoGetAccessToken(request);
+            KakaoUserInfoDto kakaoUserInfo = userService.kakaoGetUserInfo(kakaoTokenResponse.getAccess_token());
+
+            String userEmail = kakaoUserInfo.kakao_account.email;
+            User existingUser = userService.findByEmail(userEmail);
+            boolean isExistUser = userEmail.equals(existingUser.getEmail());
+
+            if (isExistUser) {
+                existingUser.setAccessToken(kakaoTokenResponse.getAccess_token());
+
+                responseBody.put("data", existingUser);
+            } else {
+                User newUser = new User();
+                newUser.setAccessToken(kakaoTokenResponse.getAccess_token());
+                newUser.setEmail(userEmail);
+                newUser.setUserName(kakaoUserInfo.properties.nickname);
+                newUser.setAvatar(kakaoUserInfo.properties.thumbnail_image);
+
+                userService.join(newUser);
+                responseBody.put("data", newUser);
+            }
+
+            return ResponseEntity.ok(responseBody);
+
         } catch (Exception e) {
+            responseBody.put("message", "정상적으로 처리하지 못했습니다.");
             log.info("exception = {}", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
         }
-
-        /*User user = new User();
-        user.setUserName(request.getUserName());
-        user.setEmail(request.getEmail());
-        user.setAvatar(request.getAvatar());
-
-        userService.join(user);*/
     }
 }

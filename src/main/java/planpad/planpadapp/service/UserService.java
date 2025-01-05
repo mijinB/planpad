@@ -76,7 +76,7 @@ public class UserService {
         return user.getId();
     }
 
-    public User findOne(Long userId) {
-        return userRepository.findOne(userId);
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
     }
 }

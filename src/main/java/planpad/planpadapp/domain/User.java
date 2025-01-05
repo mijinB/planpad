@@ -16,15 +16,21 @@ public class User {
     private Long id;
 
     @NotEmpty
+    @Column(name = "access_token")
     private String accessToken;
 
     @NotEmpty
+    @Column(unique = true)
     private String email;
 
     @Column(name = "user_name")
     private String userName;
 
     private String avatar;
+
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
+    }
 
     public void setUserName(String userName) {
         // validation 추가 예정
