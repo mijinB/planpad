@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
-import planpad.planpadapp.dto.user.kakao.TokenResponseDto;
-import planpad.planpadapp.dto.user.UserRequestDto;
+import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
 import planpad.planpadapp.service.UserService;
 
 @Slf4j
@@ -22,13 +22,12 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/users")
-    @Operation(summary = "사용자 생성", description = "새 사용자를 생성합니다.")
-    public void kakaoLogIn(@RequestBody @Valid UserRequestDto request) {
+    @Operation(summary = "소셜 로그인", description = "소셜 로그인을 진행합니다.")
+    public void SocialLogIn(@RequestBody @Valid KakaoUserRequestDto request) {
 
         try {
-            TokenResponseDto tokenResponse = userService.getAccessToken(request);
-            KakaoUserInfoDto kakaoUserInfoDto = userService.getUserInfo(tokenResponse.getAccess_token());
-            log.info("kakaoUserInfoDto email = {}", kakaoUserInfoDto.kakao_account.email);
+            KakaoTokenResponseDto tokenResponse = userService.kakaoGetAccessToken(request);
+            KakaoUserInfoDto kakaoUserInfoDto = userService.kakaoGetUserInfo(tokenResponse.getAccess_token());
         } catch (Exception e) {
             log.info("exception = {}", e.getMessage());
         }

@@ -7,9 +7,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.domain.User;
+import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
-import planpad.planpadapp.dto.user.kakao.TokenResponseDto;
-import planpad.planpadapp.dto.user.UserRequestDto;
+import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
 import planpad.planpadapp.repository.UserRepository;
 
 @Slf4j
@@ -20,7 +20,7 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public TokenResponseDto getAccessToken(UserRequestDto request) {
+    public KakaoTokenResponseDto kakaoGetAccessToken(KakaoUserRequestDto request) {
 
         WebClient webClient = WebClient.create();
         ObjectMapper objectMapper = new ObjectMapper();
@@ -42,13 +42,13 @@ public class UserService {
                     .bodyToMono(String.class)
                     .block();       // 동기적으로 응답 값을 반환
 
-            return objectMapper.readValue(response, TokenResponseDto.class);
+            return objectMapper.readValue(response, KakaoTokenResponseDto.class);
         } catch (Exception e) {
             throw new RuntimeException("getAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
-    public KakaoUserInfoDto getUserInfo(String accessToken) {
+    public KakaoUserInfoDto kakaoGetUserInfo(String accessToken) {
 
         WebClient webClient = WebClient.create();
         ObjectMapper objectMapper = new ObjectMapper();
