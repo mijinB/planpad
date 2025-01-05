@@ -1,4 +1,4 @@
-package planpad.planpadapp.dto.user;
+package planpad.planpadapp.dto.user.kakao;
 
 import lombok.Getter;
 

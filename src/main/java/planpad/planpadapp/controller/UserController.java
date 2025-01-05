@@ -5,22 +5,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.util.LinkedMultiValueMap;
-import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.client.RestTemplate;
-import org.springframework.web.reactive.function.client.WebClient;
-import planpad.planpadapp.dto.user.TokenResponseDto;
+import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
+import planpad.planpadapp.dto.user.kakao.TokenResponseDto;
 import planpad.planpadapp.dto.user.UserRequestDto;
 import planpad.planpadapp.service.UserService;
-
-import java.util.Map;
 
 @Slf4j
 @RestController
@@ -36,7 +27,8 @@ public class UserController {
 
         try {
             TokenResponseDto tokenResponse = userService.getAccessToken(request);
-            log.info("access_token = {}", tokenResponse.getAccess_token());
+            KakaoUserInfoDto kakaoUserInfoDto = userService.getUserInfo(tokenResponse.getAccess_token());
+            log.info("kakaoUserInfoDto email = {}", kakaoUserInfoDto.kakao_account.email);
         } catch (Exception e) {
             log.info("exception = {}", e.getMessage());
         }

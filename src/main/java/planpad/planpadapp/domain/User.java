@@ -4,6 +4,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 
 @Entity
@@ -14,10 +15,15 @@ public class User {
     @Column(name = "user_id")
     private Long id;
 
+    @NotEmpty
+    private String accessToken;
+
+    @NotEmpty
+    private String email;
+
     @Column(name = "user_name")
     private String userName;
 
-    private String email;
     private String avatar;
 
     public void setUserName(String userName) {
