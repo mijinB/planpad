@@ -12,6 +12,8 @@ import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
 import planpad.planpadapp.repository.UserRepository;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @Transactional(readOnly = true)
@@ -76,7 +78,7 @@ public class UserService {
         return user.getId();
     }
 
-    public User findByEmail(String email) {
+    public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 }

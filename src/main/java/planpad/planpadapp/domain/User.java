@@ -5,6 +5,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 @Entity
@@ -14,6 +15,10 @@ public class User {
     @Id @GeneratedValue
     @Column(name = "user_id")
     private Long id;
+
+    @NotNull
+    @Column(name = "kakao_id", unique = true)
+    private Long kakaoId;
 
     @NotEmpty
     @Column(name = "access_token")
@@ -27,6 +32,10 @@ public class User {
     private String userName;
 
     private String avatar;
+
+    public void setKakaoId(Long kakaoId) {
+        this.kakaoId = kakaoId;
+    }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;

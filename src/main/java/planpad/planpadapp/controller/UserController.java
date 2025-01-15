@@ -18,6 +18,7 @@ import planpad.planpadapp.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -38,15 +39,16 @@ public class UserController {
             KakaoUserInfoDto kakaoUserInfo = userService.kakaoGetUserInfo(kakaoTokenResponse.getAccess_token());
 
             String userEmail = kakaoUserInfo.kakao_account.email;
-            User existingUser = userService.findByEmail(userEmail);
-            boolean isExistUser = userEmail.equals(existingUser.getEmail());
+            Optional<User> existingUserOptional = userService.findByEmail(userEmail);
 
-            if (isExistUser) {
+            if (existingUserOptional.isPresent()) {
+                User existingUser = existingUserOptional.get();
                 existingUser.setAccessToken(kakaoTokenResponse.getAccess_token());
 
                 responseBody.put("data", existingUser);
             } else {
                 User newUser = new User();
+                newUser.setKakaoId(kakaoUserInfo.id);
                 newUser.setAccessToken(kakaoTokenResponse.getAccess_token());
                 newUser.setEmail(userEmail);
                 newUser.setUserName(kakaoUserInfo.properties.nickname);
