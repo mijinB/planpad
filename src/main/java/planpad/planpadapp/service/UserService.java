@@ -3,6 +3,7 @@ package planpad.planpadapp.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -22,15 +23,19 @@ public class UserService {
 
     private final UserRepository userRepository;
 
+    @Value("${kakao.token_url}")
+    private String TOKEN_URL;
+    @Value("${kakao.client_id}")
+    private String CLIENT_ID;
+    @Value("${kakao.redirect_uri}")
+    private String REDIRECT_URI;
+
     public KakaoTokenResponseDto kakaoGetAccessToken(KakaoUserRequestDto request) {
 
         WebClient webClient = WebClient.create();
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            String TOKEN_URL = "https://kauth.kakao.com/oauth/token";
-            String CLIENT_ID = "97106bc8684af5584543581289cfd304";
-            String REDIRECT_URI = "http://localhost:3000/api/auth/kakao";
             String code = request.getCode();
 
             String response = webClient.post()
