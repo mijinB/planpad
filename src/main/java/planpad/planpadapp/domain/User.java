@@ -1,9 +1,6 @@
 package planpad.planpadapp.domain;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
@@ -12,7 +9,8 @@ import lombok.Getter;
 @Getter
 public class User {
 
-    @Id @GeneratedValue
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) // user_id 1부터 시작되지 않고 51부터 시작되는 이슈 해결 : JPA 가 user_seq 테이블의 next_val(=1)을 참고하여 50개의 ID 값을 미리 할당하기 때문 -> MySQL 의 GenerationType.IDENTITY 사용으로 변경
     @Column(name = "user_id")
     private Long id;
 
