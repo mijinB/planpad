@@ -11,14 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
-import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
 import planpad.planpadapp.service.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
 
 @Slf4j
 @RestController
@@ -35,29 +32,9 @@ public class UserController {
         Map<String, Object> responseBody = new HashMap<>();
 
         try {
-            KakaoTokenResponseDto kakaoTokenResponse = userService.kakaoGetAccessToken(request);
-            KakaoUserInfoDto kakaoUserInfo = userService.kakaoGetUserInfo(kakaoTokenResponse.getAccess_token());
+            User responseUser = userService.kakaoLogin(request.getCode());
 
-            String userEmail = kakaoUserInfo.kakao_account.email;
-            Optional<User> existingUserOptional = userService.findByEmail(userEmail);
-
-            if (existingUserOptional.isPresent()) {
-                User existingUser = existingUserOptional.get();
-                existingUser.setAccessToken(kakaoTokenResponse.getAccess_token());
-
-                responseBody.put("data", existingUser);
-            } else {
-                User newUser = new User();
-                newUser.setKakaoId(kakaoUserInfo.id);
-                newUser.setAccessToken(kakaoTokenResponse.getAccess_token());
-                newUser.setEmail(userEmail);
-                newUser.setUserName(kakaoUserInfo.properties.nickname);
-                newUser.setAvatar(kakaoUserInfo.properties.thumbnail_image);
-
-                userService.join(newUser);
-                responseBody.put("data", newUser);
-            }
-
+            responseBody.put("data", responseUser);
             return ResponseEntity.ok(responseBody);
 
         } catch (Exception e) {
