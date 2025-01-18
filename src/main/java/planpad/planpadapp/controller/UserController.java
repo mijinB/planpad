@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import planpad.planpadapp.domain.User;
+import planpad.planpadapp.dto.user.UserResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
-import planpad.planpadapp.service.UserService;
+import planpad.planpadapp.service.user.JwtTokenProvider;
+import planpad.planpadapp.service.user.UserService;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,6 +26,7 @@ import java.util.Map;
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/users")
     @Operation(summary = "소셜 로그인", description = "소셜 로그인을 진행합니다.")
@@ -32,9 +35,15 @@ public class UserController {
         Map<String, Object> responseBody = new HashMap<>();
 
         try {
-            User responseUser = userService.kakaoLogin(request.getCode());
+            User user = userService.kakaoLoginOrJoin(request.getCode());
+            String userToken = jwtTokenProvider.createToken(user.getId().toString());
+            UserResponseDto userData = new UserResponseDto();
+            userData.setToken(userToken);
+            userData.setName(user.getUserName());
+            userData.setEmail(user.getEmail());
+            userData.setAvatar(user.getAvatar());
 
-            responseBody.put("data", responseUser);
+            responseBody.put("data", userData);
             return ResponseEntity.ok(responseBody);
 
         } catch (Exception e) {

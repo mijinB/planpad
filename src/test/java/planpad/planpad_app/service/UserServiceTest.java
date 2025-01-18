@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.PlanpadAppApplication;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.repository.UserRepository;
-import planpad.planpadapp.service.UserService;
+import planpad.planpadapp.service.user.UserService;
 
 @SpringBootTest(classes = PlanpadAppApplication.class)
 @Transactional

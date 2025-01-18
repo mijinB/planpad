@@ -1,4 +1,4 @@
-package planpad.planpadapp.service;
+package planpad.planpadapp.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;

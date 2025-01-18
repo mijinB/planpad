@@ -1,4 +1,4 @@
-package planpad.planpadapp.service;
+package planpad.planpadapp.service.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,7 +30,7 @@ public class UserService {
     }
 
     @Transactional
-    public User kakaoLogin(String code) {
+    public User kakaoLoginOrJoin(String code) {
         String kakaoAccessToken = kakaoService.kakaoGetAccessToken(code);
         KakaoUserInfoDto kakaoUserInfo = kakaoService.kakaoGetUserInfo(kakaoAccessToken);
 
