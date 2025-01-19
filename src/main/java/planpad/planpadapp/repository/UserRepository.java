@@ -18,6 +18,10 @@ public class UserRepository {
         em.persist(user);
     }
 
+    public User findOne(Long id) {
+        return em.find(User.class, id);
+    }
+
     public Optional<User> findByEmail(String email) {
         try {
             String jpql = "SELECT u FROM User u WHERE u.email=:email";

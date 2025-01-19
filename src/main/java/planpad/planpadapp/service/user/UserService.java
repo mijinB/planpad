@@ -2,12 +2,15 @@ package planpad.planpadapp.service.user;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
 import planpad.planpadapp.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.Optional;
 
 @Slf4j
@@ -27,6 +30,19 @@ public class UserService {
 
     public Optional<User> findByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public UserDetails loadUserById(Long id) {
+        User user = userRepository.findOne(id);
+        if (user == null) {
+            throw new UsernameNotFoundException("회원을 찾을 수 없습니다. id = " + id);
+        }
+
+        return new org.springframework.security.core.userdetails.User(
+                user.getEmail(),
+                "SOCIAL_LOGIN",
+                Collections.singletonList(() -> "ROLE_USER")
+        );
     }
 
     @Transactional

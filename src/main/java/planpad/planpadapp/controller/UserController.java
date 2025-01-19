@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.UserResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserRequestDto;
-import planpad.planpadapp.service.user.JwtTokenProvider;
+import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
 
 import java.util.HashMap;
@@ -30,7 +30,7 @@ public class UserController {
 
     @PostMapping("/users")
     @Operation(summary = "소셜 로그인", description = "소셜 로그인을 진행합니다.")
-    public ResponseEntity<Map<String, Object>> SocialLogIn(@RequestBody @Valid KakaoUserRequestDto request) {
+    public ResponseEntity<Map<String, Object>> socialLogIn(@RequestBody @Valid KakaoUserRequestDto request) {
 
         Map<String, Object> responseBody = new HashMap<>();
 
