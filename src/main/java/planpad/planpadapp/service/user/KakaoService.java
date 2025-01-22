@@ -16,6 +16,10 @@ public class KakaoService {
 
     @Value("${kakao.token_url}")
     private String TOKEN_URL;
+    @Value("${kakao.info_url}")
+    private String INFO_URL;
+    @Value("${kakao.logout_url}")
+    private String LOGOUT_URL;
     @Value("${kakao.client_id}")
     private String CLIENT_ID;
     @Value("${kakao.redirect_uri}")
@@ -52,8 +56,6 @@ public class KakaoService {
         ObjectMapper objectMapper = new ObjectMapper();
 
         try {
-            String INFO_URL = "https://kapi.kakao.com/v2/user/me";
-
             String response = webClient.get()
                     .uri(INFO_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
@@ -65,6 +67,22 @@ public class KakaoService {
             return objectMapper.readValue(response, KakaoUserInfoDto.class);
         } catch (Exception e) {
             throw new RuntimeException("getUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    public void kakaoLogout(String accessToken) {
+        WebClient webClient = WebClient.create();
+
+        try {
+            String response = webClient.post()
+                    .uri(LOGOUT_URL)
+                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+        } catch (Exception e) {
+            throw new RuntimeException("kakaoLogout 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 }

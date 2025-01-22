@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.OncePerRequestFilter;
 import planpad.planpadapp.provider.JwtTokenProvider;
+import planpad.planpadapp.service.JwtBlacklistService;
 import planpad.planpadapp.service.user.UserService;
 
 import java.io.IOException;
@@ -17,14 +18,19 @@ import java.io.IOException;
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final JwtBlacklistService jwtBlacklistService;
     private final UserService userService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = getTokenFromRequest(request);
+        String userToken = getTokenFromRequest(request);
 
-        if (token != null && jwtTokenProvider.validateToken(token)) {
-            Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(token));
+        if (userToken != null && jwtTokenProvider.validateToken(userToken)) {
+            if (jwtBlacklistService.isBlacklisted(userToken)) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+            }
+
+            Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
             var userDetails = userService.loadUserById(userId);
             var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

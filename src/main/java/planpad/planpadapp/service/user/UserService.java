@@ -28,7 +28,11 @@ public class UserService {
         return user.getId();
     }
 
-    public Optional<User> findByEmail(String email) {
+    public User getUserById(Long id) {
+        return userRepository.findOne(id);
+    }
+
+    public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -51,7 +55,7 @@ public class UserService {
         KakaoUserInfoDto kakaoUserInfo = kakaoService.kakaoGetUserInfo(kakaoAccessToken);
 
         String userEmail = kakaoUserInfo.kakao_account.email;
-        Optional<User> existingUserOptional = findByEmail(userEmail);
+        Optional<User> existingUserOptional = getUserByEmail(userEmail);
 
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
