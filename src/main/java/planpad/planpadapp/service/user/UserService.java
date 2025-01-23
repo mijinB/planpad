@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
+import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
 
 import java.util.Collections;
@@ -21,6 +22,7 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final KakaoService kakaoService;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public Long join(User user) {
@@ -73,5 +75,13 @@ public class UserService {
             join(newUser);
             return newUser;
         }
+    }
+
+    public void kakaoUnLink(String bearerToken) {
+        String userToken = bearerToken.replace("Bearer ", "");
+        Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+        String accessToken = getUserById(userId).getAccessToken();
+
+        kakaoService.kakaoUnLink(accessToken);
     }
 }

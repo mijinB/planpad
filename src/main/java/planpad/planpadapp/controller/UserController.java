@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.UserResponseDto;
@@ -47,8 +48,29 @@ public class UserController {
             return ResponseEntity.ok(responseBody);
 
         } catch (Exception e) {
-            responseBody.put("message", "정상적으로 처리하지 못했습니다.");
-            log.info("exception = {}", e.getMessage());
+            responseBody.put("message", "로그인을 정상적으로 처리하지 못했습니다.");
+            log.info("socialLogIn exception = {}", e.getMessage());
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
+        }
+    }
+
+    @PostMapping("/kakao-unlink")
+    @Operation(summary = "카카오톡 연결끊기", description = "카카오톡 연결을 끊습니다.")
+    public ResponseEntity<Map<String, Object>> socialUnLink(@RequestHeader("Authorization") String bearerToken) {
+
+        Map<String, Object> responseBody = new HashMap<>();
+
+        try {
+            userService.kakaoUnLink(bearerToken);
+
+            responseBody.put("message", "카카오톡 연결 끊기에 성공하였습니다.");
+            log.info("카카오톡 연결 끊기에 성공하였습니다.");
+            return ResponseEntity.ok(responseBody);
+
+        } catch (Exception e) {
+            responseBody.put("message", "카카오톡 연결 끊기를 정상적으로 처리하지 못했습니다.");
+            log.info("socialUnLink exception = {}", e.getMessage());
 
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(responseBody);
         }

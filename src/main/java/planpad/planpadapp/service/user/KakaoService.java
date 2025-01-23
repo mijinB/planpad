@@ -20,6 +20,8 @@ public class KakaoService {
     private String INFO_URL;
     @Value("${kakao.logout_url}")
     private String LOGOUT_URL;
+    @Value("${kakao.unlink_url}")
+    private String UNLINK_URL;
     @Value("${kakao.client_id}")
     private String CLIENT_ID;
     @Value("${kakao.redirect_uri}")
@@ -65,22 +67,43 @@ public class KakaoService {
                     .block();
 
             return objectMapper.readValue(response, KakaoUserInfoDto.class);
+
         } catch (Exception e) {
             throw new RuntimeException("getUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
     public void kakaoLogout(String accessToken) {
+
         WebClient webClient = WebClient.create();
 
         try {
-            String response = webClient.post()
+            webClient.post()
                     .uri(LOGOUT_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
+
+        } catch (Exception e) {
+            throw new RuntimeException("kakaoLogout 처리 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    public void kakaoUnLink(String accessToken) {
+
+        WebClient webClient = WebClient.create();
+
+        try {
+            webClient.post()
+                    .uri(UNLINK_URL)
+                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                    .header("Authorization", "Bearer " + accessToken)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
         } catch (Exception e) {
             throw new RuntimeException("kakaoLogout 처리 중 오류 발생: " + e.getMessage(), e);
         }
