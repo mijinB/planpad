@@ -54,6 +54,7 @@ public class JwtTokenProvider {
     }
 
     public boolean validateToken(String userToken) {
+
         if (jwtBlacklistService.isBlacklisted(userToken)) {
             return false; // 블랙리스트에 있으면 유효하지 않음
         }
@@ -64,6 +65,7 @@ public class JwtTokenProvider {
                     .build()
                     .parseClaimsJws(userToken);
             return true;
+
         } catch (JwtException | IllegalArgumentException e) {
             return false;
         }

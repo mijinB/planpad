@@ -40,14 +40,10 @@ public class User {
     }
 
     public void setUserName(String userName) {
-        // validation 추가 예정
-
         this.userName = userName;
     }
 
     public void setEmail(String email) {
-        // validation 추가 예정
-
         this.email = email;
     }
 

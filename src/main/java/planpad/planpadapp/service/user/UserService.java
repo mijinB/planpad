@@ -39,7 +39,9 @@ public class UserService {
     }
 
     public UserDetails loadUserById(Long id) {
+
         User user = userRepository.findOne(id);
+
         if (user == null) {
             throw new UsernameNotFoundException("회원을 찾을 수 없습니다. id = " + id);
         }
@@ -53,6 +55,7 @@ public class UserService {
 
     @Transactional
     public User kakaoLoginOrJoin(String code) {
+
         String kakaoAccessToken = kakaoService.kakaoGetAccessToken(code);
         KakaoUserInfoDto kakaoUserInfo = kakaoService.kakaoGetUserInfo(kakaoAccessToken);
 
@@ -78,6 +81,7 @@ public class UserService {
     }
 
     public void kakaoUnLink(String bearerToken) {
+
         String userToken = bearerToken.replace("Bearer ", "");
         Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
         String accessToken = getUserById(userId).getAccessToken();
