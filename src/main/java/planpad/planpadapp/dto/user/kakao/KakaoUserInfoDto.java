@@ -1,8 +1,16 @@
 package planpad.planpadapp.dto.user.kakao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class KakaoUserInfoDto {
+
     public Long id;
-    public String connected_at;
+
+    @JsonProperty("connected_at")
+    public String connectedAt;
+
     public Properties properties;
-    public KakaoAccount kakao_account;
+
+    @JsonProperty("kakao_account")
+    public KakaoAccount kakaoAccount;
 }

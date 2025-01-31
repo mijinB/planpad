@@ -1,9 +1,20 @@
 package planpad.planpadapp.dto.user.kakao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class Profile {
+
     public String nickname;
-    public String thumbnail_image_url;
-    public String profile_image_url;
-    public String is_default_image;
-    public String is_default_nickname;
+
+    @JsonProperty("thumbnail_image_url")
+    public String thumbnailImageUrl;
+
+    @JsonProperty("profile_image_url")
+    public String profileImageUrl;
+
+    @JsonProperty("is_default_image")
+    public String isDefaultImage;
+
+    @JsonProperty("is_default_nickname")
+    public String isDefaultNickname;
 }

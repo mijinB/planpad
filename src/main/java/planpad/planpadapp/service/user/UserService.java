@@ -21,7 +21,8 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final KakaoService kakaoService;
+    private final KakaoLoginService kakaoLoginService;
+    private final NaverLoginService naverLoginService;
     private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
@@ -56,10 +57,10 @@ public class UserService {
     @Transactional
     public User kakaoLoginOrJoin(String code) {
 
-        String kakaoAccessToken = kakaoService.kakaoGetAccessToken(code);
-        KakaoUserInfoDto kakaoUserInfo = kakaoService.kakaoGetUserInfo(kakaoAccessToken);
+        String kakaoAccessToken = kakaoLoginService.kakaoGetAccessToken(code);
+        KakaoUserInfoDto kakaoUserInfo = kakaoLoginService.kakaoGetUserInfo(kakaoAccessToken);
 
-        String userEmail = kakaoUserInfo.kakao_account.email;
+        String userEmail = kakaoUserInfo.kakaoAccount.email;
         Optional<User> existingUserOptional = getUserByEmail(userEmail);
 
         if (existingUserOptional.isPresent()) {
@@ -73,7 +74,7 @@ public class UserService {
             newUser.setAccessToken(kakaoAccessToken);
             newUser.setEmail(userEmail);
             newUser.setUserName(kakaoUserInfo.properties.nickname);
-            newUser.setAvatar(kakaoUserInfo.properties.thumbnail_image);
+            newUser.setAvatar(kakaoUserInfo.properties.thumbnailImage);
 
             join(newUser);
             return newUser;
@@ -86,6 +87,11 @@ public class UserService {
         Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
         String accessToken = getUserById(userId).getAccessToken();
 
-        kakaoService.kakaoUnLink(accessToken);
+        kakaoLoginService.kakaoUnLink(accessToken);
+    }
+
+    public void naverLoginOrJoin(String code) {
+        String naverAccessToken = naverLoginService.naverGetAccessToken(code);
+        log.info("naverAccessToken = {}", naverAccessToken);
     }
 }

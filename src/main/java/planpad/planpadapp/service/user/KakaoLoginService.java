@@ -1,19 +1,19 @@
 package planpad.planpadapp.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
 
-@Slf4j
 @Service
-@RequiredArgsConstructor
-public class KakaoService {
+public class KakaoLoginService {
 
+    @Value("${kakao.client_id}")
+    private String CLIENT_ID;
+    @Value("${kakao.redirect_uri}")
+    private String REDIRECT_URI;
     @Value("${kakao.token_url}")
     private String TOKEN_URL;
     @Value("${kakao.info_url}")
@@ -22,10 +22,6 @@ public class KakaoService {
     private String LOGOUT_URL;
     @Value("${kakao.unlink_url}")
     private String UNLINK_URL;
-    @Value("${kakao.client_id}")
-    private String CLIENT_ID;
-    @Value("${kakao.redirect_uri}")
-    private String REDIRECT_URI;
 
     public String kakaoGetAccessToken(String code) {
 
@@ -43,12 +39,12 @@ public class KakaoService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();       // 동기적으로 응답 값을 반환
-            KakaoTokenResponseDto tokenResponse = objectMapper.readValue(response, KakaoTokenResponseDto.class);
 
-            return tokenResponse.getAccess_token();
+            KakaoTokenResponseDto tokenResponse = objectMapper.readValue(response, KakaoTokenResponseDto.class);
+            return tokenResponse.getAccessToken();
 
         } catch (Exception e) {
-            throw new RuntimeException("getAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("kakaoGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 

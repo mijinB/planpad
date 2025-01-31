@@ -1,12 +1,27 @@
 package planpad.planpadapp.dto.user.kakao;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 public class KakaoAccount {
-    public String profile_nickname_needs_agreement;
-    public String profile_image_needs_agreement;
-    public String has_email;
-    public String email_needs_agreement;
-    public String is_email_valid;
-    public String is_email_verified;
+
+    @JsonProperty("profile_nickname_needs_agreement")
+    public String profileNicknameNeedsAgreement;
+
+    @JsonProperty("profile_image_needs_agreement")
+    public String profileImageNeedsAgreement;
+
+    @JsonProperty("has_email")
+    public String hasEmail;
+
+    @JsonProperty("email_needs_agreement")
+    public String emailNeedsAgreement;
+
+    @JsonProperty("is_email_valid")
+    public String isEmailValid;
+
+    @JsonProperty("is_email_verified")
+    public String isEmailVerified;
+
     public String email;
     public Profile profile;
 }
