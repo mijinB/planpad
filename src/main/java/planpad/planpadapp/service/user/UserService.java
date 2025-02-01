@@ -39,6 +39,11 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public User getUserByBearerToken(String userToken) {
+        Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+        return getUserById(userId);
+    }
+
     public UserDetails loadUserById(Long id) {
 
         User user = userRepository.findOne(id);

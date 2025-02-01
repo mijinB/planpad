@@ -13,6 +13,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import planpad.planpadapp.config.security.CustomAccessDeniedHandler;
+import planpad.planpadapp.config.security.UnauthorizedEntryPoint;
 import planpad.planpadapp.filter.JwtAuthenticationFilter;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.JwtBlacklistService;
@@ -29,6 +31,9 @@ import java.util.Map;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final UnauthorizedEntryPoint unauthorizedEntryPoint;
+    private final CustomAccessDeniedHandler accessDeniedHandler;
+
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtBlacklistService jwtBlacklistService;
     private final KakaoLoginService kakaoLoginService;
@@ -38,7 +43,18 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(csrf -> csrf.disable())
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(
+                                "/swagger-ui.html",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
+                        ).permitAll()
+                        .requestMatchers("/users").permitAll()
+                        .anyRequest().authenticated()
+                )
                 .logout(logout -> logout
                         .logoutUrl("/logout")
                         .logoutSuccessHandler((request, response, authentication) -> {
@@ -57,10 +73,10 @@ public class SecurityConfig {
                                 kakaoLoginService.kakaoLogout(accessToken);
 
                                 message.put("message", "로그아웃에 성공하였습니다.");
-                                log.info("로그아웃에 성공하였습니다.");
+                                log.info("로그아웃 성공");
                             } else {
                                 message.put("message", "토큰이 만료되었거나 유효하지 않습니다.");
-                                log.info("토큰이 만료되었거나 유효하지 않습니다.");
+                                log.info("로그아웃 실패 = 유효하지 않은 토큰");
                             }
 
                             response.setContentType("application/json");
@@ -70,21 +86,13 @@ public class SecurityConfig {
                             new ObjectMapper().writeValue(response.getWriter(), message);
                         })
                 )
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(
-                                "/swagger-ui.html",
-                                "/swagger-ui/**",
-                                "/v3/api-docs/**",
-                                "/webjars/**"
-                        ).permitAll()
-                        .requestMatchers("/users").permitAll()
-                        .anyRequest().authenticated()
-                )
                 .addFilterBefore(
                         new JwtAuthenticationFilter(jwtTokenProvider, jwtBlacklistService, userService),
                         UsernamePasswordAuthenticationFilter.class
                 )
-                .cors(cors -> cors.configurationSource(corsConfigurationSource()));
+                .exceptionHandling((exceptionConfig) ->
+                        exceptionConfig.authenticationEntryPoint(unauthorizedEntryPoint).accessDeniedHandler(accessDeniedHandler)
+                );
 
         return http.build();
     }

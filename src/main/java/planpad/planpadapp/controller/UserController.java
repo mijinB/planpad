@@ -11,15 +11,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.common.ErrorResponseDto;
-import planpad.planpadapp.dto.common.OkResponseWrapper;
-import planpad.planpadapp.dto.user.UserResponseDto;
+import planpad.planpadapp.dto.api.ErrorResponseDto;
+import planpad.planpadapp.dto.api.LoginResponseWrapper;
+import planpad.planpadapp.dto.api.UserResponseWrapper;
+import planpad.planpadapp.dto.user.LoginResponseDto;
 import planpad.planpadapp.dto.user.SocialLoginRequestDto;
+import planpad.planpadapp.dto.user.UserResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
 
@@ -35,7 +34,7 @@ public class UserController {
     @PostMapping("/users")
     @Operation(summary = "소셜 로그인", description = "사용자의 최초 연결 여부에 따라 회원가입/로그인이 진행됩니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OkResponseWrapper.class))),
+            @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class)))
     })
     public ResponseEntity<Object> socialLogIn(@RequestBody @Valid SocialLoginRequestDto request) {
@@ -47,18 +46,18 @@ public class UserController {
                 User user = userService.kakaoLoginOrJoin(request.getCode());
                 String userToken = jwtTokenProvider.createToken(user.getId().toString());
 
-                UserResponseDto userData = new UserResponseDto();
-                userData.setToken(userToken);
-                userData.setName(user.getUserName());
-                userData.setEmail(user.getEmail());
-                userData.setAvatar(user.getAvatar());
+                LoginResponseDto loginUserData = new LoginResponseDto();
+                loginUserData.setToken(userToken);
+                loginUserData.setName(user.getUserName());
+                loginUserData.setEmail(user.getEmail());
+                loginUserData.setAvatar(user.getAvatar());
 
-                OkResponseWrapper apiResponseWrapper = new OkResponseWrapper();
-                apiResponseWrapper.setData(userData);
-                apiResponseWrapper.setMessage("카카오 소셜 회원가입/로그인에 성공하였습니다.");
+                LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
+                loginResponseWrapper.setData(loginUserData);
+                loginResponseWrapper.setMessage("카카오 소셜 회원가입/로그인에 성공하였습니다.");
 
-                log.info("카카오 로그인 성공 userToken = {}", userData.getToken());
-                return ResponseEntity.ok(apiResponseWrapper);
+                log.info("카카오 로그인 성공 userToken = {}", loginUserData.getToken());
+                return ResponseEntity.ok(loginResponseWrapper);
 
             } catch (Exception e) {
                 ErrorResponseDto errorResponseDto = new ErrorResponseDto();
@@ -71,14 +70,14 @@ public class UserController {
         } else if ("naver".equalsIgnoreCase(socialType)) {
             try {
                 userService.naverLoginOrJoin(request.getCode());
-                UserResponseDto userData = new UserResponseDto();
+                LoginResponseDto loginUserData = new LoginResponseDto();
 
-                OkResponseWrapper apiResponseWrapper = new OkResponseWrapper();
-                apiResponseWrapper.setData(userData);
-                apiResponseWrapper.setMessage("네이버 소셜 회원가입/로그인에 성공하였습니다.");
+                LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
+                loginResponseWrapper.setData(loginUserData);
+                loginResponseWrapper.setMessage("네이버 소셜 회원가입/로그인에 성공하였습니다.");
 
-                log.info("네이버 로그인 성공 userToken = {}", userData.getToken());
-                return ResponseEntity.ok(apiResponseWrapper);
+                log.info("네이버 로그인 성공 userToken = {}", loginUserData.getToken());
+                return ResponseEntity.ok(loginResponseWrapper);
 
             } catch (Exception e) {
                 ErrorResponseDto errorResponseDto = new ErrorResponseDto();
@@ -109,6 +108,40 @@ public class UserController {
         } catch (Exception e) {
             log.info("카카오톡 연결 끊기 실패 socialUnLink exception = {}", e.getMessage());
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/me")
+    @Operation(summary = "사용자 정보 조회", description = "사용자의 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "사용자 정보 조회 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class)))
+    })
+    public ResponseEntity<Object> userInfo(@RequestHeader("Authorization") String bearerToken) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+
+            User user = userService.getUserByBearerToken(userToken);
+
+            UserResponseDto userData = new UserResponseDto();
+            userData.setName(user.getUserName());
+            userData.setEmail(user.getEmail());
+            userData.setAvatar(user.getAvatar());
+
+            UserResponseWrapper userResponseWrapper = new UserResponseWrapper();
+            userResponseWrapper.setData(userData);
+            userResponseWrapper.setMessage("사용자 정보 조회를 성공하였습니다.");
+
+            log.info("사용자 정보 조회 성공 userName = {}", userData.getName());
+            return ResponseEntity.ok(userResponseWrapper);
+
+        } catch (Exception e) {
+            ErrorResponseDto errorResponseDto = new ErrorResponseDto();
+            errorResponseDto.setMessage("사용자 정보 조회를 실패하였습니다.");
+
+            log.info("사용자 정보 조회 실패 exception = {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
         }
     }
 }
