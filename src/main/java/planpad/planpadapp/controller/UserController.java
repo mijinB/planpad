@@ -39,61 +39,39 @@ public class UserController {
     })
     public ResponseEntity<Object> socialLogin(@RequestBody @Valid SocialLoginRequestDto request) {
 
-        String socialType = request.getSocialType();
+        try {
+            User user = processSocialLogin(request.getSocialType(), request.getCode());
+            String userToken = jwtTokenProvider.createToken(user.getId().toString());
 
+            LoginResponseDto loginUserData = new LoginResponseDto();
+            loginUserData.setToken(userToken);
+            loginUserData.setName(user.getName());
+            loginUserData.setEmail(user.getEmail());
+            loginUserData.setAvatar(user.getAvatar());
+
+            LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
+            loginResponseWrapper.setData(loginUserData);
+            loginResponseWrapper.setMessage("소셜 회원가입/로그인에 성공하였습니다.");
+
+            log.info("소셜 로그인 성공 userToken = {}", loginUserData.getToken());
+            return ResponseEntity.ok(loginResponseWrapper);
+
+        } catch (Exception e) {
+            ErrorResponseDto errorResponseDto = new ErrorResponseDto();
+            errorResponseDto.setMessage("소셜 회원가입/로그인에 실패하였습니다.");
+
+            log.info("소셜 로그인 실패 socialLogin exception = {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
+        }
+    }
+
+    private User processSocialLogin(String socialType, String code) {
         if ("kakao".equalsIgnoreCase(socialType)) {
-            try {
-                User user = userService.kakaoLoginOrJoin(request.getCode());
-                String userToken = jwtTokenProvider.createToken(user.getId().toString());
-
-                LoginResponseDto loginUserData = new LoginResponseDto();
-                loginUserData.setToken(userToken);
-                loginUserData.setName(user.getName());
-                loginUserData.setEmail(user.getEmail());
-                loginUserData.setAvatar(user.getAvatar());
-
-                LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
-                loginResponseWrapper.setData(loginUserData);
-                loginResponseWrapper.setMessage("카카오 소셜 회원가입/로그인에 성공하였습니다.");
-
-                log.info("카카오 로그인 성공 userToken = {}", loginUserData.getToken());
-                return ResponseEntity.ok(loginResponseWrapper);
-
-            } catch (Exception e) {
-                ErrorResponseDto errorResponseDto = new ErrorResponseDto();
-                errorResponseDto.setMessage("카카오 소셜 회원가입/로그인에 실패하였습니다.");
-
-                log.info("카카오 로그인 실패 socialLogin exception = {}", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
-            }
-
+            return userService.kakaoLoginOrJoin(code);
         } else if ("naver".equalsIgnoreCase(socialType)) {
-            try {
-                User user = userService.naverLoginOrJoin(request.getCode());
-                String userToken = jwtTokenProvider.createToken(user.getId().toString());
-
-                LoginResponseDto loginUserData = new LoginResponseDto();
-                loginUserData.setToken(userToken);
-                loginUserData.setName(user.getName());
-                loginUserData.setEmail(user.getEmail());
-                loginUserData.setAvatar(user.getAvatar());
-
-                LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
-                loginResponseWrapper.setData(loginUserData);
-                loginResponseWrapper.setMessage("네이버 소셜 회원가입/로그인에 성공하였습니다.");
-
-                log.info("네이버 로그인 성공 userToken = {}", loginUserData.getToken());
-                return ResponseEntity.ok(loginResponseWrapper);
-
-            } catch (Exception e) {
-                ErrorResponseDto errorResponseDto = new ErrorResponseDto();
-                errorResponseDto.setMessage("네이버 소셜 회원가입/로그인에 실패하였습니다.");
-
-                log.info("네이버 로그인 실패 socialLogin exception = {}", e.getMessage());
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
-            }
+            return userService.naverLoginOrJoin(code);
         } else {
-            throw new IllegalArgumentException("지원하지 않는 소셜 로그인 타입입니다.");
+            throw new IllegalArgumentException("지원하지 않는 소셜 타입");
         }
     }
 
@@ -151,3 +129,9 @@ public class UserController {
         }
     }
 }
+
+/**
+ * 1. User 테이블에 id 값을 createToken 할 때 toString을 하고 있는데, 꼭 컬럼이 Long 타입이어야하는지 확인 후 수정 (String으로 수정 시 값이 그냥 1, 2 ... 인데 앞에 다른값을 넣어보기 ex. kakao_1)
+ * 2. naver, google 소셜 로그인 기능 진행하면서 판단에 따라 API url, controller(위 api) 메서드명 수정
+ * 3. repository 에 있는 것만이라도 테스트코드 작성하기
+ */
