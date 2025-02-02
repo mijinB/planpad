@@ -15,8 +15,12 @@ public class User {
     private Long id;
 
     @NotNull
-    @Column(name = "kakao_id", unique = true)
-    private Long kakaoId;
+    @Column(name = "social_id", unique = true)
+    private String socialId;
+
+    @NotEmpty
+    @Column(name = "social_type")
+    private String socialType;
 
     @NotEmpty
     @Column(name = "access_token")
@@ -26,21 +30,25 @@ public class User {
     @Column(unique = true)
     private String email;
 
-    @Column(name = "user_name")
-    private String userName;
+    @Column(name = "name")
+    private String name;
 
     private String avatar;
 
-    public void setKakaoId(Long kakaoId) {
-        this.kakaoId = kakaoId;
+    public void setSocialId(String socialId) {
+        this.socialId = socialId;
+    }
+
+    public void setSocialType(String socialType) {
+        this.socialType = socialType;
     }
 
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public void setEmail(String email) {

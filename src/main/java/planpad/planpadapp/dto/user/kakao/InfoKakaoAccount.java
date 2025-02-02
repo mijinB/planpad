@@ -2,7 +2,7 @@ package planpad.planpadapp.dto.user.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class KakaoAccount {
+public class InfoKakaoAccount {
 
     @JsonProperty("profile_nickname_needs_agreement")
     public String profileNicknameNeedsAgreement;
@@ -23,5 +23,5 @@ public class KakaoAccount {
     public String isEmailVerified;
 
     public String email;
-    public Profile profile;
+    public InfoProfile profile;
 }

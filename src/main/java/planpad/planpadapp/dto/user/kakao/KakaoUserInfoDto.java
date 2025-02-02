@@ -9,8 +9,8 @@ public class KakaoUserInfoDto {
     @JsonProperty("connected_at")
     public String connectedAt;
 
-    public Properties properties;
+    public InfoProperties properties;
 
     @JsonProperty("kakao_account")
-    public KakaoAccount kakaoAccount;
+    public InfoKakaoAccount kakaoAccount;
 }

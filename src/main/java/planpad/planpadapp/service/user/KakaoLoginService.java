@@ -65,7 +65,7 @@ public class KakaoLoginService {
             return objectMapper.readValue(response, KakaoUserInfoDto.class);
 
         } catch (Exception e) {
-            throw new RuntimeException("getUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("kakaoGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
@@ -101,7 +101,7 @@ public class KakaoLoginService {
                     .block();
 
         } catch (Exception e) {
-            throw new RuntimeException("kakaoLogout 처리 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 }

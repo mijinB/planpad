@@ -8,9 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
+import planpad.planpadapp.dto.user.naver.NaverUserInfoDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -73,12 +76,14 @@ public class UserService {
             existingUser.setAccessToken(kakaoAccessToken);
 
             return existingUser;
+
         } else {
             User newUser = new User();
-            newUser.setKakaoId(kakaoUserInfo.id);
+            newUser.setSocialId(kakaoUserInfo.id.toString());
+            newUser.setSocialType("kakao");
             newUser.setAccessToken(kakaoAccessToken);
             newUser.setEmail(userEmail);
-            newUser.setUserName(kakaoUserInfo.properties.nickname);
+            newUser.setName(kakaoUserInfo.properties.nickname);
             newUser.setAvatar(kakaoUserInfo.properties.thumbnailImage);
 
             join(newUser);
@@ -95,8 +100,37 @@ public class UserService {
         kakaoLoginService.kakaoUnLink(accessToken);
     }
 
-    public void naverLoginOrJoin(String code) {
+    @Transactional
+    public User naverLoginOrJoin(String code) {
         String naverAccessToken = naverLoginService.naverGetAccessToken(code);
-        log.info("naverAccessToken = {}", naverAccessToken);
+        NaverUserInfoDto naverUserInfo = naverLoginService.naverGetUserInfo(naverAccessToken);
+
+        String userEmail = naverUserInfo.response.email;
+        Optional<User> existingUserOptional = getUserByEmail(userEmail);
+
+        if (existingUserOptional.isPresent()) {
+            User existingUser = existingUserOptional.get();
+            existingUser.setAccessToken(naverAccessToken);
+
+            return existingUser;
+
+        } else {
+            try {
+                User newUser = new User();
+                newUser.setSocialId(naverUserInfo.response.id);
+                newUser.setSocialType("naver");
+                newUser.setAccessToken(naverAccessToken);
+                newUser.setEmail(userEmail);
+                newUser.setName(URLDecoder.decode(naverUserInfo.response.name, "UTF-8"));
+                newUser.setAvatar(naverUserInfo.response.profileImage);
+
+                join(newUser);
+                return newUser;
+
+            } catch (UnsupportedEncodingException e) {  // URLDecoder.decode 예외 처리
+                e.printStackTrace();
+                return null;
+            }
+        }
     }
 }

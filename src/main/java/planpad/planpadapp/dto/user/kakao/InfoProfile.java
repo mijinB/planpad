@@ -2,7 +2,7 @@ package planpad.planpadapp.dto.user.kakao;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Profile {
+public class InfoProfile {
 
     public String nickname;
 

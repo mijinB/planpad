@@ -37,7 +37,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class)))
     })
-    public ResponseEntity<Object> socialLogIn(@RequestBody @Valid SocialLoginRequestDto request) {
+    public ResponseEntity<Object> socialLogin(@RequestBody @Valid SocialLoginRequestDto request) {
 
         String socialType = request.getSocialType();
 
@@ -48,7 +48,7 @@ public class UserController {
 
                 LoginResponseDto loginUserData = new LoginResponseDto();
                 loginUserData.setToken(userToken);
-                loginUserData.setName(user.getUserName());
+                loginUserData.setName(user.getName());
                 loginUserData.setEmail(user.getEmail());
                 loginUserData.setAvatar(user.getAvatar());
 
@@ -63,14 +63,20 @@ public class UserController {
                 ErrorResponseDto errorResponseDto = new ErrorResponseDto();
                 errorResponseDto.setMessage("카카오 소셜 회원가입/로그인에 실패하였습니다.");
 
-                log.info("카카오 로그인 실패 socialLogIn exception = {}", e.getMessage());
+                log.info("카카오 로그인 실패 socialLogin exception = {}", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
             }
 
         } else if ("naver".equalsIgnoreCase(socialType)) {
             try {
-                userService.naverLoginOrJoin(request.getCode());
+                User user = userService.naverLoginOrJoin(request.getCode());
+                String userToken = jwtTokenProvider.createToken(user.getId().toString());
+
                 LoginResponseDto loginUserData = new LoginResponseDto();
+                loginUserData.setToken(userToken);
+                loginUserData.setName(user.getName());
+                loginUserData.setEmail(user.getEmail());
+                loginUserData.setAvatar(user.getAvatar());
 
                 LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
                 loginResponseWrapper.setData(loginUserData);
@@ -83,7 +89,7 @@ public class UserController {
                 ErrorResponseDto errorResponseDto = new ErrorResponseDto();
                 errorResponseDto.setMessage("네이버 소셜 회원가입/로그인에 실패하였습니다.");
 
-                log.info("네이버 로그인 실패 socialLogIn exception = {}", e.getMessage());
+                log.info("네이버 로그인 실패 socialLogin exception = {}", e.getMessage());
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
             }
         } else {
@@ -125,7 +131,7 @@ public class UserController {
             User user = userService.getUserByBearerToken(userToken);
 
             UserResponseDto userData = new UserResponseDto();
-            userData.setName(user.getUserName());
+            userData.setName(user.getName());
             userData.setEmail(user.getEmail());
             userData.setAvatar(user.getAvatar());
 
@@ -145,8 +151,3 @@ public class UserController {
         }
     }
 }
-
-/**
- * 1. naver, google 소셜 로그인 기능 진행하면서 판단에 따라 API url, controller(위 api) 메서드명 수정
- * 2. repository 에 있는 것만이라도 테스트코드 작성하기
- */
