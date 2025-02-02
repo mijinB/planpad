@@ -13,8 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.api.ErrorResponseDto;
 import planpad.planpadapp.dto.api.LoginResponseWrapper;
+import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.UserResponseWrapper;
 import planpad.planpadapp.dto.user.LoginResponseDto;
 import planpad.planpadapp.dto.user.SocialLoginRequestDto;
@@ -36,7 +36,7 @@ public class UserController {
     @Operation(summary = "소셜 로그인", description = "사용자의 최초 연결 여부에 따라 회원가입/로그인이 진행됩니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class)))
+            @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
     public ResponseEntity<Object> socialLogin(@RequestBody @Valid SocialLoginRequestDto request) {
 
@@ -45,25 +45,21 @@ public class UserController {
             String userToken = jwtTokenProvider.createToken(user.getId().toString());
 
             LoginResponseDto loginUserData = new LoginResponseDto();
-            loginUserData.setSocialType(user.getSocialType());
             loginUserData.setToken(userToken);
-            loginUserData.setName(user.getName());
-            loginUserData.setEmail(user.getEmail());
-            loginUserData.setAvatar(user.getAvatar());
 
-            LoginResponseWrapper loginResponseWrapper = new LoginResponseWrapper();
-            loginResponseWrapper.setData(loginUserData);
-            loginResponseWrapper.setMessage("소셜 회원가입/로그인에 성공하였습니다.");
+            LoginResponseWrapper loginResponse = new LoginResponseWrapper();
+            loginResponse.setData(loginUserData);
+            loginResponse.setMessage("소셜 회원가입/로그인에 성공하였습니다.");
 
             log.info("소셜 로그인 성공 userToken = {}", loginUserData.getToken());
-            return ResponseEntity.ok(loginResponseWrapper);
+            return ResponseEntity.ok(loginResponse);
 
         } catch (Exception e) {
-            ErrorResponseDto errorResponseDto = new ErrorResponseDto();
-            errorResponseDto.setMessage("소셜 회원가입/로그인에 실패하였습니다.");
+            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
+            onlyMessageResponse.setMessage("소셜 회원가입/로그인에 실패하였습니다.");
 
             log.info("소셜 로그인 실패 socialLogin exception = {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
         }
     }
 
@@ -91,7 +87,7 @@ public class UserController {
     @Operation(summary = "사용자 정보 조회", description = "사용자의 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "사용자 정보 조회 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponseDto.class)))
+            @ApiResponse(responseCode = "400", description = "사용자 정보 조회 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
     public ResponseEntity<Object> userInfo(@RequestHeader("Authorization") String bearerToken) {
 
@@ -114,11 +110,11 @@ public class UserController {
             return ResponseEntity.ok(userResponseWrapper);
 
         } catch (Exception e) {
-            ErrorResponseDto errorResponseDto = new ErrorResponseDto();
-            errorResponseDto.setMessage("사용자 정보 조회를 실패하였습니다.");
+            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
+            onlyMessageResponse.setMessage("사용자 정보 조회를 실패하였습니다.");
 
             log.info("사용자 정보 조회 실패 exception = {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
         }
     }
 
