@@ -63,4 +63,23 @@ public class NaverLoginService {
             throw new RuntimeException("naverGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
+
+    public void naverUnLink(String accessToken) {
+
+        try {
+            webClient.post()
+                    .uri(TOKEN_URL)
+                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                    .bodyValue("grant_type=delete" +
+                            "&client_id=" + CLIENT_ID +
+                            "&client_secret=" + SECRET_VALUE +
+                            "&access_token=" + accessToken)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+        } catch (Exception e) {
+            throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
 }

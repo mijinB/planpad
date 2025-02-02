@@ -8,6 +8,9 @@ import lombok.Setter;
 @Schema(description = "사용자 응답 데이터")
 public class UserResponseDto {
 
+    @Schema(description = "소셜 로그인 타입", example = "kakao")
+    public String socialType;
+
     @Schema(description = "사용자 이름", example = "홍길동")
     public String name;
 

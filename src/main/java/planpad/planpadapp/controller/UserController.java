@@ -18,6 +18,7 @@ import planpad.planpadapp.dto.api.LoginResponseWrapper;
 import planpad.planpadapp.dto.api.UserResponseWrapper;
 import planpad.planpadapp.dto.user.LoginResponseDto;
 import planpad.planpadapp.dto.user.SocialLoginRequestDto;
+import planpad.planpadapp.dto.user.SocialUnLinkRequestDto;
 import planpad.planpadapp.dto.user.UserResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
@@ -31,7 +32,7 @@ public class UserController {
     private final UserService userService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @PostMapping("/users")
+    @PostMapping("/login")
     @Operation(summary = "소셜 로그인", description = "사용자의 최초 연결 여부에 따라 회원가입/로그인이 진행됩니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
@@ -44,6 +45,7 @@ public class UserController {
             String userToken = jwtTokenProvider.createToken(user.getId().toString());
 
             LoginResponseDto loginUserData = new LoginResponseDto();
+            loginUserData.setSocialType(user.getSocialType());
             loginUserData.setToken(userToken);
             loginUserData.setName(user.getName());
             loginUserData.setEmail(user.getEmail());
@@ -65,32 +67,22 @@ public class UserController {
         }
     }
 
-    private User processSocialLogin(String socialType, String code) {
-        if ("kakao".equalsIgnoreCase(socialType)) {
-            return userService.kakaoLoginOrJoin(code);
-        } else if ("naver".equalsIgnoreCase(socialType)) {
-            return userService.naverLoginOrJoin(code);
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 소셜 타입");
-        }
-    }
-
-    @PostMapping("/kakao-unlink")
-    @Operation(summary = "카카오톡 연결 끊기", description = "(회원탈퇴 개념) 카카오톡 소셜 로그인 연결을 끊습니다.")
+    @PostMapping("/unlink")
+    @Operation(summary = "소셜 로그인 연결 끊기", description = "(회원탈퇴 개념) 소셜 로그인 연결을 끊습니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "카카오톡 연결 끊기 성공"),
-            @ApiResponse(responseCode = "400", description = "카카오톡 연결 끊기 실패 = 잘못된 요청")
+            @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공"),
+            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패 = 잘못된 요청")
     })
-    public ResponseEntity<Void> socialUnLink(@RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<Void> socialUnLink(@RequestBody @Valid SocialUnLinkRequestDto request, @RequestHeader("Authorization") String bearerToken) {
 
         try {
-            userService.kakaoUnLink(bearerToken);
+            processSocialUnLink(request.getSocialType(), bearerToken);
 
-            log.info("카카오톡 연결 끊기 성공");
+            log.info("소셜 로그인 연결 끊기 성공");
             return ResponseEntity.ok().build();
 
         } catch (Exception e) {
-            log.info("카카오톡 연결 끊기 실패 socialUnLink exception = {}", e.getMessage());
+            log.info("소셜 로그인 연결 끊기 실패 socialUnLink exception = {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -109,6 +101,7 @@ public class UserController {
             User user = userService.getUserByBearerToken(userToken);
 
             UserResponseDto userData = new UserResponseDto();
+            userData.setSocialType(user.getSocialType());
             userData.setName(user.getName());
             userData.setEmail(user.getEmail());
             userData.setAvatar(user.getAvatar());
@@ -128,10 +121,24 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorResponseDto);
         }
     }
-}
 
-/**
- * 1. User 테이블에 id 값을 createToken 할 때 toString을 하고 있는데, 꼭 컬럼이 Long 타입이어야하는지 확인 후 수정 (String으로 수정 시 값이 그냥 1, 2 ... 인데 앞에 다른값을 넣어보기 ex. kakao_1)
- * 2. naver, google 소셜 로그인 기능 진행하면서 판단에 따라 API url, controller(위 api) 메서드명 수정
- * 3. repository 에 있는 것만이라도 테스트코드 작성하기
- */
+    private User processSocialLogin(String socialType, String code) {
+        if ("kakao".equalsIgnoreCase(socialType)) {
+            return userService.kakaoLoginOrJoin(code);
+        } else if ("naver".equalsIgnoreCase(socialType)) {
+            return userService.naverLoginOrJoin(code);
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 소셜 타입");
+        }
+    }
+
+    private void processSocialUnLink(String socialType, String bearerToken) {
+        if ("kakao".equalsIgnoreCase(socialType)) {
+            userService.kakaoUnLink(bearerToken);
+        } else if ("naver".equalsIgnoreCase(socialType)) {
+            userService.naverUnLink(bearerToken);
+        } else {
+            throw new IllegalArgumentException("지원하지 않는 소셜 타입");
+        }
+    }
+}

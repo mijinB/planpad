@@ -133,4 +133,13 @@ public class UserService {
             }
         }
     }
+
+    public void naverUnLink(String bearerToken) {
+
+        String userToken = bearerToken.replace("Bearer ", "");
+        Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+        String accessToken = getUserById(userId).getAccessToken();
+
+        naverLoginService.naverUnLink(accessToken);
+    }
 }
