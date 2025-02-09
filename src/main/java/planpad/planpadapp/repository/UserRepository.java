@@ -1,37 +1,25 @@
 package planpad.planpadapp.repository;
 
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.NoResultException;
-import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import planpad.planpadapp.domain.User;
 
 import java.util.Optional;
 
 @Repository
-@RequiredArgsConstructor
-public class UserRepository {
+public interface UserRepository extends JpaRepository<User, Long> {
 
-    private final EntityManager em;
+    @Query("SELECT u FROM User u WHERE u.email = :email")
+    Optional<User> findByEmail(@Param("email") String email);
 
-    public void save(User user) {
-        em.persist(user);
-    }
+    @Modifying
+    @Query("DELETE FROM User u WHERE u.socialId = :socialId")
+    void deleteBySocialId(@Param("socialId") String socialId);
 
-    public User findOne(Long id) {
-        return em.find(User.class, id);
-    }
-
-    public Optional<User> findByEmail(String email) {
-        try {
-            String jpql = "SELECT u FROM User u WHERE u.email=:email";
-            User user = em.createQuery(jpql, User.class)
-                    .setParameter("email", email)
-                    .getSingleResult();
-            return Optional.of(user);
-
-        } catch (NoResultException e) {
-            return Optional.empty();
-        }
-    }
+    @Modifying
+    @Query("DELETE FROM User u WHERE u.accessToken = :accessToken")
+    void deleteByAccessToken(@Param("accessToken") String accessToken);
 }

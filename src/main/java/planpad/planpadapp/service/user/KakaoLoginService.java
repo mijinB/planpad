@@ -1,12 +1,16 @@
 package planpad.planpadapp.service.user;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
 import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
 
+import java.util.Map;
+
+@Slf4j
 @Service
 public class KakaoLoginService {
 
@@ -23,10 +27,10 @@ public class KakaoLoginService {
     @Value("${kakao.unlink_url}")
     private String UNLINK_URL;
 
-    public String kakaoGetAccessToken(String code) {
+    WebClient webClient = WebClient.create();
+    ObjectMapper objectMapper = new ObjectMapper();
 
-        WebClient webClient = WebClient.create();
-        ObjectMapper objectMapper = new ObjectMapper();
+    public String kakaoGetAccessToken(String code) {
 
         try {
             String response = webClient.post()
@@ -50,9 +54,6 @@ public class KakaoLoginService {
 
     public KakaoUserInfoDto kakaoGetUserInfo(String accessToken) {
 
-        WebClient webClient = WebClient.create();
-        ObjectMapper objectMapper = new ObjectMapper();
-
         try {
             String response = webClient.get()
                     .uri(INFO_URL)
@@ -71,8 +72,6 @@ public class KakaoLoginService {
 
     public void kakaoLogout(String accessToken) {
 
-        WebClient webClient = WebClient.create();
-
         try {
             webClient.post()
                     .uri(LOGOUT_URL)
@@ -87,18 +86,19 @@ public class KakaoLoginService {
         }
     }
 
-    public void kakaoUnLink(String accessToken) {
-
-        WebClient webClient = WebClient.create();
+    public String kakaoUnLink(String accessToken) {
 
         try {
-            webClient.post()
+            String response = webClient.post()
                     .uri(UNLINK_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
+
+            Map<String, Long> responseMap = objectMapper.readValue(response, Map.class);
+            return responseMap.get("id").toString();
 
         } catch (Exception e) {
             throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);

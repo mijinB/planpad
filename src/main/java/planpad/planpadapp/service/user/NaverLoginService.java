@@ -8,6 +8,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.dto.user.naver.NaverTokenResponseDto;
 import planpad.planpadapp.dto.user.naver.NaverUserInfoDto;
 
+import java.util.Map;
+
 @Slf4j
 @Service
 public class NaverLoginService {
@@ -64,10 +66,10 @@ public class NaverLoginService {
         }
     }
 
-    public void naverUnLink(String accessToken) {
+    public String naverUnLink(String accessToken) {
 
         try {
-            webClient.post()
+            String response = webClient.post()
                     .uri(TOKEN_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .bodyValue("grant_type=delete" +
@@ -77,6 +79,9 @@ public class NaverLoginService {
                     .retrieve()
                     .bodyToMono(String.class)
                     .block();
+
+            Map<String, String> responseMap = objectMapper.readValue(response, Map.class);
+            return responseMap.get("access_token");
 
         } catch (Exception e) {
             throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);

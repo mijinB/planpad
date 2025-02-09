@@ -25,12 +25,12 @@ public class UserServiceTest {
     public void 회원가입() {
         // given
         User user = new User();
-        user.setUserName("userA");
+        user.setName("userA");
 
         // when
         Long savedId = userService.join(user);
 
         // then
-        Assertions.assertEquals(user, userRepository.findOne(savedId));
+        Assertions.assertEquals(user, userRepository.findById(savedId));
     }
 }

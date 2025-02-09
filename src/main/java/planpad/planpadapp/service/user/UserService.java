@@ -28,18 +28,26 @@ public class UserService {
     private final NaverLoginService naverLoginService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Transactional
     public Long join(User user) {
         userRepository.save(user);
         return user.getId();
     }
 
     public User getUserById(Long id) {
-        return userRepository.findOne(id);
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("getUserById 실패 userId = " + id));
     }
 
     public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
+    }
+
+    public void deleteUserById(String socialId) {
+        userRepository.deleteBySocialId(socialId);
+    }
+
+    public void deleteUserByAccessToken(String accessToken) {
+        userRepository.deleteByAccessToken(accessToken);
     }
 
     public User getUserByBearerToken(String userToken) {
@@ -49,7 +57,7 @@ public class UserService {
 
     public UserDetails loadUserById(Long id) {
 
-        User user = userRepository.findOne(id);
+        User user = getUserById(id);
 
         if (user == null) {
             throw new UsernameNotFoundException("회원을 찾을 수 없습니다. id = " + id);
@@ -91,13 +99,15 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void kakaoUnLink(String bearerToken) {
 
         String userToken = bearerToken.replace("Bearer ", "");
         Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
         String accessToken = getUserById(userId).getAccessToken();
 
-        kakaoLoginService.kakaoUnLink(accessToken);
+        String socialId = kakaoLoginService.kakaoUnLink(accessToken);
+        deleteUserById(socialId);
     }
 
     @Transactional
@@ -134,6 +144,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public void naverUnLink(String bearerToken) {
 
         String userToken = bearerToken.replace("Bearer ", "");
@@ -141,5 +152,6 @@ public class UserService {
         String accessToken = getUserById(userId).getAccessToken();
 
         naverLoginService.naverUnLink(accessToken);
+        deleteUserByAccessToken(accessToken);
     }
 }
