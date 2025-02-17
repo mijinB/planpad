@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
+import planpad.planpadapp.dto.user.SocialUserDto;
 
 @Entity
 @Getter
@@ -34,6 +35,17 @@ public class User {
     private String name;
 
     private String avatar;
+
+    public User() {}
+
+    public User(SocialUserDto dtoData) {
+        this.socialId = dtoData.getSocialId();
+        this.socialType = dtoData.getSocialType();
+        this.accessToken = dtoData.getAccessToken();
+        this.name = dtoData.getName();
+        this.email = dtoData.getEmail();
+        this.avatar = dtoData.getAvatar();
+    }
 
     public void setSocialId(String socialId) {
         this.socialId = socialId;

@@ -7,13 +7,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
-import planpad.planpadapp.dto.user.naver.NaverUserInfoDto;
+import planpad.planpadapp.dto.user.SocialUserDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -71,30 +68,32 @@ public class UserService {
     }
 
     @Transactional
-    public User kakaoLoginOrJoin(String code) {
+    public User kakaoNaverLoginOrJoin(String socialType, String code) {
 
-        String kakaoAccessToken = kakaoLoginService.kakaoGetAccessToken(code);
-        KakaoUserInfoDto kakaoUserInfo = kakaoLoginService.kakaoGetUserInfo(kakaoAccessToken);
+        String socialAccessToken = new String();
+        SocialUserDto socialUser = new SocialUserDto();
 
-        String userEmail = kakaoUserInfo.kakaoAccount.email;
+        if ("kakao".equalsIgnoreCase(socialType)) {
+            socialAccessToken = kakaoLoginService.kakaoGetAccessToken(code);
+            socialUser = kakaoLoginService.kakaoGetUserInfo(socialAccessToken);
+        } else if ("naver".equalsIgnoreCase(socialType)) {
+            socialAccessToken = naverLoginService.naverGetAccessToken(code);
+            socialUser = naverLoginService.naverGetUserInfo(socialAccessToken);
+        }
+
+        String userEmail = socialUser.getEmail();
         Optional<User> existingUserOptional = getUserByEmail(userEmail);
 
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
-            existingUser.setAccessToken(kakaoAccessToken);
+            existingUser.setAccessToken(socialAccessToken);
 
             return existingUser;
 
         } else {
-            User newUser = new User();
-            newUser.setSocialId(kakaoUserInfo.id.toString());
-            newUser.setSocialType("kakao");
-            newUser.setAccessToken(kakaoAccessToken);
-            newUser.setEmail(userEmail);
-            newUser.setName(kakaoUserInfo.properties.nickname);
-            newUser.setAvatar(kakaoUserInfo.properties.thumbnailImage);
-
+            User newUser = new User(socialUser);
             join(newUser);
+
             return newUser;
         }
     }
@@ -108,40 +107,6 @@ public class UserService {
 
         String socialId = kakaoLoginService.kakaoUnLink(accessToken);
         deleteUserById(socialId);
-    }
-
-    @Transactional
-    public User naverLoginOrJoin(String code) {
-        String naverAccessToken = naverLoginService.naverGetAccessToken(code);
-        NaverUserInfoDto naverUserInfo = naverLoginService.naverGetUserInfo(naverAccessToken);
-
-        String userEmail = naverUserInfo.response.email;
-        Optional<User> existingUserOptional = getUserByEmail(userEmail);
-
-        if (existingUserOptional.isPresent()) {
-            User existingUser = existingUserOptional.get();
-            existingUser.setAccessToken(naverAccessToken);
-
-            return existingUser;
-
-        } else {
-            try {
-                User newUser = new User();
-                newUser.setSocialId(naverUserInfo.response.id);
-                newUser.setSocialType("naver");
-                newUser.setAccessToken(naverAccessToken);
-                newUser.setEmail(userEmail);
-                newUser.setName(URLDecoder.decode(naverUserInfo.response.name, "UTF-8"));
-                newUser.setAvatar(naverUserInfo.response.profileImage);
-
-                join(newUser);
-                return newUser;
-
-            } catch (UnsupportedEncodingException e) {  // URLDecoder.decode 예외 처리
-                e.printStackTrace();
-                return null;
-            }
-        }
     }
 
     @Transactional

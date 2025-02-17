@@ -1,12 +1,12 @@
 package planpad.planpadapp.service.user;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import planpad.planpadapp.dto.user.kakao.KakaoTokenResponseDto;
-import planpad.planpadapp.dto.user.kakao.KakaoUserInfoDto;
+import planpad.planpadapp.dto.user.SocialUserDto;
 
 import java.util.Map;
 
@@ -44,15 +44,15 @@ public class KakaoLoginService {
                     .bodyToMono(String.class)
                     .block();       // 동기적으로 응답 값을 반환
 
-            KakaoTokenResponseDto tokenResponse = objectMapper.readValue(response, KakaoTokenResponseDto.class);
-            return tokenResponse.getAccessToken();
+            Map<String, String> responseMap = objectMapper.readValue(response, Map.class);
+            return responseMap.get("access_token");
 
         } catch (Exception e) {
             throw new RuntimeException("kakaoGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
-    public KakaoUserInfoDto kakaoGetUserInfo(String accessToken) {
+    public SocialUserDto kakaoGetUserInfo(String accessToken) {
 
         try {
             String response = webClient.get()
@@ -63,7 +63,16 @@ public class KakaoLoginService {
                     .bodyToMono(String.class)
                     .block();
 
-            return objectMapper.readValue(response, KakaoUserInfoDto.class);
+            JsonNode rootNode = objectMapper.readTree(response);
+            SocialUserDto socialUser = new SocialUserDto();
+            socialUser.setSocialId(rootNode.path("id").toString());
+            socialUser.setSocialType("kakao");
+            socialUser.setAccessToken(accessToken);
+            socialUser.setEmail(rootNode.path("kakao_account").path("email").asText());
+            socialUser.setName(rootNode.path("properties").path("nickname").asText());
+            socialUser.setAvatar(rootNode.path("properties").path("thumbnail_image").asText());
+
+            return socialUser;
 
         } catch (Exception e) {
             throw new RuntimeException("kakaoGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);

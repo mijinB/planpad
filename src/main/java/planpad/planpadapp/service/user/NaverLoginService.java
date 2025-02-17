@@ -1,13 +1,15 @@
 package planpad.planpadapp.service.user;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import planpad.planpadapp.dto.user.naver.NaverTokenResponseDto;
-import planpad.planpadapp.dto.user.naver.NaverUserInfoDto;
+import planpad.planpadapp.dto.user.SocialUserDto;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 import java.util.Map;
 
 @Slf4j
@@ -40,15 +42,15 @@ public class NaverLoginService {
                     .bodyToMono(String.class)
                     .block();
 
-            NaverTokenResponseDto naverTokenResponseDto = objectMapper.readValue(response, NaverTokenResponseDto.class);
-            return naverTokenResponseDto.getAccessToken();
+            Map<String, String> responseMap = objectMapper.readValue(response, Map.class);
+            return responseMap.get("access_token");
 
         } catch (Exception e) {
             throw new RuntimeException("naverGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 
-    public NaverUserInfoDto naverGetUserInfo(String accessToken) {
+    public SocialUserDto naverGetUserInfo(String accessToken) {
 
         try {
             String response = webClient.get()
@@ -59,7 +61,23 @@ public class NaverLoginService {
                     .bodyToMono(String.class)
                     .block();
 
-            return objectMapper.readValue(response, NaverUserInfoDto.class);
+            JsonNode rootNode = objectMapper.readTree(response);
+            SocialUserDto socialUser = new SocialUserDto();
+
+            try {
+                socialUser.setSocialId(rootNode.path("response").path("id").asText());
+                socialUser.setSocialType("naver");
+                socialUser.setAccessToken(accessToken);
+                socialUser.setEmail(rootNode.path("response").path("email").asText());
+                socialUser.setName(URLDecoder.decode(rootNode.path("response").path("name").asText(), "UTF-8"));
+                socialUser.setAvatar(rootNode.path("response").path("profile_image").asText());
+
+            } catch (UnsupportedEncodingException e) {
+                e.printStackTrace();
+                return null;
+            }
+
+            return socialUser;
 
         } catch (Exception e) {
             throw new RuntimeException("naverGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
