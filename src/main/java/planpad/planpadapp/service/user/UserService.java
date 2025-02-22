@@ -21,16 +21,16 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
-    private final KakaoLoginService kakaoLoginService;
-    private final NaverLoginService naverLoginService;
+    private final KakaoService kakaoService;
+    private final NaverService naverService;
     private final JwtTokenProvider jwtTokenProvider;
 
-    public Long join(User user) {
+    public String join(User user) {
         userRepository.save(user);
         return user.getId();
     }
 
-    public User getUserById(Long id) {
+    public User getUserById(String id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("getUserById 실패 userId = " + id));
     }
@@ -48,11 +48,11 @@ public class UserService {
     }
 
     public User getUserByBearerToken(String userToken) {
-        Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+        String userId = jwtTokenProvider.getUserIdFromToken(userToken);
         return getUserById(userId);
     }
 
-    public UserDetails loadUserById(Long id) {
+    public UserDetails loadUserById(String id) {
 
         User user = getUserById(id);
 
@@ -74,11 +74,11 @@ public class UserService {
         SocialUserDto socialUser = new SocialUserDto();
 
         if ("kakao".equalsIgnoreCase(socialType)) {
-            socialAccessToken = kakaoLoginService.kakaoGetAccessToken(code);
-            socialUser = kakaoLoginService.kakaoGetUserInfo(socialAccessToken);
+            socialAccessToken = kakaoService.kakaoGetAccessToken(code);
+            socialUser = kakaoService.kakaoGetUserInfo(socialAccessToken);
         } else if ("naver".equalsIgnoreCase(socialType)) {
-            socialAccessToken = naverLoginService.naverGetAccessToken(code);
-            socialUser = naverLoginService.naverGetUserInfo(socialAccessToken);
+            socialAccessToken = naverService.naverGetAccessToken(code);
+            socialUser = naverService.naverGetUserInfo(socialAccessToken);
         }
 
         String userEmail = socialUser.getEmail();
@@ -99,24 +99,19 @@ public class UserService {
     }
 
     @Transactional
-    public void kakaoUnLink(String bearerToken) {
+    public void kakaoNaverUnLink(String socialType, String bearerToken) {
 
         String userToken = bearerToken.replace("Bearer ", "");
-        Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+        String userId = jwtTokenProvider.getUserIdFromToken(userToken);
         String accessToken = getUserById(userId).getAccessToken();
 
-        String socialId = kakaoLoginService.kakaoUnLink(accessToken);
-        deleteUserById(socialId);
-    }
+        if ("kakao".equalsIgnoreCase(socialType)) {
+            String socialId = kakaoService.kakaoUnLink(accessToken);
+            deleteUserById(socialId);
 
-    @Transactional
-    public void naverUnLink(String bearerToken) {
-
-        String userToken = bearerToken.replace("Bearer ", "");
-        Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
-        String accessToken = getUserById(userId).getAccessToken();
-
-        naverLoginService.naverUnLink(accessToken);
-        deleteUserByAccessToken(accessToken);
+        } else if ("naver".equalsIgnoreCase(socialType)) {
+            naverService.naverUnLink(accessToken);
+            deleteUserByAccessToken(accessToken);
+        }
     }
 }

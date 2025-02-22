@@ -18,7 +18,7 @@ import planpad.planpadapp.config.security.UnauthorizedEntryPoint;
 import planpad.planpadapp.filter.JwtAuthenticationFilter;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.JwtBlacklistService;
-import planpad.planpadapp.service.user.KakaoLoginService;
+import planpad.planpadapp.service.user.KakaoService;
 import planpad.planpadapp.service.user.UserService;
 
 import java.util.Date;
@@ -36,7 +36,7 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtBlacklistService jwtBlacklistService;
-    private final KakaoLoginService kakaoLoginService;
+    private final KakaoService kakaoService;
     private final UserService userService;
 
     @Bean
@@ -68,9 +68,9 @@ public class SecurityConfig {
                                 Date expirationDate = jwtTokenProvider.getExpirationFromToken(userToken);
                                 jwtBlacklistService.addToBlacklist(userToken, expirationDate);
 
-                                Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+                                String userId = jwtTokenProvider.getUserIdFromToken(userToken);
                                 String accessToken = userService.getUserById(userId).getAccessToken();
-                                kakaoLoginService.kakaoLogout(accessToken);
+                                kakaoService.kakaoLogout(accessToken);
 
                                 message.put("message", "로그아웃에 성공하였습니다.");
                                 log.info("로그아웃 성공");

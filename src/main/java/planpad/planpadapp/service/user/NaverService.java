@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class NaverLoginService {
+public class NaverService {
 
     @Value("${naver.client_id}")
     private String CLIENT_ID;

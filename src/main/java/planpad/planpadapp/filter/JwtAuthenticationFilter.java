@@ -32,7 +32,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
             }
 
-            Long userId = Long.parseLong(jwtTokenProvider.getUserIdFromToken(userToken));
+            String userId = jwtTokenProvider.getUserIdFromToken(userToken);
             var userDetails = userService.loadUserById(userId);
             var authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);

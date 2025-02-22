@@ -49,7 +49,7 @@ public class UserController {
             }
 
             User user = userService.kakaoNaverLoginOrJoin(socialType, code);
-            String userToken = jwtTokenProvider.createToken(user.getId().toString());
+            String userToken = jwtTokenProvider.createToken(user.getId());
 
             LoginResponseDto loginUserData = new LoginResponseDto();
             loginUserData.setToken(userToken);
@@ -81,7 +81,7 @@ public class UserController {
         String socialType = request.getSocialType();
 
         try {
-            processSocialUnLink(socialType, bearerToken);
+            userService.kakaoNaverUnLink(socialType, bearerToken);
 
             log.info("소셜 로그인 연결 끊기 성공");
             return ResponseEntity.ok().build();
@@ -124,16 +124,6 @@ public class UserController {
 
             log.info("사용자 정보 조회 실패 exception = {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
-        }
-    }
-
-    private void processSocialUnLink(String socialType, String bearerToken) {
-        if ("kakao".equalsIgnoreCase(socialType)) {
-            userService.kakaoUnLink(bearerToken);
-        } else if ("naver".equalsIgnoreCase(socialType)) {
-            userService.naverUnLink(bearerToken);
-        } else {
-            throw new IllegalArgumentException("지원하지 않는 소셜 타입");
         }
     }
 }

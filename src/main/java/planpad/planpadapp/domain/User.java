@@ -1,5 +1,6 @@
 package planpad.planpadapp.domain;
 
+import de.huxhorn.sulky.ulid.ULID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -11,9 +12,8 @@ import planpad.planpadapp.dto.user.SocialUserDto;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY) // user_id 1부터 시작되지 않고 51부터 시작되는 이슈 해결 : JPA 가 user_seq 테이블의 next_val(=1)을 참고하여 50개의 ID 값을 미리 할당하기 때문 -> MySQL 의 GenerationType.IDENTITY 사용으로 변경
     @Column(name = "user_id")
-    private Long id;
+    private String id;
 
     @NotNull
     @Column(name = "social_id", unique = true)
@@ -35,6 +35,13 @@ public class User {
     private String name;
 
     private String avatar;
+
+    @PrePersist
+    public void generateId() {
+        if (this.id == null) {
+            this.id = new ULID().nextULID();
+        }
+    }
 
     public User() {}
 

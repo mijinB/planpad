@@ -12,7 +12,7 @@ import java.util.Map;
 
 @Slf4j
 @Service
-public class KakaoLoginService {
+public class KakaoService {
 
     @Value("${kakao.client_id}")
     private String CLIENT_ID;
