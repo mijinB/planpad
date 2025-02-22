@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.dto.user.SocialUserDto;
@@ -33,7 +34,7 @@ public class KakaoService {
     public String kakaoGetAccessToken(String code) {
 
         try {
-            String response = webClient.post()
+            Map<String, String> response = webClient.post()
                     .uri(TOKEN_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .bodyValue("grant_type=authorization_code" +
@@ -41,11 +42,14 @@ public class KakaoService {
                             "&redirect_uri=" + REDIRECT_URI +
                             "&code=" + code)
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                     .block();       // 동기적으로 응답 값을 반환
 
-            Map<String, String> responseMap = objectMapper.readValue(response, Map.class);
-            return responseMap.get("access_token");
+            if (response == null || !response.containsKey("access_token")) {
+                throw new RuntimeException("kakaoGetAccessToken 실패");
+            }
+
+            return response.get("access_token");
 
         } catch (Exception e) {
             throw new RuntimeException("kakaoGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
@@ -79,35 +83,22 @@ public class KakaoService {
         }
     }
 
-    public void kakaoLogout(String accessToken) {
-
-        try {
-            webClient.post()
-                    .uri(LOGOUT_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .header("Authorization", "Bearer " + accessToken)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-        } catch (Exception e) {
-            throw new RuntimeException("kakaoLogout 처리 중 오류 발생: " + e.getMessage(), e);
-        }
-    }
-
     public String kakaoUnLink(String accessToken) {
 
         try {
-            String response = webClient.post()
+            Map<String, String> response = webClient.post()
                     .uri(UNLINK_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .header("Authorization", "Bearer " + accessToken)
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                     .block();
 
-            Map<String, Long> responseMap = objectMapper.readValue(response, Map.class);
-            return responseMap.get("id").toString();
+            if (response == null || !response.containsKey("id")) {
+                throw new RuntimeException("kakaoUnLink 실패");
+            }
+
+            return response.get("id").toString();
 
         } catch (Exception e) {
             throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);

@@ -44,11 +44,11 @@ public class UserController {
         String code = request.getCode();
 
         try {
-            if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType)) {
+            if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType) && !"google".equalsIgnoreCase(socialType)) {
                 throw new IllegalArgumentException("지원하지 않는 소셜 타입");
             }
 
-            User user = userService.kakaoNaverLoginOrJoin(socialType, code);
+            User user = userService.socialLoginOrJoin(socialType, code);
             String userToken = jwtTokenProvider.createToken(user.getId());
 
             LoginResponseDto loginUserData = new LoginResponseDto();

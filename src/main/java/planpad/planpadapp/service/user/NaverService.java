@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import planpad.planpadapp.dto.user.SocialUserDto;
@@ -31,7 +32,7 @@ public class NaverService {
     public String naverGetAccessToken(String code) {
 
         try {
-            String response = webClient.post()
+            Map<String, String> response = webClient.post()
                     .uri(TOKEN_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .bodyValue("grant_type=authorization_code" +
@@ -39,11 +40,14 @@ public class NaverService {
                             "&client_secret=" + SECRET_VALUE +
                             "&code=" + code)
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                     .block();
 
-            Map<String, String> responseMap = objectMapper.readValue(response, Map.class);
-            return responseMap.get("access_token");
+            if (response == null || !response.containsKey("access_token")) {
+                throw new RuntimeException("naverGetAccessToken 실패");
+            }
+
+            return response.get("access_token");
 
         } catch (Exception e) {
             throw new RuntimeException("naverGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
@@ -87,7 +91,7 @@ public class NaverService {
     public String naverUnLink(String accessToken) {
 
         try {
-            String response = webClient.post()
+            Map<String, String> response = webClient.post()
                     .uri(TOKEN_URL)
                     .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
                     .bodyValue("grant_type=delete" +
@@ -95,14 +99,17 @@ public class NaverService {
                             "&client_secret=" + SECRET_VALUE +
                             "&access_token=" + accessToken)
                     .retrieve()
-                    .bodyToMono(String.class)
+                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
                     .block();
 
-            Map<String, String> responseMap = objectMapper.readValue(response, Map.class);
-            return responseMap.get("access_token");
+            if (response == null || !response.containsKey("access_token")) {
+                throw new RuntimeException("naverUnLink 실패");
+            }
+
+            return response.get("access_token");
 
         } catch (Exception e) {
-            throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("naverUnLink 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 }

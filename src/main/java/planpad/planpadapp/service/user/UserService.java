@@ -21,9 +21,10 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
     private final KakaoService kakaoService;
     private final NaverService naverService;
-    private final JwtTokenProvider jwtTokenProvider;
+    private final GoogleService googleService;
 
     public String join(User user) {
         userRepository.save(user);
@@ -68,7 +69,7 @@ public class UserService {
     }
 
     @Transactional
-    public User kakaoNaverLoginOrJoin(String socialType, String code) {
+    public User socialLoginOrJoin(String socialType, String code) {
 
         String socialAccessToken = new String();
         SocialUserDto socialUser = new SocialUserDto();
@@ -79,6 +80,9 @@ public class UserService {
         } else if ("naver".equalsIgnoreCase(socialType)) {
             socialAccessToken = naverService.naverGetAccessToken(code);
             socialUser = naverService.naverGetUserInfo(socialAccessToken);
+        } else if ("google".equalsIgnoreCase(socialType)) {
+            socialAccessToken = googleService.googleGetAccessToken(code);
+            socialUser = googleService.googleGetUserInfo(socialAccessToken);
         }
 
         String userEmail = socialUser.getEmail();
