@@ -26,10 +26,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
         String userToken = getTokenFromRequest(request);
 
-        if (userToken != null && jwtTokenProvider.validateToken(userToken)) {
+        if (userToken != null) {
 
-            if (jwtBlacklistService.isBlacklisted(userToken)) {
+            if (!jwtTokenProvider.validateToken(userToken)) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                return;
             }
 
             String userId = jwtTokenProvider.getUserIdFromToken(userToken);

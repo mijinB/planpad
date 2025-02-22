@@ -66,11 +66,7 @@ public class SecurityConfig {
 
                             if (jwtTokenProvider.validateToken(userToken)) {
                                 Date expirationDate = jwtTokenProvider.getExpirationFromToken(userToken);
-                                jwtBlacklistService.addToBlacklist(userToken, expirationDate);
-
-                                String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-                                String accessToken = userService.getUserById(userId).getAccessToken();
-                                kakaoService.kakaoLogout(accessToken);
+                                jwtBlacklistService.addToBlacklist(userToken, expirationDate.getTime());
 
                                 message.put("message", "로그아웃에 성공하였습니다.");
                                 log.info("로그아웃 성공");
