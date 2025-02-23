@@ -8,7 +8,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +22,6 @@ import planpad.planpadapp.dto.user.UserResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "User API", description = "사용자 관리 API")
@@ -58,14 +56,12 @@ public class UserController {
             loginResponse.setData(loginUserData);
             loginResponse.setMessage("소셜 회원가입/로그인에 성공하였습니다.");
 
-            log.info("소셜 로그인 성공 userToken = {}", loginUserData.getToken());
             return ResponseEntity.ok(loginResponse);
 
         } catch (Exception e) {
             OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
             onlyMessageResponse.setMessage("소셜 회원가입/로그인에 실패하였습니다.");
 
-            log.info("소셜 로그인 실패 socialLogin exception = {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
         }
     }
@@ -87,11 +83,9 @@ public class UserController {
 
             userService.socialUnLink(socialType, bearerToken);
 
-            log.info("소셜 로그인 연결 끊기 성공");
             return ResponseEntity.ok().build();
 
         } catch (Exception e) {
-            log.info("소셜 로그인 연결 끊기 실패 socialUnLink exception = {}", e.getMessage());
             return ResponseEntity.badRequest().build();
         }
     }
@@ -119,14 +113,12 @@ public class UserController {
             userResponseWrapper.setData(userData);
             userResponseWrapper.setMessage("사용자 정보 조회를 성공하였습니다.");
 
-            log.info("사용자 정보 조회 성공 userName = {}", userData.getName());
             return ResponseEntity.ok(userResponseWrapper);
 
         } catch (Exception e) {
             OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
             onlyMessageResponse.setMessage("사용자 정보 조회를 실패하였습니다.");
 
-            log.info("사용자 정보 조회 실패 exception = {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
         }
     }

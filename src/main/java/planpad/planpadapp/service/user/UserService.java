@@ -1,7 +1,6 @@
 package planpad.planpadapp.service.user;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -14,7 +13,6 @@ import planpad.planpadapp.repository.UserRepository;
 import java.util.Collections;
 import java.util.Optional;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
