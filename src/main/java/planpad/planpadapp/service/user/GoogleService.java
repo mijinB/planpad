@@ -23,6 +23,8 @@ public class GoogleService {
     private String TOKEN_URL;
     @Value("${google.info_url}")
     private String INFO_URL;
+    @Value("${google.unlink_url}")
+    private String UNLINK_URL;
 
     WebClient webClient = WebClient.create();
 
@@ -79,6 +81,24 @@ public class GoogleService {
 
         } catch (Exception e) {
             throw new RuntimeException("googleGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
+        }
+    }
+
+    public void googleUnLink(String accessToken) {
+
+        try {
+            webClient.post()
+                    .uri(UNLINK_URL)
+                    .header("Content-Type", "application/x-www-form-urlencoded")
+                    .bodyValue("client_id=" + CLIENT_ID +
+                            "&client_secret=" + CLIENT_SECRET +
+                            "&token=" + accessToken)
+                    .retrieve()
+                    .bodyToMono(String.class)
+                    .block();
+
+        } catch (Exception e) {
+            throw new RuntimeException("googleUnLink 처리 중 오류 발생: " + e.getMessage(), e);
         }
     }
 }

@@ -81,7 +81,11 @@ public class UserController {
         String socialType = request.getSocialType();
 
         try {
-            userService.kakaoNaverUnLink(socialType, bearerToken);
+            if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType) && !"google".equalsIgnoreCase(socialType)) {
+                throw new IllegalArgumentException("지원하지 않는 소셜 타입");
+            }
+
+            userService.socialUnLink(socialType, bearerToken);
 
             log.info("소셜 로그인 연결 끊기 성공");
             return ResponseEntity.ok().build();
@@ -127,3 +131,10 @@ public class UserController {
         }
     }
 }
+
+/**
+ * 1. controller 에도 service 에도 catch 가 필요한가?
+ * 2. 소셜 로그인 서비스 파일들도 주소만 다른 경우 중복 코드 제거 되는지 확인 후 리팩토링
+ * 3. log 정리 = 성능 저하 원인이 될 수 있음 아마도? (info 뿐만 아니고 warn, error 도 사용하면서 정리하기. 되도록이면 제거)
+ * 4. repository 에 있는 메서드들 테스트케이스 작성하기
+ */

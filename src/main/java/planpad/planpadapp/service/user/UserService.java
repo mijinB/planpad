@@ -77,9 +77,11 @@ public class UserService {
         if ("kakao".equalsIgnoreCase(socialType)) {
             socialAccessToken = kakaoService.kakaoGetAccessToken(code);
             socialUser = kakaoService.kakaoGetUserInfo(socialAccessToken);
+
         } else if ("naver".equalsIgnoreCase(socialType)) {
             socialAccessToken = naverService.naverGetAccessToken(code);
             socialUser = naverService.naverGetUserInfo(socialAccessToken);
+
         } else if ("google".equalsIgnoreCase(socialType)) {
             socialAccessToken = googleService.googleGetAccessToken(code);
             socialUser = googleService.googleGetUserInfo(socialAccessToken);
@@ -103,7 +105,7 @@ public class UserService {
     }
 
     @Transactional
-    public void kakaoNaverUnLink(String socialType, String bearerToken) {
+    public void socialUnLink(String socialType, String bearerToken) {
 
         String userToken = bearerToken.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
@@ -115,6 +117,10 @@ public class UserService {
 
         } else if ("naver".equalsIgnoreCase(socialType)) {
             naverService.naverUnLink(accessToken);
+            deleteUserByAccessToken(accessToken);
+
+        } else if ("google".equalsIgnoreCase(socialType)) {
+            googleService.googleUnLink(accessToken);
             deleteUserByAccessToken(accessToken);
         }
     }
