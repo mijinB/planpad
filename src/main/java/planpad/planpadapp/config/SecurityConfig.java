@@ -64,20 +64,13 @@ public class SecurityConfig {
                             String userToken = request.getHeader("Authorization").replace("Bearer ", "");
                             Map<String, String> message = new HashMap<>();
 
-                            if (jwtTokenProvider.validateToken(userToken)) {
-                                Date expirationDate = jwtTokenProvider.getExpirationFromToken(userToken);
-                                jwtBlacklistService.addToBlacklist(userToken, expirationDate.getTime());
-
-                                message.put("message", "로그아웃에 성공하였습니다.");
-                                log.info("로그아웃 성공");
-                            } else {
-                                message.put("message", "토큰이 만료되었거나 유효하지 않습니다.");
-                                log.info("로그아웃 실패 = 유효하지 않은 토큰");
-                            }
+                            Date expirationDate = jwtTokenProvider.getExpirationFromToken(userToken);
+                            jwtBlacklistService.addToBlacklist(userToken, expirationDate.getTime());
 
                             response.setContentType("application/json");
                             response.setCharacterEncoding("UTF-8");
                             response.setStatus(HttpServletResponse.SC_OK);
+                            message.put("message", "로그아웃에 성공하였습니다.");
 
                             new ObjectMapper().writeValue(response.getWriter(), message);
                         })

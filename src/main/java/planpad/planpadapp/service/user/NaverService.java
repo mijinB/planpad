@@ -1,5 +1,6 @@
 package planpad.planpadapp.service.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -31,85 +32,71 @@ public class NaverService {
 
     public String naverGetAccessToken(String code) {
 
-        try {
-            Map<String, String> response = webClient.post()
-                    .uri(TOKEN_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .bodyValue("grant_type=authorization_code" +
-                            "&client_id=" + CLIENT_ID +
-                            "&client_secret=" + SECRET_VALUE +
-                            "&code=" + code)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
-                    .block();
+        Map<String, String> response = webClient.post()
+                .uri(TOKEN_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .bodyValue("grant_type=authorization_code" +
+                        "&client_id=" + CLIENT_ID +
+                        "&client_secret=" + SECRET_VALUE +
+                        "&code=" + code)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
+                .block();
 
-            if (response == null || !response.containsKey("access_token")) {
-                throw new RuntimeException("naverGetAccessToken 실패");
-            }
-
-            return response.get("access_token");
-
-        } catch (Exception e) {
-            throw new RuntimeException("naverGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
+        if (response == null || !response.containsKey("access_token")) {
+            throw new RuntimeException("naverGetAccessToken 실패");
         }
+
+        return response.get("access_token");
     }
 
     public SocialUserDto naverGetUserInfo(String accessToken) {
 
+        String response = webClient.get()
+                .uri(INFO_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        JsonNode rootNode;
+        SocialUserDto socialUser = new SocialUserDto();
+
         try {
-            String response = webClient.get()
-                    .uri(INFO_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .header("Authorization", "Bearer " + accessToken)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
+            rootNode = objectMapper.readTree(response);
+            socialUser.setName(URLDecoder.decode(rootNode.path("response").path("name").asText(), "UTF-8"));
 
-            JsonNode rootNode = objectMapper.readTree(response);
-            SocialUserDto socialUser = new SocialUserDto();
-
-            try {
-                socialUser.setSocialId(rootNode.path("response").path("id").asText());
-                socialUser.setSocialType("naver");
-                socialUser.setAccessToken(accessToken);
-                socialUser.setEmail(rootNode.path("response").path("email").asText());
-                socialUser.setName(URLDecoder.decode(rootNode.path("response").path("name").asText(), "UTF-8"));
-                socialUser.setAvatar(rootNode.path("response").path("profile_image").asText());
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                return null;
-            }
-
-            return socialUser;
-
-        } catch (Exception e) {
+        } catch (JsonProcessingException | UnsupportedEncodingException e) {
             throw new RuntimeException("naverGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
         }
+
+        socialUser.setSocialId(rootNode.path("response").path("id").asText());
+        socialUser.setSocialType("naver");
+        socialUser.setAccessToken(accessToken);
+        socialUser.setEmail(rootNode.path("response").path("email").asText());
+        socialUser.setAvatar(rootNode.path("response").path("profile_image").asText());
+
+        return socialUser;
     }
 
     public String naverUnLink(String accessToken) {
 
-        try {
-            Map<String, String> response = webClient.post()
-                    .uri(TOKEN_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .bodyValue("grant_type=delete" +
-                            "&client_id=" + CLIENT_ID +
-                            "&client_secret=" + SECRET_VALUE +
-                            "&access_token=" + accessToken)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
-                    .block();
+        Map<String, String> response = webClient.post()
+                .uri(TOKEN_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .bodyValue("grant_type=delete" +
+                        "&client_id=" + CLIENT_ID +
+                        "&client_secret=" + SECRET_VALUE +
+                        "&access_token=" + accessToken)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
+                .block();
 
-            if (response == null || !response.containsKey("access_token")) {
-                throw new RuntimeException("naverUnLink 실패");
-            }
-
-            return response.get("access_token");
-
-        } catch (Exception e) {
-            throw new RuntimeException("naverUnLink 처리 중 오류 발생: " + e.getMessage(), e);
+        if (response == null || !response.containsKey("access_token")) {
+            throw new RuntimeException("naverUnLink 실패");
         }
+
+        return response.get("access_token");
     }
 }

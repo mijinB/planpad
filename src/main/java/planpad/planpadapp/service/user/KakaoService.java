@@ -1,5 +1,6 @@
 package planpad.planpadapp.service.user;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
@@ -33,75 +34,66 @@ public class KakaoService {
 
     public String kakaoGetAccessToken(String code) {
 
-        try {
-            Map<String, String> response = webClient.post()
-                    .uri(TOKEN_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .bodyValue("grant_type=authorization_code" +
-                            "&client_id=" + CLIENT_ID +
-                            "&redirect_uri=" + REDIRECT_URI +
-                            "&code=" + code)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
-                    .block();       // 동기적으로 응답 값을 반환
+        Map<String, String> response = webClient.post()
+                .uri(TOKEN_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .bodyValue("grant_type=authorization_code" +
+                        "&client_id=" + CLIENT_ID +
+                        "&redirect_uri=" + REDIRECT_URI +
+                        "&code=" + code)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
+                .block();       // 동기적으로 응답 값을 반환
 
-            if (response == null || !response.containsKey("access_token")) {
-                throw new RuntimeException("kakaoGetAccessToken 실패");
-            }
-
-            return response.get("access_token");
-
-        } catch (Exception e) {
-            throw new RuntimeException("kakaoGetAccessToken 처리 중 오류 발생: " + e.getMessage(), e);
+        if (response == null || !response.containsKey("access_token")) {
+            throw new RuntimeException("kakaoGetAccessToken 실패");
         }
+
+        return response.get("access_token");
     }
 
     public SocialUserDto kakaoGetUserInfo(String accessToken) {
 
+        String response = webClient.get()
+                .uri(INFO_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(String.class)
+                .block();
+
+        JsonNode rootNode;
         try {
-            String response = webClient.get()
-                    .uri(INFO_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .header("Authorization", "Bearer " + accessToken)
-                    .retrieve()
-                    .bodyToMono(String.class)
-                    .block();
-
-            JsonNode rootNode = objectMapper.readTree(response);
-            SocialUserDto socialUser = new SocialUserDto();
-            socialUser.setSocialId(rootNode.path("id").toString());
-            socialUser.setSocialType("kakao");
-            socialUser.setAccessToken(accessToken);
-            socialUser.setEmail(rootNode.path("kakao_account").path("email").asText());
-            socialUser.setName(rootNode.path("properties").path("nickname").asText());
-            socialUser.setAvatar(rootNode.path("properties").path("thumbnail_image").asText());
-
-            return socialUser;
-
-        } catch (Exception e) {
-            throw new RuntimeException("kakaoGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
+            rootNode = objectMapper.readTree(response);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("kakaoGetUserInfo 에서 JSON 파싱 실패 = ", e);
         }
+
+        SocialUserDto socialUser = new SocialUserDto();
+        socialUser.setSocialId(rootNode.path("id").toString());
+        socialUser.setSocialType("kakao");
+        socialUser.setAccessToken(accessToken);
+        socialUser.setEmail(rootNode.path("kakao_account").path("email").asText());
+        socialUser.setName(rootNode.path("properties").path("nickname").asText());
+        socialUser.setAvatar(rootNode.path("properties").path("thumbnail_image").asText());
+
+        return socialUser;
     }
 
     public String kakaoUnLink(String accessToken) {
 
-        try {
-            Map<String, String> response = webClient.post()
-                    .uri(UNLINK_URL)
-                    .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
-                    .header("Authorization", "Bearer " + accessToken)
-                    .retrieve()
-                    .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
-                    .block();
+        Map<String, String> response = webClient.post()
+                .uri(UNLINK_URL)
+                .header("Content-Type", "application/x-www-form-urlencoded;charset=utf-8")
+                .header("Authorization", "Bearer " + accessToken)
+                .retrieve()
+                .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
+                .block();
 
-            if (response == null || !response.containsKey("id")) {
-                throw new RuntimeException("kakaoUnLink 실패");
-            }
-
-            return response.get("id").toString();
-
-        } catch (Exception e) {
-            throw new RuntimeException("kakaoUnLink 처리 중 오류 발생: " + e.getMessage(), e);
+        if (response == null || !response.containsKey("id")) {
+            throw new RuntimeException("kakaoUnLink 실패");
         }
+
+        return response.get("id").toString();
     }
 }
