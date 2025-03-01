@@ -16,19 +16,19 @@ public class User {
     private String id;
 
     @NotNull
-    @Column(name = "social_id", unique = true)
+    @Column(name = "social_id", unique = true, nullable = false)
     private String socialId;
 
     @NotEmpty
-    @Column(name = "social_type")
+    @Column(name = "social_type", nullable = false)
     private String socialType;
 
     @NotEmpty
-    @Column(name = "access_token")
+    @Column(name = "access_token", nullable = false)
     private String accessToken;
 
     @NotEmpty
-    @Column(unique = true)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(name = "name")
