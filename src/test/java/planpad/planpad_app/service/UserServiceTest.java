@@ -25,7 +25,7 @@ public class UserServiceTest {
     public void 회원가입() {
         // given
         User user = new User();
-        user.setName("userA");
+        user.updateName("userA");
 
         // when
         String savedId = userService.join(user);

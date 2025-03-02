@@ -13,7 +13,7 @@ public class User {
 
     @Id
     @Column(name = "user_id")
-    private String id;
+    private String userId;
 
     @NotNull
     @Column(name = "social_id", unique = true, nullable = false)
@@ -38,8 +38,8 @@ public class User {
 
     @PrePersist
     public void generateId() {
-        if (this.id == null) {
-            this.id = new ULID().nextULID();
+        if (this.userId == null) {
+            this.userId = new ULID().nextULID();
         }
     }
 
@@ -54,27 +54,11 @@ public class User {
         this.avatar = dtoData.getAvatar();
     }
 
-    public void setSocialId(String socialId) {
-        this.socialId = socialId;
-    }
-
-    public void setSocialType(String socialType) {
-        this.socialType = socialType;
-    }
-
-    public void setAccessToken(String accessToken) {
+    public void updateAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
 
-    public void setName(String name) {
+    public void updateName(String name) {
         this.name = name;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 }

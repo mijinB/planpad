@@ -26,7 +26,7 @@ public class UserService {
 
     public String join(User user) {
         userRepository.save(user);
-        return user.getId();
+        return user.getUserId();
     }
 
     public User getUserById(String id) {
@@ -90,7 +90,7 @@ public class UserService {
 
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
-            existingUser.setAccessToken(socialAccessToken);
+            existingUser.updateAccessToken(socialAccessToken);
 
             return existingUser;
 
