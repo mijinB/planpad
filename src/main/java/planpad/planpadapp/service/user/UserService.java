@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.user.SocialUserDto;
+import planpad.planpadapp.dto.user.UserDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
 
@@ -70,7 +70,7 @@ public class UserService {
     public User socialLoginOrJoin(String socialType, String code) {
 
         String socialAccessToken = new String();
-        SocialUserDto socialUser = new SocialUserDto();
+        UserDto socialUser = new UserDto();
 
         if ("kakao".equalsIgnoreCase(socialType)) {
             socialAccessToken = kakaoService.kakaoGetAccessToken(code);

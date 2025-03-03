@@ -1,6 +1,5 @@
 package planpad.planpadapp.domain;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -8,14 +7,16 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import planpad.planpadapp.converter.JsonNodeConverter;
 import planpad.planpadapp.dto.memo.MemoDto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
-@Getter
 @EntityListeners(AuditingEntityListener.class)
+@Getter
 public class Memo {
 
     @Id
@@ -33,6 +34,14 @@ public class Memo {
     @JoinColumn(name = "folder_id", nullable = false)
     private Folder folder;
 
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "memo_tag",
+            joinColumns = @JoinColumn(name = "memo_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private List<Tag> tags = new ArrayList<>();
+
     @Column(name = "memo_order")
     private int memoOrder;
 
@@ -41,10 +50,6 @@ public class Memo {
     private String title;
 
     private String contents;
-
-    @Convert(converter = JsonNodeConverter.class)
-    @Column(columnDefinition = "TEXT")
-    private JsonNode tags;
 
     @Column(name = "is_fixed", nullable = false)
     private boolean isFixed;
@@ -62,10 +67,10 @@ public class Memo {
     public Memo(MemoDto dtoData) {
         this.user = dtoData.getUser();
         this.folder = dtoData.getFolder();
+        this.tags = dtoData.getTags();
         this.memoOrder = dtoData.getMemoOrder();
         this.title = dtoData.getTitle();
         this.contents = dtoData.getContents();
-        this.tags = dtoData.getTags();
         this.isFixed = dtoData.isFixed();
     }
 }

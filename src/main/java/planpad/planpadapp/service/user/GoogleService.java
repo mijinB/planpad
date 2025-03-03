@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import planpad.planpadapp.dto.user.SocialUserDto;
+import planpad.planpadapp.dto.user.UserDto;
 
 import java.util.Map;
 
@@ -47,7 +47,7 @@ public class GoogleService {
         return response.get("access_token");
     }
 
-    public SocialUserDto googleGetUserInfo(String accessToken) {
+    public UserDto googleGetUserInfo(String accessToken) {
 
         Map<String, String> response = webClient.get()
                 .uri(INFO_URL)
@@ -61,15 +61,15 @@ public class GoogleService {
             throw new RuntimeException("googleGetUserInfo 실패");
         }
 
-        SocialUserDto socialUser = new SocialUserDto();
-        socialUser.setSocialId(response.get("id"));
-        socialUser.setSocialType("google");
-        socialUser.setAccessToken(accessToken);
-        socialUser.setEmail(response.get("email"));
-        socialUser.setName(response.get("name"));
-        socialUser.setAvatar(response.get("picture"));
+        UserDto userData = new UserDto();
+        userData.setSocialId(response.get("id"));
+        userData.setSocialType("google");
+        userData.setAccessToken(accessToken);
+        userData.setEmail(response.get("email"));
+        userData.setName(response.get("name"));
+        userData.setAvatar(response.get("picture"));
 
-        return socialUser;
+        return userData;
     }
 
     public void googleUnLink(String accessToken) {

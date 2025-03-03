@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import planpad.planpadapp.dto.user.SocialUserDto;
+import planpad.planpadapp.dto.user.UserDto;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
@@ -48,7 +48,7 @@ public class NaverService {
         return response.get("access_token");
     }
 
-    public SocialUserDto naverGetUserInfo(String accessToken) {
+    public UserDto naverGetUserInfo(String accessToken) {
 
         String response = webClient.get()
                 .uri(INFO_URL)
@@ -59,7 +59,7 @@ public class NaverService {
                 .block();
 
         JsonNode rootNode;
-        SocialUserDto socialUser = new SocialUserDto();
+        UserDto socialUser = new UserDto();
 
         try {
             rootNode = objectMapper.readTree(response);

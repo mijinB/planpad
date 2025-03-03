@@ -6,7 +6,10 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import planpad.planpadapp.domain.Folder;
+import planpad.planpadapp.domain.Tag;
 import planpad.planpadapp.domain.User;
+
+import java.util.List;
 
 @Getter @Setter
 public class MemoDto {
@@ -17,12 +20,12 @@ public class MemoDto {
     @NotNull
     private Folder folder;
 
+    private List<Tag> tags;
     private int memoOrder;
 
     @NotEmpty
     private String title;
 
     private String contents;
-    private JsonNode tags;
     private boolean isFixed;
 }

@@ -12,13 +12,13 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.api.LoginResponseWrapper;
+import planpad.planpadapp.dto.api.user.LoginResponseWrapper;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
-import planpad.planpadapp.dto.api.UserResponseWrapper;
+import planpad.planpadapp.dto.api.user.UserResponseWrapper;
+import planpad.planpadapp.dto.user.LoginRequestDto;
 import planpad.planpadapp.dto.user.LoginResponseDto;
-import planpad.planpadapp.dto.user.SocialLoginRequestDto;
 import planpad.planpadapp.dto.user.SocialUnLinkRequestDto;
-import planpad.planpadapp.dto.user.UserResponseDto;
+import planpad.planpadapp.dto.user.UserInfoResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
 
@@ -36,7 +36,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> socialLogin(@RequestBody @Valid SocialLoginRequestDto request) {
+    public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request) {
 
         String socialType = request.getSocialType();
         String code = request.getCode();
@@ -47,7 +47,7 @@ public class UserController {
             }
 
             User user = userService.socialLoginOrJoin(socialType, code);
-            String userToken = jwtTokenProvider.createToken(user.getId());
+            String userToken = jwtTokenProvider.createToken(user.getUserId());
 
             LoginResponseDto loginUserData = new LoginResponseDto();
             loginUserData.setToken(userToken);
@@ -66,7 +66,7 @@ public class UserController {
         }
     }
 
-    @PostMapping("/unlink")
+    @DeleteMapping("/unlink")
     @Operation(summary = "소셜 로그인 연결 끊기", description = "(회원탈퇴 개념) 소셜 로그인 연결을 끊습니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공"),
@@ -103,7 +103,7 @@ public class UserController {
 
             User user = userService.getUserByBearerToken(userToken);
 
-            UserResponseDto userData = new UserResponseDto();
+            UserInfoResponseDto userData = new UserInfoResponseDto();
             userData.setSocialType(user.getSocialType());
             userData.setName(user.getName());
             userData.setEmail(user.getEmail());

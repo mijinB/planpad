@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
-import planpad.planpadapp.dto.user.SocialUserDto;
+import planpad.planpadapp.dto.user.UserDto;
 
 import java.util.Map;
 
@@ -50,7 +50,7 @@ public class KakaoService {
         return response.get("access_token");
     }
 
-    public SocialUserDto kakaoGetUserInfo(String accessToken) {
+    public UserDto kakaoGetUserInfo(String accessToken) {
 
         String response = webClient.get()
                 .uri(INFO_URL)
@@ -67,15 +67,15 @@ public class KakaoService {
             throw new RuntimeException("kakaoGetUserInfo 에서 JSON 파싱 실패 = ", e);
         }
 
-        SocialUserDto socialUser = new SocialUserDto();
-        socialUser.setSocialId(rootNode.path("id").toString());
-        socialUser.setSocialType("kakao");
-        socialUser.setAccessToken(accessToken);
-        socialUser.setEmail(rootNode.path("kakao_account").path("email").asText());
-        socialUser.setName(rootNode.path("properties").path("nickname").asText());
-        socialUser.setAvatar(rootNode.path("properties").path("thumbnail_image").asText());
+        UserDto userData = new UserDto();
+        userData.setSocialId(rootNode.path("id").toString());
+        userData.setSocialType("kakao");
+        userData.setAccessToken(accessToken);
+        userData.setEmail(rootNode.path("kakao_account").path("email").asText());
+        userData.setName(rootNode.path("properties").path("nickname").asText());
+        userData.setAvatar(rootNode.path("properties").path("thumbnail_image").asText());
 
-        return socialUser;
+        return userData;
     }
 
     public String kakaoUnLink(String accessToken) {

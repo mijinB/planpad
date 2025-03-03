@@ -1,4 +1,4 @@
-package planpad.planpadapp.dto.api;
+package planpad.planpadapp.dto.api.user;
 
 import lombok.Getter;
 import lombok.Setter;

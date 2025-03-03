@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class SocialUserDto {
+public class UserDto {
 
     @NotNull
     private String socialId;
