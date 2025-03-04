@@ -5,6 +5,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import planpad.planpadapp.dto.memo.FolderDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 public class Folder {
@@ -24,6 +27,10 @@ public class Folder {
 
     @Column(name = "color_code")
     private String colorCode;
+
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Memo> memos = new ArrayList<>();
+
 
     public Folder() {}
 

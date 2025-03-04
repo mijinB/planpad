@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import planpad.planpadapp.dto.user.UserDto;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Getter
 public class User {
@@ -35,6 +38,16 @@ public class User {
     private String name;
 
     private String avatar;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Folder> folders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Memo> memos = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tag> tags = new ArrayList<>();
+
 
     @PrePersist
     public void generateId() {

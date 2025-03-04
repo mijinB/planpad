@@ -10,9 +10,8 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import planpad.planpadapp.dto.memo.MemoDto;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @EntityListeners(AuditingEntityListener.class)
@@ -34,14 +33,6 @@ public class Memo {
     @JoinColumn(name = "folder_id", nullable = false)
     private Folder folder;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(
-            name = "memo_tag",
-            joinColumns = @JoinColumn(name = "memo_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id")
-    )
-    private List<Tag> tags = new ArrayList<>();
-
     @Column(name = "memo_order")
     private int memoOrder;
 
@@ -49,6 +40,7 @@ public class Memo {
     @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
     private String contents;
 
     @Column(name = "is_fixed", nullable = false)
@@ -61,6 +53,15 @@ public class Memo {
     @LastModifiedDate
     @Column(name = "updated_at")
     private LocalDateTime updatedAt;
+
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+            name = "memo_tag",
+            joinColumns = @JoinColumn(name = "memo_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
+    private Set<Tag> tags = new HashSet<>();
+
 
     public Memo() {}
 

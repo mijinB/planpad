@@ -9,7 +9,7 @@ import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.Tag;
 import planpad.planpadapp.domain.User;
 
-import java.util.List;
+import java.util.Set;
 
 @Getter @Setter
 public class MemoDto {
@@ -20,7 +20,7 @@ public class MemoDto {
     @NotNull
     private Folder folder;
 
-    private List<Tag> tags;
+    private Set<Tag> tags;
     private int memoOrder;
 
     @NotEmpty
