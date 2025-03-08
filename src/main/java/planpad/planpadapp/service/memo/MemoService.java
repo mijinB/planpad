@@ -1,4 +1,4 @@
-package planpad.planpadapp.service;
+package planpad.planpadapp.service.memo;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

@@ -34,7 +34,7 @@ public class UserController {
     @Operation(summary = "소셜 로그인", description = "사용자의 최초 연결 여부에 따라 회원가입/로그인이 진행됩니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+            @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
     public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request) {
 
@@ -70,7 +70,7 @@ public class UserController {
     @Operation(summary = "소셜 로그인 연결 끊기", description = "(회원탈퇴 개념) 소셜 로그인 연결을 끊습니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공"),
-            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패 = 잘못된 요청")
+            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패")
     })
     public ResponseEntity<Void> socialUnLink(@RequestBody @Valid SocialUnLinkRequestDto request, @RequestHeader("Authorization") String bearerToken) {
 
@@ -94,7 +94,7 @@ public class UserController {
     @Operation(summary = "사용자 정보 조회", description = "사용자의 정보를 조회합니다.")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "사용자 정보 조회 실패 = 잘못된 요청", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+            @ApiResponse(responseCode = "400", description = "사용자 정보 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
     public ResponseEntity<Object> userInfo(@RequestHeader("Authorization") String bearerToken) {
 

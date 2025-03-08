@@ -43,7 +43,7 @@ public class Memo {
     @Column(columnDefinition = "TEXT")
     private String contents;
 
-    @Column(name = "is_fixed", nullable = false)
+    @Column(name = "is_fixed")
     private boolean isFixed;
 
     @CreatedDate

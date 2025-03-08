@@ -1,6 +1,7 @@
 package planpad.planpadapp.domain;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import planpad.planpadapp.dto.memo.FolderDto;
@@ -22,6 +23,9 @@ public class Folder {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
+    @NotEmpty
+    private String name;
+
     @Column(name = "folder_order")
     private int folderOrder;
 
@@ -34,9 +38,10 @@ public class Folder {
 
     public Folder() {}
 
-    public Folder(FolderDto dtoData) {
-        this.user = dtoData.getUser();
-        this.folderOrder = dtoData.getFolderOrder();
-        this.colorCode = dtoData.getColorCode();
+    public Folder(User user, String name, int folderOrder, String colorCode) {
+        this.user = user;
+        this.name = name;
+        this.folderOrder = folderOrder;
+        this.colorCode = (colorCode != null) ? colorCode : "#DCDCDC";
     }
 }

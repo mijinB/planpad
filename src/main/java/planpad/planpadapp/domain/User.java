@@ -34,7 +34,6 @@ public class User {
     @Column(unique = true, nullable = false)
     private String email;
 
-    @Column(name = "name")
     private String name;
 
     private String avatar;
