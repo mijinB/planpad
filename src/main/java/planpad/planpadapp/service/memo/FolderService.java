@@ -15,6 +15,7 @@ public class FolderService {
 
     private final FolderRepository folderRepository;
 
+    @Transactional
     public void saveFolder(User user, FolderDto folderDto) {
         Folder folder = folderDto.toEntity(user);
         folderRepository.save(folder);
