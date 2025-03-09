@@ -3,6 +3,7 @@ package planpad.planpadapp.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ public class Folder {
     private User user;
 
     @NotEmpty
+    @Size(min = 1, max = 20)
+    @Column(nullable = false)
     private String name;
 
     @NotEmpty

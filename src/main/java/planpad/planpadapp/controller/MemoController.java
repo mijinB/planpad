@@ -16,7 +16,6 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.memo.FoldersResponseWrapper;
 import planpad.planpadapp.dto.api.memo.MemosResponseWrapper;
 import planpad.planpadapp.dto.memo.FolderDto;
-import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.memo.FolderService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -27,7 +26,6 @@ import java.util.List;
 @RequiredArgsConstructor
 public class MemoController {
 
-    private final JwtTokenProvider jwtTokenProvider;
     private final UserService userService;
     private final FolderService folderService;
 
@@ -43,10 +41,6 @@ public class MemoController {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
 
-            // 테스트를 위해 default 1으로 setting
-            if (request.getFolderOrder() == null) {
-                request.setFolderOrder(1);
-            }
             folderService.saveFolder(user, request);
 
             return ResponseEntity.ok().build();
@@ -66,9 +60,9 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            String userId = jwtTokenProvider.getUserIdFromToken(userToken);
+            User user = userService.getUserByBearerToken(userToken);
 
-            List<FolderDto> folders = folderService.getFoldersByUserId(userId);
+            List<FolderDto> folders = folderService.getFoldersByUser(user);
 
             FoldersResponseWrapper foldersResponse = new FoldersResponseWrapper();
             foldersResponse.setData(folders);
@@ -93,7 +87,6 @@ public class MemoController {
     public void getMemos(@RequestHeader("Authorization") String bearerToken) {
 
         String userToken = bearerToken.replace("Bearer ", "");
-        String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-        User user = userService.getUserById(userId);
+        User user = userService.getUserByBearerToken(userToken);
     }
 }

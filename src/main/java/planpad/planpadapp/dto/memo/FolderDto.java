@@ -2,7 +2,6 @@ package planpad.planpadapp.dto.memo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import planpad.planpadapp.domain.Folder;
@@ -22,13 +21,15 @@ public class FolderDto {
     @Schema(description = "폴더 순서", example = "1")
     private Integer folderOrder;
 
+    public FolderDto() {}
+
     public FolderDto(Folder folder) {
         this.name = folder.getName();
         this.colorCode = folder.getColorCode();
         this.folderOrder = folder.getFolderOrder();
     }
 
-    public Folder toEntity(User user) {
-        return new Folder(user, this.name, this.folderOrder, this.colorCode);
+    public Folder toEntity(User user, Integer nextOrder) {
+        return new Folder(user, this.name, nextOrder, this.colorCode);
     }
 }
