@@ -7,16 +7,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
+import planpad.planpadapp.dto.api.memo.FoldersResponseWrapper;
 import planpad.planpadapp.dto.api.memo.MemosResponseWrapper;
 import planpad.planpadapp.dto.memo.FolderDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.memo.FolderService;
 import planpad.planpadapp.service.user.UserService;
 
+import java.util.List;
+
+@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MemoController {
@@ -35,10 +41,9 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-            User user = userService.getUserById(userId);
+            User user = userService.getUserByBearerToken(userToken);
 
-            // 테스트를 위해 default 0으로 setting
+            // 테스트를 위해 default 1으로 setting
             if (request.getFolderOrder() == null) {
                 request.setFolderOrder(1);
             }
@@ -48,6 +53,33 @@ public class MemoController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @GetMapping("/folders")
+    @Operation(summary = "폴더 리스트 조회", description = "폴더 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "폴더 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FoldersResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "폴더 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getFolders(@RequestHeader("Authorization") String bearerToken) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            String userId = jwtTokenProvider.getUserIdFromToken(userToken);
+
+            List<FolderDto> folders = folderService.getFoldersByUserId(userId);
+
+            FoldersResponseWrapper foldersResponse = new FoldersResponseWrapper();
+            foldersResponse.setData(folders);
+            foldersResponse.setMessage("폴더 리스트 조회에 성공하였습니다.");
+
+            return ResponseEntity.ok(foldersResponse);
+        } catch (Exception e) {
+            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
+            onlyMessageResponse.setMessage("폴더 리스트 조회에 실패하였습니다.");
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
         }
     }
 

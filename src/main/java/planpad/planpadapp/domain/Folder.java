@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import planpad.planpadapp.dto.memo.FolderDto;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,11 +25,12 @@ public class Folder {
     @NotEmpty
     private String name;
 
+    @NotEmpty
+    @Column(name = "color_code", nullable = false)
+    private String colorCode;
+
     @Column(name = "folder_order")
     private int folderOrder;
-
-    @Column(name = "color_code")
-    private String colorCode;
 
     @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Memo> memos = new ArrayList<>();
@@ -42,6 +42,6 @@ public class Folder {
         this.user = user;
         this.name = name;
         this.folderOrder = folderOrder;
-        this.colorCode = (colorCode != null) ? colorCode : "#DCDCDC";
+        this.colorCode = colorCode;
     }
 }
