@@ -17,7 +17,6 @@ import planpad.planpadapp.config.security.UnauthorizedEntryPoint;
 import planpad.planpadapp.filter.JwtAuthenticationFilter;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.JwtBlacklistService;
-import planpad.planpadapp.service.user.KakaoService;
 import planpad.planpadapp.service.user.UserService;
 
 import java.util.Date;
@@ -34,7 +33,6 @@ public class SecurityConfig {
 
     private final JwtTokenProvider jwtTokenProvider;
     private final JwtBlacklistService jwtBlacklistService;
-    private final KakaoService kakaoService;
     private final UserService userService;
 
     @Bean

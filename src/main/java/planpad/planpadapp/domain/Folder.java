@@ -47,4 +47,21 @@ public class Folder {
         this.folderOrder = folderOrder;
         this.colorCode = colorCode;
     }
+
+    public void updateFolderInfo(String name, String colorCode) {
+
+        if (name != null) {
+            this.name = name;
+        }
+        if (colorCode != null) {
+            this.colorCode = colorCode;
+        }
+    }
+
+    public void updateFolderOrder(Integer folderOrder) {
+
+        if (folderOrder != null) {
+            this.folderOrder = folderOrder;
+        }
+    }
 }

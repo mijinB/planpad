@@ -15,6 +15,8 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
     @Query("SELECT f FROM Folder f WHERE f.user = :user ORDER BY f.folderOrder")
     List<Folder> findAllByUser(@Param("user") User user);
 
+    List<Folder> findByFolderOrderBetween(Integer startOrder, Integer endOrder);
+
     @Query("SELECT COALESCE(MAX(f.folderOrder) + 1, 1) FROM Folder f WHERE f.user = :user")
     Integer findNextOrderByUser(@Param("user") User user);
 }
