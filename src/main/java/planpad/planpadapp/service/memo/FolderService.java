@@ -1,19 +1,18 @@
 package planpad.planpadapp.service.memo;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.FolderDto;
+import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Slf4j
 @Service
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -39,6 +38,19 @@ public class FolderService {
 
     public Optional<Folder> getFolder(Long id) {
         return folderRepository.findById(id);
+    }
+
+    @Transactional
+    public void updateFolder(Long id, FolderUpdateRequestDto data) {
+
+        Folder folder = folderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+        folder.updateFolderInfo(data.getName(), data.getColorCode());
+
+        if (data.getTargetOrder() != null && data.getNextOrder() != null) {
+            changeFolderOrder(data.getTargetOrder(), data.getNextOrder());
+        }
     }
 
     @Transactional

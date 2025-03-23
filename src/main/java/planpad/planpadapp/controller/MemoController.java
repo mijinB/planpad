@@ -7,11 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.memo.FolderSaveResponseWrapper;
@@ -25,7 +23,6 @@ import planpad.planpadapp.service.user.UserService;
 
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 public class MemoController {
@@ -97,17 +94,13 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "폴더 수정 성공"),
             @ApiResponse(responseCode = "400", description = "폴더 수정 실패")
     })
-    public ResponseEntity<Void> updateFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable Long id, @RequestBody @Valid FolderUpdateRequestDto request) {
+    public ResponseEntity<Void> updateFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid FolderUpdateRequestDto request) {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
+            userService.getUserByBearerToken(userToken);
 
-            Folder folder = folderService.getFolder(id)
-                    .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
-
-            folder.updateFolderInfo(request.getName(), request.getColorCode());
-            folderService.changeFolderOrder(request.getTargetOrder(), request.getNextOrder());
+            folderService.updateFolder(id, request);
 
             return ResponseEntity.ok().build();
 
