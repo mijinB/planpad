@@ -28,7 +28,7 @@ public class FolderService {
         return folder.getFolderId();
     }
 
-    public List<FolderDto> getFoldersByUser(User user) {
+    public List<FolderDto> getFolders(User user) {
         List<Folder> folders = folderRepository.findAllByUser(user);
 
         return folders.stream()

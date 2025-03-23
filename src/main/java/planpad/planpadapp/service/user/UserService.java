@@ -38,6 +38,11 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
+    public User getUserByBearerToken(String userToken) {
+        String userId = jwtTokenProvider.getUserIdFromToken(userToken);
+        return getUserById(userId);
+    }
+
     public void deleteUserById(String socialId) {
         userRepository.deleteBySocialId(socialId);
     }
@@ -46,12 +51,7 @@ public class UserService {
         userRepository.deleteByAccessToken(accessToken);
     }
 
-    public User getUserByBearerToken(String userToken) {
-        String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-        return getUserById(userId);
-    }
-
-    public UserDetails loadUserById(String id) {
+    public UserDetails loadUser(String id) {
 
         User user = getUserById(id);
 

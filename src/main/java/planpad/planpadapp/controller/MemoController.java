@@ -42,7 +42,7 @@ public class MemoController {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
 
-            List<FolderDto> folders = folderService.getFoldersByUser(user);
+            List<FolderDto> folders = folderService.getFolders(user);
 
             FoldersResponseWrapper foldersResponse = new FoldersResponseWrapper();
             foldersResponse.setData(folders);
