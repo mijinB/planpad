@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.FolderDto;
+import planpad.planpadapp.dto.memo.FolderResponseDto;
 import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 
@@ -23,16 +24,16 @@ public class FolderService {
     @Transactional
     public Long saveFolder(User user, FolderDto folderDto) {
         Integer nextOrder = folderRepository.findNextOrderByUser(user);
-        Folder folder = folderDto.toEntity(user, nextOrder);
+        Folder folder = new Folder(user, folderDto.getName(), nextOrder, folderDto.getColorCode());
         folderRepository.save(folder);
         return folder.getFolderId();
     }
 
-    public List<FolderDto> getFolders(User user) {
+    public List<FolderResponseDto> getFolders(User user) {
         List<Folder> folders = folderRepository.findAllByUser(user);
 
         return folders.stream()
-                .map(FolderDto::new)
+                .map(FolderResponseDto::new)
                 .collect(Collectors.toList());
     }
 

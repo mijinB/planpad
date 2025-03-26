@@ -8,25 +8,29 @@ import lombok.Setter;
 import planpad.planpadapp.domain.Folder;
 
 @Getter @Setter
-public class FolderDto {
+public class FolderResponseDto {
 
     @NotNull
     @Schema(description = "폴더 id", example = "1")
     private Long id;
 
     @NotEmpty
-    @Schema(description = "폴더 이름", example = "folder (필수)")
+    @Schema(description = "폴더 이름", example = "folder")
     private String name;
 
     @NotEmpty
-    @Schema(description = "폴더 색상 코드", example = "#FFFFFF (필수)")
+    @Schema(description = "폴더 색상 코드", example = "#FFFFFF")
     private String colorCode;
 
-    public FolderDto() {}
+    @Schema(description = "폴더 순서", example = "1")
+    private Integer folderOrder;
 
-    public FolderDto(Folder folder) {
+    public FolderResponseDto() {}
+
+    public FolderResponseDto(Folder folder) {
         this.id = folder.getFolderId();
         this.name = folder.getName();
         this.colorCode = folder.getColorCode();
+        this.folderOrder = folder.getFolderOrder();
     }
 }

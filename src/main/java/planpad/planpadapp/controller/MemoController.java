@@ -17,6 +17,7 @@ import planpad.planpadapp.dto.api.memo.FoldersResponseWrapper;
 import planpad.planpadapp.dto.api.memo.MemosResponseWrapper;
 import planpad.planpadapp.dto.memo.FolderDto;
 import planpad.planpadapp.dto.memo.FolderIdDto;
+import planpad.planpadapp.dto.memo.FolderResponseDto;
 import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
 import planpad.planpadapp.service.memo.FolderService;
 import planpad.planpadapp.service.user.UserService;
@@ -42,7 +43,7 @@ public class MemoController {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
 
-            List<FolderDto> folders = folderService.getFolders(user);
+            List<FolderResponseDto> folders = folderService.getFolders(user);
 
             FoldersResponseWrapper foldersResponse = new FoldersResponseWrapper();
             foldersResponse.setData(folders);
