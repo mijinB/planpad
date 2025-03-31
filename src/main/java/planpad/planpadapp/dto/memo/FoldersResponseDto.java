@@ -10,15 +10,12 @@ import planpad.planpadapp.domain.Folder;
 @Getter @Setter
 public class FoldersResponseDto {
 
-    @NotNull
     @Schema(description = "폴더 id", example = "1")
     private Long id;
 
-    @NotEmpty
     @Schema(description = "폴더 이름", example = "folder")
     private String name;
 
-    @NotEmpty
     @Schema(description = "폴더 색상 코드", example = "#FFFFFF")
     private String colorCode;
 

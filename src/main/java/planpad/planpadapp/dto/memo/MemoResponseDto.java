@@ -5,8 +5,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class FolderResponseDto {
+public class MemoResponseDto {
 
-    @Schema(description = "폴더 id", example = "1")
-    private Long id;
+    @Schema(description = "메모 id", example = "1")
+    public Long id;
 }

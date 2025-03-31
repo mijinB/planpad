@@ -14,12 +14,11 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.memo.FolderSaveResponseWrapper;
 import planpad.planpadapp.dto.api.memo.FoldersResponseWrapper;
+import planpad.planpadapp.dto.api.memo.MemoResponseWrapper;
 import planpad.planpadapp.dto.api.memo.MemosResponseWrapper;
-import planpad.planpadapp.dto.memo.FolderRequestDto;
-import planpad.planpadapp.dto.memo.FolderResponseDto;
-import planpad.planpadapp.dto.memo.FoldersResponseDto;
-import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
+import planpad.planpadapp.dto.memo.*;
 import planpad.planpadapp.service.memo.FolderService;
+import planpad.planpadapp.service.memo.MemoService;
 import planpad.planpadapp.service.user.UserService;
 
 import java.util.List;
@@ -30,6 +29,7 @@ public class MemoController {
 
     private final UserService userService;
     private final FolderService folderService;
+    private final MemoService memoService;
 
     @GetMapping("/folders")
     @Operation(summary = "폴더 리스트 조회", description = "폴더 리스트를 조회합니다.")
@@ -121,5 +121,34 @@ public class MemoController {
 
         String userToken = bearerToken.replace("Bearer ", "");
         User user = userService.getUserByBearerToken(userToken);
+    }
+
+    @PostMapping("/memo")
+    @Operation(summary = "메모 생성", description = "새로운 메모를 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemoResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "메모 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByBearerToken(userToken);
+
+            Long memoId = memoService.saveMemo(user, request);
+            MemoResponseDto memoResponseData = new MemoResponseDto();
+            memoResponseData.setId(memoId);
+
+            MemoResponseWrapper memoResponseWrapper = new MemoResponseWrapper();
+            memoResponseWrapper.setData(memoResponseData);
+            memoResponseWrapper.setMessage("메모 생성에 성공하였습니다.");
+
+            return ResponseEntity.ok(memoResponseWrapper);
+        } catch (Exception e) {
+            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
+            onlyMessageResponse.setMessage("메모 생성에 실패하였습니다.");
+
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
+        }
     }
 }

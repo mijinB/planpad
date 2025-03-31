@@ -7,7 +7,6 @@ import lombok.Getter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
-import planpad.planpadapp.dto.memo.MemoDto;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -65,13 +64,12 @@ public class Memo {
 
     public Memo() {}
 
-    public Memo(MemoDto dtoData) {
-        this.user = dtoData.getUser();
-        this.folder = dtoData.getFolder();
-        this.tags = dtoData.getTags();
-        this.memoOrder = dtoData.getMemoOrder();
-        this.title = dtoData.getTitle();
-        this.contents = dtoData.getContents();
-        this.isFixed = dtoData.isFixed();
+    public Memo(User user, Folder folder, int memoOrder, String title, String contents, boolean isFixed) {
+        this.user = user;
+        this.folder = folder;
+        this.memoOrder = memoOrder;
+        this.title = title;
+        this.contents = contents;
+        this.isFixed = isFixed;
     }
 }
