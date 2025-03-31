@@ -10,4 +10,9 @@ import java.util.List;
 public class FoldersResponseWrapper {
     private List<FoldersResponseDto> data;
     private String message;
+
+    public FoldersResponseWrapper(List<FoldersResponseDto> data, String message) {
+        this.data = data;
+        this.message = message;
+    }
 }

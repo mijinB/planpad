@@ -8,4 +8,9 @@ import planpad.planpadapp.dto.memo.MemoResponseDto;
 public class MemoResponseWrapper {
     private MemoResponseDto data;
     private String message;
+
+    public MemoResponseWrapper(MemoResponseDto data, String message) {
+        this.data = data;
+        this.message = message;
+    }
 }

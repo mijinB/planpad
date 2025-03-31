@@ -9,4 +9,8 @@ public class FolderResponseDto {
 
     @Schema(description = "폴더 id", example = "1")
     private Long id;
+
+    public FolderResponseDto(Long id) {
+        this.id = id;
+    }
 }

@@ -8,4 +8,9 @@ import planpad.planpadapp.dto.memo.FolderResponseDto;
 public class FolderSaveResponseWrapper {
     private FolderResponseDto data;
     private String message;
+
+    public FolderSaveResponseWrapper(FolderResponseDto data, String message) {
+        this.data = data;
+        this.message = message;
+    }
 }

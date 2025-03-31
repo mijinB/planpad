@@ -49,20 +49,10 @@ public class UserController {
             User user = userService.socialLoginOrJoin(socialType, code);
             String userToken = jwtTokenProvider.createToken(user.getUserId());
 
-            LoginResponseDto loginUserData = new LoginResponseDto();
-            loginUserData.setToken(userToken);
-
-            LoginResponseWrapper loginResponse = new LoginResponseWrapper();
-            loginResponse.setData(loginUserData);
-            loginResponse.setMessage("소셜 회원가입/로그인에 성공하였습니다.");
-
-            return ResponseEntity.ok(loginResponse);
+            return ResponseEntity.ok(new LoginResponseWrapper(new LoginResponseDto(userToken), "소셜 회원가입/로그인에 성공하였습니다."));
 
         } catch (Exception e) {
-            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
-            onlyMessageResponse.setMessage("소셜 회원가입/로그인에 실패하였습니다.");
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("소셜 회원가입/로그인에 실패하였습니다."));
         }
     }
 
@@ -100,26 +90,12 @@ public class UserController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-
             User user = userService.getUserByBearerToken(userToken);
 
-            UserInfoResponseDto userData = new UserInfoResponseDto();
-            userData.setSocialType(user.getSocialType());
-            userData.setName(user.getName());
-            userData.setEmail(user.getEmail());
-            userData.setAvatar(user.getAvatar());
-
-            UserResponseWrapper userResponseWrapper = new UserResponseWrapper();
-            userResponseWrapper.setData(userData);
-            userResponseWrapper.setMessage("사용자 정보 조회를 성공하였습니다.");
-
-            return ResponseEntity.ok(userResponseWrapper);
+            return ResponseEntity.ok(new UserResponseWrapper(new UserInfoResponseDto(user.getSocialType(), user.getName(), user.getEmail(), user.getAvatar()), "사용자 정보 조회를 성공하였습니다."));
 
         } catch (Exception e) {
-            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
-            onlyMessageResponse.setMessage("사용자 정보 조회를 실패하였습니다.");
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("사용자 정보 조회를 실패하였습니다."));
         }
     }
 }

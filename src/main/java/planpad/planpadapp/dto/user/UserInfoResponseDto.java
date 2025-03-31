@@ -19,4 +19,11 @@ public class UserInfoResponseDto {
 
     @Schema(description = "사용자 프로필 사진 url", example = "https://example.com/avatar.jpg")
     public String avatar;
+
+    public UserInfoResponseDto(String socialType, String name, String email, String avatar) {
+        this.socialType = socialType;
+        this.name = name;
+        this.email = email;
+        this.avatar = avatar;
+    }
 }

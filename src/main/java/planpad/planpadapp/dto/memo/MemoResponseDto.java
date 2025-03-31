@@ -9,4 +9,8 @@ public class MemoResponseDto {
 
     @Schema(description = "메모 id", example = "1")
     public Long id;
+
+    public MemoResponseDto(Long id) {
+        this.id = id;
+    }
 }

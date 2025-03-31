@@ -8,4 +8,9 @@ import planpad.planpadapp.dto.user.LoginResponseDto;
 public class LoginResponseWrapper {
     private LoginResponseDto data;
     private String message;
+
+    public LoginResponseWrapper(LoginResponseDto data, String message) {
+        this.data = data;
+        this.message = message;
+    }
 }

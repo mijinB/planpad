@@ -42,20 +42,12 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
-
             List<FoldersResponseDto> folders = folderService.getFolders(user);
 
-            FoldersResponseWrapper foldersResponse = new FoldersResponseWrapper();
-            foldersResponse.setData(folders);
-            foldersResponse.setMessage("폴더 리스트 조회에 성공하였습니다.");
-
-            return ResponseEntity.ok(foldersResponse);
+            return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
 
         } catch (Exception e) {
-            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
-            onlyMessageResponse.setMessage("폴더 리스트 조회에 실패하였습니다.");
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("폴더 리스트 조회에 실패하였습니다."));
         }
     }
 
@@ -70,22 +62,12 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
-
             Long folderId = folderService.saveFolder(user, request);
-            FolderResponseDto folderResponseData = new FolderResponseDto();
-            folderResponseData.setId(folderId);
 
-            FolderSaveResponseWrapper folderSaveResponse = new FolderSaveResponseWrapper();
-            folderSaveResponse.setData(folderResponseData);
-            folderSaveResponse.setMessage("폴더 생성에 성공하였습니다.");
-
-            return ResponseEntity.ok(folderSaveResponse);
+            return ResponseEntity.ok(new FolderSaveResponseWrapper(new FolderResponseDto(folderId), "폴더 생성에 성공하였습니다."));
 
         } catch (Exception e) {
-            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
-            onlyMessageResponse.setMessage("폴더 생성에 실패하였습니다.");
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("폴더 생성에 실패하였습니다."));
         }
     }
 
@@ -100,7 +82,6 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             userService.getUserByBearerToken(userToken);
-
             folderService.updateFolder(id, request);
 
             return ResponseEntity.ok().build();
@@ -134,21 +115,12 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
-
             Long memoId = memoService.saveMemo(user, request);
-            MemoResponseDto memoResponseData = new MemoResponseDto();
-            memoResponseData.setId(memoId);
 
-            MemoResponseWrapper memoResponseWrapper = new MemoResponseWrapper();
-            memoResponseWrapper.setData(memoResponseData);
-            memoResponseWrapper.setMessage("메모 생성에 성공하였습니다.");
+            return ResponseEntity.ok(new MemoResponseWrapper(new MemoResponseDto(memoId), "메모 생성에 성공하였습니다."));
 
-            return ResponseEntity.ok(memoResponseWrapper);
         } catch (Exception e) {
-            OnlyMessageResponseDto onlyMessageResponse = new OnlyMessageResponseDto();
-            onlyMessageResponse.setMessage("메모 생성에 실패하였습니다.");
-
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(onlyMessageResponse);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("메모 생성에 실패하였습니다."));
         }
     }
 }
