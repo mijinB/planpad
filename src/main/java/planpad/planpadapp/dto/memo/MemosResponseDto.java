@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter @Setter
 @Schema(description = "메모 조회 응답 데이터")
-public class MemoResponseDto {
+public class MemosResponseDto {
 
     @Schema(description = "태그 리스트", example = "['A', 'B', 'C']")
     public List<String> tags;
