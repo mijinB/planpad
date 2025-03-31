@@ -15,9 +15,9 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.memo.FolderSaveResponseWrapper;
 import planpad.planpadapp.dto.api.memo.FoldersResponseWrapper;
 import planpad.planpadapp.dto.api.memo.MemosResponseWrapper;
-import planpad.planpadapp.dto.memo.FolderDto;
-import planpad.planpadapp.dto.memo.FolderIdDto;
+import planpad.planpadapp.dto.memo.FolderRequestDto;
 import planpad.planpadapp.dto.memo.FolderResponseDto;
+import planpad.planpadapp.dto.memo.FoldersResponseDto;
 import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
 import planpad.planpadapp.service.memo.FolderService;
 import planpad.planpadapp.service.user.UserService;
@@ -43,7 +43,7 @@ public class MemoController {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
 
-            List<FolderResponseDto> folders = folderService.getFolders(user);
+            List<FoldersResponseDto> folders = folderService.getFolders(user);
 
             FoldersResponseWrapper foldersResponse = new FoldersResponseWrapper();
             foldersResponse.setData(folders);
@@ -65,18 +65,18 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "폴더 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FolderSaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "폴더 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderDto request) {
+    public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderRequestDto request) {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByBearerToken(userToken);
 
             Long folderId = folderService.saveFolder(user, request);
-            FolderIdDto folderIdData = new FolderIdDto();
-            folderIdData.setId(folderId);
+            FolderResponseDto folderResponseData = new FolderResponseDto();
+            folderResponseData.setId(folderId);
 
             FolderSaveResponseWrapper folderSaveResponse = new FolderSaveResponseWrapper();
-            folderSaveResponse.setData(folderIdData);
+            folderSaveResponse.setData(folderResponseData);
             folderSaveResponse.setMessage("폴더 생성에 성공하였습니다.");
 
             return ResponseEntity.ok(folderSaveResponse);

@@ -41,11 +41,11 @@ public class Folder {
 
     public Folder() {}
 
-    public Folder(User user, String name, int folderOrder, String colorCode) {
+    public Folder(User user, String name, String colorCode, int folderOrder) {
         this.user = user;
         this.name = name;
-        this.folderOrder = folderOrder;
         this.colorCode = colorCode;
+        this.folderOrder = folderOrder;
     }
 
     public void updateFolderInfo(String name, String colorCode) {

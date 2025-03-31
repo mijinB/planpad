@@ -8,7 +8,7 @@ import lombok.Setter;
 import planpad.planpadapp.domain.Folder;
 
 @Getter @Setter
-public class FolderDto {
+public class FolderRequestDto {
 
     @NotNull
     @Schema(description = "폴더 id", example = "1")
@@ -22,9 +22,9 @@ public class FolderDto {
     @Schema(description = "폴더 색상 코드", example = "#FFFFFF (필수)")
     private String colorCode;
 
-    public FolderDto() {}
+    public FolderRequestDto() {}
 
-    public FolderDto(Folder folder) {
+    public FolderRequestDto(Folder folder) {
         this.id = folder.getFolderId();
         this.name = folder.getName();
         this.colorCode = folder.getColorCode();

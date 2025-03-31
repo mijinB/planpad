@@ -6,7 +6,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class FolderIdDto {
+public class FolderResponseDto {
 
     @NotNull
     @Schema(description = "폴더 id", example = "1")

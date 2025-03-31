@@ -5,8 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.memo.FolderDto;
-import planpad.planpadapp.dto.memo.FolderResponseDto;
+import planpad.planpadapp.dto.memo.FolderRequestDto;
+import planpad.planpadapp.dto.memo.FoldersResponseDto;
 import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 
@@ -22,18 +22,18 @@ public class FolderService {
     private final FolderRepository folderRepository;
 
     @Transactional
-    public Long saveFolder(User user, FolderDto folderDto) {
+    public Long saveFolder(User user, FolderRequestDto data) {
         Integer nextOrder = folderRepository.findNextOrderByUser(user);
-        Folder folder = new Folder(user, folderDto.getName(), nextOrder, folderDto.getColorCode());
+        Folder folder = new Folder(user, data.getName(), nextOrder, data.getColorCode());
         folderRepository.save(folder);
         return folder.getFolderId();
     }
 
-    public List<FolderResponseDto> getFolders(User user) {
+    public List<FoldersResponseDto> getFolders(User user) {
         List<Folder> folders = folderRepository.findAllByUser(user);
 
         return folders.stream()
-                .map(FolderResponseDto::new)
+                .map(FoldersResponseDto::new)
                 .collect(Collectors.toList());
     }
 

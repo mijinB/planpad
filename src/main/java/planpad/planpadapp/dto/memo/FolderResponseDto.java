@@ -8,7 +8,7 @@ import lombok.Setter;
 import planpad.planpadapp.domain.Folder;
 
 @Getter @Setter
-public class FolderResponseDto {
+public class FoldersResponseDto {
 
     @NotNull
     @Schema(description = "폴더 id", example = "1")
@@ -25,9 +25,9 @@ public class FolderResponseDto {
     @Schema(description = "폴더 순서", example = "1")
     private Integer folderOrder;
 
-    public FolderResponseDto() {}
+    public FoldersResponseDto() {}
 
-    public FolderResponseDto(Folder folder) {
+    public FoldersResponseDto(Folder folder) {
         this.id = folder.getFolderId();
         this.name = folder.getName();
         this.colorCode = folder.getColorCode();
