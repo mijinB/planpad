@@ -28,7 +28,15 @@ public class MemoService {
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
         int nextOrder = memoRepository.findNextOrderByUser(user);
 
-        Memo memo = new Memo(user, folder, nextOrder, data.getTitle(), data.getContents(), data.isFixed());
+        Memo memo = Memo.builder()
+                .user(user)
+                .folder(folder)
+                .memoOrder(nextOrder)
+                .title(data.getTitle())
+                .contents(data.getContents())
+                .isFixed(data.isFixed())
+                .build();
+
         memoRepository.save(memo);
         return memo.getMemoId();
 

@@ -3,7 +3,10 @@ package planpad.planpadapp.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
@@ -15,6 +18,7 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Memo {
 
     @Id
@@ -61,9 +65,7 @@ public class Memo {
     )
     private Set<Tag> tags = new HashSet<>();
 
-
-    public Memo() {}
-
+    @Builder
     public Memo(User user, Folder folder, int memoOrder, String title, String contents, boolean isFixed) {
         this.user = user;
         this.folder = folder;

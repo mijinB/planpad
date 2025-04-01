@@ -4,7 +4,9 @@ import de.huxhorn.sulky.ulid.ULID;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import planpad.planpadapp.dto.user.UserDto;
 
 import java.util.ArrayList;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class User {
 
     @Id
@@ -54,8 +57,6 @@ public class User {
             this.userId = new ULID().nextULID();
         }
     }
-
-    public User() {}
 
     public User(UserDto dtoData) {
         this.socialId = dtoData.getSocialId();

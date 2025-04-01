@@ -3,13 +3,17 @@ package planpad.planpadapp.domain;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Entity
 @Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Tag {
 
     @Id
@@ -29,9 +33,7 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private Set<Memo> memos = new HashSet<>();
 
-
-    public Tag() {}
-
+    @Builder
     public Tag(String name) {
         this.name = name;
     }

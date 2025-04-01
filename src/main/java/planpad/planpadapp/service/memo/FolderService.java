@@ -24,7 +24,13 @@ public class FolderService {
     @Transactional
     public Long saveFolder(User user, FolderRequestDto data) {
         Integer nextOrder = folderRepository.findNextOrderByUser(user);
-        Folder folder = new Folder(user, data.getName(), data.getColorCode(), nextOrder);
+        Folder folder = Folder.builder()
+                .user(user)
+                .name(data.getName())
+                .colorCode(data.getColorCode())
+                .folderOrder(nextOrder)
+                .build();
+
         folderRepository.save(folder);
         return folder.getFolderId();
     }
