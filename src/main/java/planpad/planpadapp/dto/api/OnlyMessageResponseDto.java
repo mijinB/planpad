@@ -1,13 +1,12 @@
 package planpad.planpadapp.dto.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class OnlyMessageResponseDto {
     private String message;
-
-    public OnlyMessageResponseDto(String message) {
-        this.message = message;
-    }
 }

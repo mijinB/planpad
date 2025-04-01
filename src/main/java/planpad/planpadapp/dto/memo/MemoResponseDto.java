@@ -1,16 +1,15 @@
 package planpad.planpadapp.dto.memo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 
-@Getter @Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class MemoResponseDto {
 
     @Schema(description = "메모 id", example = "1")
-    public Long id;
-
-    public MemoResponseDto(Long id) {
-        this.id = id;
-    }
+    private Long id;
 }

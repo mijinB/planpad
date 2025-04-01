@@ -1,13 +1,12 @@
 package planpad.planpadapp.dto.memo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.Folder;
 
-@Getter @Setter
+@Getter
+@NoArgsConstructor
 public class FoldersResponseDto {
 
     @Schema(description = "폴더 id", example = "1")
@@ -21,8 +20,6 @@ public class FoldersResponseDto {
 
     @Schema(description = "폴더 순서", example = "1")
     private Integer folderOrder;
-
-    public FoldersResponseDto() {}
 
     public FoldersResponseDto(Folder folder) {
         this.id = folder.getFolderId();

@@ -1,16 +1,14 @@
 package planpad.planpadapp.dto.api.user;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.NoArgsConstructor;
 import planpad.planpadapp.dto.user.LoginResponseDto;
 
-@Getter @Setter
+@Getter
+@NoArgsConstructor
+@AllArgsConstructor
 public class LoginResponseWrapper {
     private LoginResponseDto data;
     private String message;
-
-    public LoginResponseWrapper(LoginResponseDto data, String message) {
-        this.data = data;
-        this.message = message;
-    }
 }

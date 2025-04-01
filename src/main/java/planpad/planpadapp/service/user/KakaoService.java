@@ -67,15 +67,12 @@ public class KakaoService {
             throw new RuntimeException("kakaoGetUserInfo 에서 JSON 파싱 실패 = ", e);
         }
 
-        UserDto userData = new UserDto();
-        userData.setSocialId(rootNode.path("id").toString());
-        userData.setSocialType("kakao");
-        userData.setAccessToken(accessToken);
-        userData.setEmail(rootNode.path("kakao_account").path("email").asText());
-        userData.setName(rootNode.path("properties").path("nickname").asText());
-        userData.setAvatar(rootNode.path("properties").path("thumbnail_image").asText());
+        String id = rootNode.path("id").toString();
+        String email = rootNode.path("kakao_account").path("email").asText();
+        String name = rootNode.path("properties").path("nickname").asText();
+        String avatar = rootNode.path("properties").path("thumbnail_image").asText();
 
-        return userData;
+        return new UserDto(id, "kakao", accessToken, email, name, avatar);
     }
 
     public String kakaoUnLink(String accessToken) {

@@ -2,9 +2,8 @@ package planpad.planpadapp.dto.memo;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
-import lombok.Setter;
 
-@Getter @Setter
+@Getter
 public class FolderUpdateRequestDto {
 
     @Schema(description = "폴더 이름", example = "folder")

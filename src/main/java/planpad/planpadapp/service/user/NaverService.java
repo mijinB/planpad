@@ -59,23 +59,21 @@ public class NaverService {
                 .block();
 
         JsonNode rootNode;
-        UserDto socialUser = new UserDto();
+        String name;
 
         try {
             rootNode = objectMapper.readTree(response);
-            socialUser.setName(URLDecoder.decode(rootNode.path("response").path("name").asText(), "UTF-8"));
+            name = URLDecoder.decode(rootNode.path("response").path("name").asText(), "UTF-8");
 
         } catch (JsonProcessingException | UnsupportedEncodingException e) {
             throw new RuntimeException("naverGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
         }
 
-        socialUser.setSocialId(rootNode.path("response").path("id").asText());
-        socialUser.setSocialType("naver");
-        socialUser.setAccessToken(accessToken);
-        socialUser.setEmail(rootNode.path("response").path("email").asText());
-        socialUser.setAvatar(rootNode.path("response").path("profile_image").asText());
+        String id = rootNode.path("response").path("id").asText();
+        String email = rootNode.path("response").path("email").asText();
+        String avatar = rootNode.path("response").path("profile_image").asText();
 
-        return socialUser;
+        return new UserDto(id, "naver", accessToken, email, name, avatar);
     }
 
     public String naverUnLink(String accessToken) {

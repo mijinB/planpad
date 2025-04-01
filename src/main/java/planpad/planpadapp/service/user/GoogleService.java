@@ -61,15 +61,12 @@ public class GoogleService {
             throw new RuntimeException("googleGetUserInfo 실패");
         }
 
-        UserDto userData = new UserDto();
-        userData.setSocialId(response.get("id"));
-        userData.setSocialType("google");
-        userData.setAccessToken(accessToken);
-        userData.setEmail(response.get("email"));
-        userData.setName(response.get("name"));
-        userData.setAvatar(response.get("picture"));
+        String id = response.get("id");
+        String email = response.get("email");
+        String name = response.get("name");
+        String avatar = response.get("picture");
 
-        return userData;
+        return new UserDto(id, "google", accessToken, email, name, avatar);
     }
 
     public void googleUnLink(String accessToken) {

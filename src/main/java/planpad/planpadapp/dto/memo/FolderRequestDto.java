@@ -4,10 +4,8 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import lombok.Setter;
-import planpad.planpadapp.domain.Folder;
 
-@Getter @Setter
+@Getter
 public class FolderRequestDto {
 
     @NotNull
@@ -21,12 +19,4 @@ public class FolderRequestDto {
     @NotEmpty
     @Schema(description = "폴더 색상 코드", example = "#FFFFFF (필수)")
     private String colorCode;
-
-    public FolderRequestDto() {}
-
-    public FolderRequestDto(Folder folder) {
-        this.id = folder.getFolderId();
-        this.name = folder.getName();
-        this.colorCode = folder.getColorCode();
-    }
 }
