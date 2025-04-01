@@ -7,8 +7,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
@@ -22,6 +23,7 @@ import planpad.planpadapp.service.memo.MemoService;
 import planpad.planpadapp.service.user.UserService;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -47,7 +49,7 @@ public class MemoController {
             return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("폴더 리스트 조회에 실패하였습니다."));
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("폴더 리스트 조회에 실패하였습니다."));
         }
     }
 
@@ -57,7 +59,15 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "폴더 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FolderSaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "폴더 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderRequestDto request) {
+    public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderRequestDto request, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
@@ -67,7 +77,7 @@ public class MemoController {
             return ResponseEntity.ok(new FolderSaveResponseWrapper(new FolderResponseDto(folderId), "폴더 생성에 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("폴더 생성에 실패하였습니다."));
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("폴더 생성에 실패하였습니다."));
         }
     }
 
@@ -110,7 +120,15 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemoResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "메모 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request) {
+    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
@@ -120,7 +138,7 @@ public class MemoController {
             return ResponseEntity.ok(new MemoResponseWrapper(new MemoResponseDto(memoId), "메모 생성에 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("메모 생성에 실패하였습니다."));
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("메모 생성에 실패하였습니다."));
         }
     }
 }

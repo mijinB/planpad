@@ -8,8 +8,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
+import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.user.LoginResponseWrapper;
@@ -21,6 +22,9 @@ import planpad.planpadapp.dto.user.SocialUnLinkRequestDto;
 import planpad.planpadapp.dto.user.UserInfoResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -36,7 +40,15 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request) {
+    public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
 
         String socialType = request.getSocialType();
         String code = request.getCode();
@@ -52,17 +64,25 @@ public class UserController {
             return ResponseEntity.ok(new LoginResponseWrapper(new LoginResponseDto(userToken), "소셜 회원가입/로그인에 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("소셜 회원가입/로그인에 실패하였습니다."));
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("소셜 회원가입/로그인에 실패하였습니다."));
         }
     }
 
     @DeleteMapping("/unlink")
     @Operation(summary = "소셜 로그인 연결 끊기", description = "(회원탈퇴 개념) 소셜 로그인 연결을 끊습니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공"),
-            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패")
+            @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class))),
+            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Void> socialUnLink(@RequestBody @Valid SocialUnLinkRequestDto request, @RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<Object> socialUnLink(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid SocialUnLinkRequestDto request, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
 
         String socialType = request.getSocialType();
 
@@ -73,10 +93,10 @@ public class UserController {
 
             userService.socialUnLink(socialType, bearerToken);
 
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok(new OnlyMessageResponseDto("소셜 로그인 연결 끊기에 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().build();
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("소셜 로그인 연결 끊기에 실패하였습니다."));
         }
     }
 
@@ -95,7 +115,7 @@ public class UserController {
             return ResponseEntity.ok(new UserResponseWrapper(new UserInfoResponseDto(user.getSocialType(), user.getName(), user.getEmail(), user.getAvatar()), "사용자 정보 조회를 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new OnlyMessageResponseDto("사용자 정보 조회를 실패하였습니다."));
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("사용자 정보 조회를 실패하였습니다."));
         }
     }
 }

@@ -7,12 +7,12 @@ import lombok.Getter;
 @Getter
 public class MemoRequestDto {
 
-    @NotNull
+    @NotNull(message = "폴더 id는 필수입니다.")
     private Long folderId;
 
     private int memoOrder;
 
-    @NotEmpty
+    @NotEmpty(message = "폴더 제목은 필수입니다.")
     private String title;
 
     private String contents;
