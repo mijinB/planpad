@@ -28,7 +28,6 @@ public class Folder {
     private User user;
 
     @NotEmpty
-    @Size(min = 1, max = 20)
     @Column(nullable = false)
     private String name;
 
