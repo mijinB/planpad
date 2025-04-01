@@ -7,11 +7,12 @@ import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.Memo;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.MemoRequestDto;
+import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 import planpad.planpadapp.repository.memo.MemoRepository;
-import planpad.planpadapp.repository.memo.TagRepository;
 
-import java.util.Optional;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -39,7 +40,14 @@ public class MemoService {
 
         memoRepository.save(memo);
         return memo.getMemoId();
+    }
 
+    public List<MemosResponseDto> getMemos(User user) {
+        List<Memo> memos = memoRepository.findAllByUser(user);
+
+        return memos.stream()
+                .map(MemosResponseDto::new)
+                .collect(Collectors.toList());
     }
 
     /*List<Tag> tags = dtoData.getTags().stream()

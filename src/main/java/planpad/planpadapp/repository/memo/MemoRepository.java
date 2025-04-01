@@ -7,8 +7,13 @@ import org.springframework.stereotype.Repository;
 import planpad.planpadapp.domain.Memo;
 import planpad.planpadapp.domain.User;
 
+import java.util.List;
+
 @Repository
 public interface MemoRepository extends JpaRepository<Memo, Long> {
+
+    @Query("SELECT m FROM Memo m WHERE m.user = :user ORDER BY m.memoOrder")
+    List<Memo> findAllByUser(@Param("user") User user);
 
     @Query("SELECT COALESCE(MAX(m.memoOrder) + 1, 1) FROM Memo m WHERE m.user = :user")
     Integer findNextOrderByUser(@Param("user") User user);

@@ -108,10 +108,18 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemosResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "메모 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public void getMemos(@RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<Object> getMemos(@RequestHeader("Authorization") String bearerToken) {
 
-        String userToken = bearerToken.replace("Bearer ", "");
-        User user = userService.getUserByBearerToken(userToken);
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByBearerToken(userToken);
+            List<MemosResponseDto> memos = memoService.getMemos(user);
+
+            return ResponseEntity.ok(new MemosResponseWrapper(memos, "메모 리스트 조회에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("메모 리스트 조회에 실패하였습니다."));
+        }
     }
 
     @PostMapping("/memo")
