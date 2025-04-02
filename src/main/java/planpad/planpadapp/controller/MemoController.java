@@ -33,26 +33,6 @@ public class MemoController {
     private final FolderService folderService;
     private final MemoService memoService;
 
-    @GetMapping("/folders")
-    @Operation(summary = "폴더 리스트 조회", description = "폴더 리스트를 조회합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "폴더 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FoldersResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "폴더 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
-    })
-    public ResponseEntity<Object> getFolders(@RequestHeader("Authorization") String bearerToken) {
-
-        try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
-            List<FoldersResponseDto> folders = folderService.getFolders(user);
-
-            return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("폴더 리스트 조회에 실패하였습니다."));
-        }
-    }
-
     @PostMapping("/folder")
     @Operation(summary = "폴더 생성", description = "새로운 폴더를 생성합니다.")
     @ApiResponses(value = {
@@ -81,6 +61,26 @@ public class MemoController {
         }
     }
 
+    @GetMapping("/folders")
+    @Operation(summary = "폴더 리스트 조회", description = "폴더 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "폴더 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = FoldersResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "폴더 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getFolders(@RequestHeader("Authorization") String bearerToken) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByBearerToken(userToken);
+            List<FoldersResponseDto> folders = folderService.getFolders(user);
+
+            return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("폴더 리스트 조회에 실패하였습니다."));
+        }
+    }
+
     @PatchMapping("/folder/{id}")
     @Operation(summary = "폴더 수정", description = "폴더 정보를 수정합니다.")
     @ApiResponses(value = {
@@ -98,6 +98,34 @@ public class MemoController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    @PostMapping("/memo")
+    @Operation(summary = "메모 생성", description = "새로운 메모를 생성합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemoResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "메모 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request, BindingResult bindingResult) {
+
+        if(bindingResult.hasErrors()) {
+            List<String> errorMessages = bindingResult.getAllErrors().stream()
+                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
+                    .collect(Collectors.toList());
+
+            return ResponseEntity.badRequest().body(errorMessages);
+        }
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByBearerToken(userToken);
+            Long memoId = memoService.saveMemo(user, request);
+
+            return ResponseEntity.ok(new MemoResponseWrapper(new MemoResponseDto(memoId), "메모 생성에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("메모 생성에 실패하였습니다."));
         }
     }
 
@@ -138,34 +166,6 @@ public class MemoController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("전체 메모 리스트 조회에 실패하였습니다."));
-        }
-    }
-
-    @PostMapping("/memo")
-    @Operation(summary = "메모 생성", description = "새로운 메모를 생성합니다.")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "메모 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemoResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "메모 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
-    })
-    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request, BindingResult bindingResult) {
-
-        if(bindingResult.hasErrors()) {
-            List<String> errorMessages = bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
-
-        try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
-            Long memoId = memoService.saveMemo(user, request);
-
-            return ResponseEntity.ok(new MemoResponseWrapper(new MemoResponseDto(memoId), "메모 생성에 성공하였습니다."));
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("메모 생성에 실패하였습니다."));
         }
     }
 }
