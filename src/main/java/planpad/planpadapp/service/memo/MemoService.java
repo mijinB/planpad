@@ -42,6 +42,16 @@ public class MemoService {
         return memo.getMemoId();
     }
 
+    public List<MemosResponseDto> getMemosByFolder(Long folderId) {
+        Folder folder = folderRepository.findById(folderId)
+                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+        List<Memo> memos = memoRepository.findAllByFolder(folder);
+
+        return memos.stream()
+                .map(MemosResponseDto::new)
+                .collect(Collectors.toList());
+    }
+
     public List<MemosResponseDto> getMemos(User user) {
         List<Memo> memos = memoRepository.findAllByUser(user);
 

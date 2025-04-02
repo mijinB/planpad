@@ -101,12 +101,31 @@ public class MemoController {
         }
     }
 
+    @GetMapping("/folder/{folderId}/memos")
+    @Operation(summary = "특정 폴더 내 메모 리스트 조회", description = "특정 폴더 내 메모 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "특정 폴더 내 메모 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemosResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "특정 폴더 내 메모 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getMemosByFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("folderId") Long folderId) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            userService.getUserByBearerToken(userToken);
+            List<MemosResponseDto> memos = memoService.getMemosByFolder(folderId);
+
+            return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("특정 폴더 내 메모 리스트 조회에 실패하였습니다."));
+        }
+    }
 
     @GetMapping("/memos")
-    @Operation(summary = "메모 리스트 조회", description = "메모 리스트를 조회합니다.")
+    @Operation(summary = "전체 메모 리스트 조회", description = "전체 메모 리스트를 조회합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "메모 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemosResponseWrapper.class))),
-            @ApiResponse(responseCode = "400", description = "메모 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+            @ApiResponse(responseCode = "200", description = "전체 메모 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemosResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "전체 메모 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
     public ResponseEntity<Object> getMemos(@RequestHeader("Authorization") String bearerToken) {
 
@@ -115,10 +134,10 @@ public class MemoController {
             User user = userService.getUserByBearerToken(userToken);
             List<MemosResponseDto> memos = memoService.getMemos(user);
 
-            return ResponseEntity.ok(new MemosResponseWrapper(memos, "메모 리스트 조회에 성공하였습니다."));
+            return ResponseEntity.ok(new MemosResponseWrapper(memos, "전체 메모 리스트 조회에 성공하였습니다."));
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("메모 리스트 조회에 실패하였습니다."));
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("전체 메모 리스트 조회에 실패하였습니다."));
         }
     }
 
