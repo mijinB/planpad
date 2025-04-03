@@ -74,4 +74,8 @@ public class Memo {
         this.contents = contents;
         this.isFixed = isFixed;
     }
+
+    public void addTag(Tag tag) {
+        this.tags.add(tag);
+    }
 }

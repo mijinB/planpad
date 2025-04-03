@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 
+import java.util.List;
+
 @Getter
 public class MemoRequestDto {
 
@@ -20,4 +22,6 @@ public class MemoRequestDto {
     private String contents;
 
     private boolean isFixed;
+
+    private List<String> tags;
 }

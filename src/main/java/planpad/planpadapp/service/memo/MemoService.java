@@ -21,6 +21,7 @@ public class MemoService {
 
     private final MemoRepository memoRepository;
     private final FolderRepository folderRepository;
+    private final TagService tagService;
 
     @Transactional
     public Long saveMemo(User user, MemoRequestDto data) {
@@ -39,6 +40,8 @@ public class MemoService {
                 .build();
 
         memoRepository.save(memo);
+        tagService.saveTag(user, memo, data.getTags());
+
         return memo.getMemoId();
     }
 

@@ -14,6 +14,14 @@ import java.util.Set;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "unique_user_tag", columnNames = {"user_id", "name"})
+        },
+        indexes = {
+                @Index(name = "idx_user_tag", columnList = "user_id, name")
+        }
+)
 public class Tag {
 
     @Id
@@ -27,14 +35,14 @@ public class Tag {
     private User user;
 
     @NotEmpty
-    @Column(unique = true)
     private String name;
 
     @ManyToMany(mappedBy = "tags")
     private Set<Memo> memos = new HashSet<>();
 
     @Builder
-    public Tag(String name) {
+    public Tag(User user, String name) {
+        this.user = user;
         this.name = name;
     }
 }

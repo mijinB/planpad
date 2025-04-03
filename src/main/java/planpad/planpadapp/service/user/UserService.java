@@ -52,7 +52,6 @@ public class UserService {
     }
 
     public UserDetails loadUser(String id) {
-
         User user = getUserById(id);
 
         if (user == null) {
@@ -68,7 +67,6 @@ public class UserService {
 
     @Transactional
     public User socialLoginOrJoin(String socialType, String code) {
-
         String socialAccessToken = new String();
         UserDto socialUser = new UserDto();
 
@@ -104,7 +102,6 @@ public class UserService {
 
     @Transactional
     public void socialUnLink(String socialType, String bearerToken) {
-
         String userToken = bearerToken.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
         String accessToken = getUserById(userId).getAccessToken();

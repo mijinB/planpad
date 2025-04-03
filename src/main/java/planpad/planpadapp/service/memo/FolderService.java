@@ -49,7 +49,6 @@ public class FolderService {
 
     @Transactional
     public void updateFolder(Long id, FolderUpdateRequestDto data) {
-
         Folder folder = folderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
 
