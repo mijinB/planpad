@@ -38,7 +38,7 @@ public class UserService {
         return userRepository.findByEmail(email);
     }
 
-    public User getUserByBearerToken(String userToken) {
+    public User getUserByUserToken(String userToken) {
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
         return getUserById(userId);
     }

@@ -51,7 +51,7 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
+            User user = userService.getUserByUserToken(userToken);
             Long folderId = folderService.saveFolder(user, request);
 
             return ResponseEntity.ok(new FolderSaveResponseWrapper(new FolderResponseDto(folderId), "폴더 생성에 성공하였습니다."));
@@ -71,7 +71,7 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
+            User user = userService.getUserByUserToken(userToken);
             List<FoldersResponseDto> folders = folderService.getFolders(user);
 
             return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
@@ -91,7 +91,7 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByBearerToken(userToken);
+            userService.getUserByUserToken(userToken);
             folderService.updateFolder(id, request);
 
             return ResponseEntity.ok().build();
@@ -119,7 +119,7 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
+            User user = userService.getUserByUserToken(userToken);
             Long memoId = memoService.saveMemo(user, request);
 
             return ResponseEntity.ok(new MemoResponseWrapper(new MemoResponseDto(memoId), "메모 생성에 성공하였습니다."));
@@ -139,7 +139,7 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByBearerToken(userToken);
+            userService.getUserByUserToken(userToken);
             List<MemosResponseDto> memos = memoService.getMemosByFolder(folderId);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));
@@ -159,13 +159,33 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
+            User user = userService.getUserByUserToken(userToken);
             List<MemosResponseDto> memos = memoService.getMemos(user);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "전체 메모 리스트 조회에 성공하였습니다."));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("전체 메모 리스트 조회에 실패하였습니다."));
+        }
+    }
+
+    @PatchMapping("/memo/{id}")
+    @Operation(summary = "메모 수정", description = "메모 정보를 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "메모 수정 실패")
+    })
+    public ResponseEntity<Void> updateMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid MemoUpdateRequestDto request) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            userService.getUserByUserToken(userToken);
+            memoService.updateMemo(id, request);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

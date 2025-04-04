@@ -110,7 +110,7 @@ public class UserController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByBearerToken(userToken);
+            User user = userService.getUserByUserToken(userToken);
 
             return ResponseEntity.ok(new UserResponseWrapper(new UserInfoResponseDto(user.getSocialType(), user.getName(), user.getEmail(), user.getAvatar()), "사용자 정보 조회를 성공하였습니다."));
 

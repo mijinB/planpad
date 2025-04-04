@@ -59,7 +59,6 @@ public class FolderService {
         }
     }
 
-    @Transactional
     public void changeFolderOrder(Integer targetOrder, Integer nextOrder) {
 
         if (targetOrder < nextOrder) {

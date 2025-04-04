@@ -78,4 +78,22 @@ public class Memo {
     public void addTag(Tag tag) {
         this.tags.add(tag);
     }
+
+    public void updateMemoInfo(String title, String contents, boolean isFixed) {
+
+        if (title != null) {
+            this.title = title;
+        }
+        if (contents != null) {
+            this.contents = contents;
+        }
+        this.isFixed = isFixed;
+    }
+
+    public void updateMemoOrder(Integer memoOrder) {
+
+        if (memoOrder != null) {
+            this.memoOrder = memoOrder;
+        }
+    }
 }

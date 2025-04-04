@@ -7,6 +7,7 @@ import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.Memo;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.MemoRequestDto;
+import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
 import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 import planpad.planpadapp.repository.memo.MemoRepository;
@@ -61,6 +62,36 @@ public class MemoService {
         return memos.stream()
                 .map(MemosResponseDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateMemo(Long id, MemoUpdateRequestDto data) {
+        Memo memo = memoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
+
+        memo.updateMemoInfo(data.getTitle(), data.getContents(), data.isFixed());
+
+        if (data.getTargetOrder() != null && data.getNextOrder() != null) {
+            changeMemoOrder(data.getTargetOrder(), data.getNextOrder());
+        }
+    }
+
+    public void changeMemoOrder(Integer targetOrder, Integer nextOrder) {
+
+        if (targetOrder < nextOrder) {
+            List<Memo> memos = memoRepository.findByMemoOrderBetween(targetOrder + 1, nextOrder);
+
+            for (Memo memo : memos) {
+                memo.updateMemoOrder(memo.getMemoOrder() - 1);
+            }
+
+        } else if (targetOrder > nextOrder) {
+            List<Memo> memos = memoRepository.findByMemoOrderBetween(targetOrder - 1, nextOrder);
+
+            for (Memo memo : memos) {
+                memo.updateMemoOrder(memo.getMemoOrder() + 1);
+            }
+        }
     }
 
     /*List<Tag> tags = dtoData.getTags().stream()
