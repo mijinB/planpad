@@ -101,6 +101,26 @@ public class MemoController {
         }
     }
 
+    @DeleteMapping("/folder/{id}")
+    @Operation(summary = "폴더 삭제", description = "폴더를 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "폴더 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "폴더 삭제 실패")
+    })
+    public ResponseEntity<Void> deleteFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            userService.getUserByUserToken(userToken);
+            folderService.deleteFolder(id);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @PostMapping("/memo")
     @Operation(summary = "메모 생성", description = "새로운 메모를 생성합니다.")
     @ApiResponses(value = {
