@@ -93,4 +93,11 @@ public class MemoService {
             }
         }
     }
+
+    @Transactional
+    public void deleteMemo(Long id) {
+        Memo memo = memoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
+        memoRepository.delete(memo);
+    }
 }

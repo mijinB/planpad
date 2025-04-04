@@ -188,4 +188,24 @@ public class MemoController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/memo/{id}")
+    @Operation(summary = "메모 삭제", description = "메모를 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "메모 삭제 실패")
+    })
+    public ResponseEntity<Void> deleteMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            userService.getUserByUserToken(userToken);
+            memoService.deleteMemo(id);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
