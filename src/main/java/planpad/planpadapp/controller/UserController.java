@@ -8,9 +8,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.user.LoginResponseWrapper;
@@ -22,9 +20,6 @@ import planpad.planpadapp.dto.user.SocialUnLinkRequestDto;
 import planpad.planpadapp.dto.user.UserInfoResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -40,15 +35,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "소셜 회원가입/로그인 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = LoginResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "소셜 회원가입/로그인 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request, BindingResult bindingResult) {
-
-        if(bindingResult.hasErrors()) {
-            List<String> errorMessages = bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request) {
 
         String socialType = request.getSocialType();
         String code = request.getCode();
