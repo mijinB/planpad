@@ -19,4 +19,6 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
     Integer findNextOrderByUser(@Param("user") User user);
 
     List<Folder> findByFolderOrderBetween(Integer startOrder, Integer endOrder);
+
+    void deleteAllByUser(User user);
 }

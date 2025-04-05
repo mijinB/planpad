@@ -71,18 +71,10 @@ public class UserController {
     @DeleteMapping("/unlink")
     @Operation(summary = "소셜 로그인 연결 끊기", description = "(회원탈퇴 개념) 소셜 로그인 연결을 끊습니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class))),
-            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+            @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공"),
+            @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패")
     })
-    public ResponseEntity<Object> socialUnLink(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid SocialUnLinkRequestDto request, BindingResult bindingResult) {
-
-        if(bindingResult.hasErrors()) {
-            List<String> errorMessages = bindingResult.getAllErrors().stream()
-                    .map(DefaultMessageSourceResolvable::getDefaultMessage)
-                    .collect(Collectors.toList());
-
-            return ResponseEntity.badRequest().body(errorMessages);
-        }
+    public ResponseEntity<Void> socialUnLink(@RequestBody @Valid SocialUnLinkRequestDto request, @RequestHeader("Authorization") String bearerToken) {
 
         String socialType = request.getSocialType();
 
@@ -93,10 +85,10 @@ public class UserController {
 
             userService.socialUnLink(socialType, bearerToken);
 
-            return ResponseEntity.ok(new OnlyMessageResponseDto("소셜 로그인 연결 끊기에 성공하였습니다."));
+            return ResponseEntity.ok().build();
 
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("소셜 로그인 연결 끊기에 실패하였습니다."));
+            return ResponseEntity.badRequest().build();
         }
     }
 

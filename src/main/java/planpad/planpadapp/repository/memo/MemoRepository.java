@@ -23,4 +23,6 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     Integer findNextOrderByUser(@Param("user") User user);
 
     List<Memo> findByMemoOrderBetween(Integer targetOrder, Integer nextOrder);
+
+    void deleteAllByUser(User user);
 }

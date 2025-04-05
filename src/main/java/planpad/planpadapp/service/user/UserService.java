@@ -9,6 +9,9 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.UserDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
+import planpad.planpadapp.service.memo.FolderService;
+import planpad.planpadapp.service.memo.MemoService;
+import planpad.planpadapp.service.memo.TagService;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -23,6 +26,9 @@ public class UserService {
     private final KakaoService kakaoService;
     private final NaverService naverService;
     private final GoogleService googleService;
+    private final FolderService folderService;
+    private final MemoService memoService;
+    private final TagService tagService;
 
     public String join(User user) {
         userRepository.save(user);
@@ -49,6 +55,12 @@ public class UserService {
 
     public void deleteUserByAccessToken(String accessToken) {
         userRepository.deleteByAccessToken(accessToken);
+    }
+
+    public void deleteFolderMemoTag(User user) {
+        folderService.deleteFolderByUser(user);
+        memoService.deleteMemoByUser(user);
+        tagService.deleteTagByUser(user);
     }
 
     public UserDetails loadUser(String id) {
@@ -104,18 +116,22 @@ public class UserService {
     public void socialUnLink(String socialType, String bearerToken) {
         String userToken = bearerToken.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-        String accessToken = getUserById(userId).getAccessToken();
+        User user = getUserById(userId);
+        String accessToken = user.getAccessToken();
 
         if ("kakao".equalsIgnoreCase(socialType)) {
             String socialId = kakaoService.kakaoUnLink(accessToken);
+            deleteFolderMemoTag(user);
             deleteUserById(socialId);
 
         } else if ("naver".equalsIgnoreCase(socialType)) {
             naverService.naverUnLink(accessToken);
+            deleteFolderMemoTag(user);
             deleteUserByAccessToken(accessToken);
 
         } else if ("google".equalsIgnoreCase(socialType)) {
             googleService.googleUnLink(accessToken);
+            deleteFolderMemoTag(user);
             deleteUserByAccessToken(accessToken);
         }
     }

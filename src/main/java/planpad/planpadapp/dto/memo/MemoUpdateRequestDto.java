@@ -12,7 +12,7 @@ public class MemoUpdateRequestDto {
     @Schema(description = "메모 내용", example = "memo contents")
     private String contents;
 
-    @Schema(description = "고정 여부", example = "true (필수)")
+    @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;
 
     @Schema(description = "기존 메모 순서", example = "1")

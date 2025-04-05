@@ -100,4 +100,9 @@ public class MemoService {
                 .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
         memoRepository.delete(memo);
     }
+
+    @Transactional
+    public void deleteMemoByUser(User user) {
+        memoRepository.deleteAllByUser(user);
+    }
 }

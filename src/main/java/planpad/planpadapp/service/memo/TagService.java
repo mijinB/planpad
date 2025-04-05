@@ -31,4 +31,9 @@ public class TagService {
             memo.addTag(tag);
         }
     }
+
+    @Transactional
+    public void deleteTagByUser(User user) {
+        tagRepository.deleteAllByUser(user);
+    }
 }
