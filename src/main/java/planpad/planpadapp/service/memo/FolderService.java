@@ -35,6 +35,18 @@ public class FolderService {
         return folder.getFolderId();
     }
 
+    @Transactional
+    public void saveDefaultFolder(User user) {
+        Folder defaultFolder = Folder.builder()
+                .user(user)
+                .name("내 메모")
+                .colorCode("#D3D3D3")
+                .folderOrder(1)
+                .build();
+
+        folderRepository.save(defaultFolder);
+    }
+
     public List<FoldersResponseDto> getFolders(User user) {
         List<Folder> folders = folderRepository.findAllByUser(user);
 

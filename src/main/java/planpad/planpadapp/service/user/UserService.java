@@ -107,6 +107,7 @@ public class UserService {
         } else {
             User newUser = new User(socialUser);
             join(newUser);
+            folderService.saveDefaultFolder(newUser);
 
             return newUser;
         }
