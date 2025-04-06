@@ -140,7 +140,7 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
+            User user = userService.getUserByUserToken(userToken);
             List<MemosResponseDto> memos = memoService.getMemosByFolder(folderId);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));

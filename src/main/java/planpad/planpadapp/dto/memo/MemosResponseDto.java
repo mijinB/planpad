@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.Memo;
 import planpad.planpadapp.domain.Tag;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -14,7 +15,7 @@ import java.util.Set;
 public class MemosResponseDto {
 
     @Schema(description = "태그 리스트", example = "['A', 'B', 'C']")
-    private Set<Tag> tags;
+    private List<String> tags;
 
     @Schema(description = "제목", example = "메모 제목")
     private String title;
@@ -25,10 +26,10 @@ public class MemosResponseDto {
     @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;
 
-    public MemosResponseDto(Memo memo) {
-        this.tags = memo.getTags();
-        this.title = memo.getTitle();
-        this.contents = memo.getContents();
-        this.isFixed = memo.isFixed();
+    public MemosResponseDto(List<String> tags, String title, String contents, boolean isFixed) {
+        this.tags = tags;
+        this.title = title;
+        this.contents = contents;
+        this.isFixed = isFixed;
     }
 }

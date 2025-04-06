@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.Folder;
 import planpad.planpadapp.domain.Memo;
+import planpad.planpadapp.domain.Tag;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.MemoRequestDto;
 import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
@@ -12,7 +13,9 @@ import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 import planpad.planpadapp.repository.memo.MemoRepository;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -30,6 +33,7 @@ public class MemoService {
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
         int nextOrder = memoRepository.findNextOrderByUser(user);
+        List<String> tags = data.getTags();
 
         Memo memo = Memo.builder()
                 .user(user)
@@ -39,9 +43,11 @@ public class MemoService {
                 .contents(data.getContents())
                 .isFixed(data.isFixed())
                 .build();
-
         memoRepository.save(memo);
-        tagService.saveTag(user, memo, data.getTags());
+
+        if (tags != null) {
+            tagService.saveTag(user, memo, tags);
+        }
 
         return memo.getMemoId();
     }
@@ -49,18 +55,30 @@ public class MemoService {
     public List<MemosResponseDto> getMemosByFolder(Long folderId) {
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
-        List<Memo> memos = memoRepository.findAllByFolder(folder);
 
-        return memos.stream()
-                .map(MemosResponseDto::new)
+        return memoRepository.findAllByFolder(folder).stream()
+                .map(memo -> new MemosResponseDto(
+                        memo.getTags().stream()
+                                .map(Tag::getName)
+                                .collect(Collectors.toList()),
+                        memo.getTitle(),
+                        memo.getContents(),
+                        memo.isFixed()
+                ))
                 .collect(Collectors.toList());
     }
 
     public List<MemosResponseDto> getMemos(User user) {
-        List<Memo> memos = memoRepository.findAllByUser(user);
 
-        return memos.stream()
-                .map(MemosResponseDto::new)
+        return user.getMemos().stream()
+                .map(memo -> new MemosResponseDto(
+                        memo.getTags().stream()
+                                .map(Tag::getName)
+                                .collect(Collectors.toList()),
+                        memo.getTitle(),
+                        memo.getContents(),
+                        memo.isFixed()
+                ))
                 .collect(Collectors.toList());
     }
 
