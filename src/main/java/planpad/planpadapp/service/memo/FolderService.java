@@ -3,7 +3,7 @@ package planpad.planpadapp.service.memo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import planpad.planpadapp.domain.Folder;
+import planpad.planpadapp.domain.memo.Folder;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.FolderRequestDto;
 import planpad.planpadapp.dto.memo.FoldersResponseDto;

@@ -3,11 +3,8 @@ package planpad.planpadapp.dto.memo;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.domain.Memo;
-import planpad.planpadapp.domain.Tag;
 
 import java.util.List;
-import java.util.Set;
 
 @Getter
 @NoArgsConstructor

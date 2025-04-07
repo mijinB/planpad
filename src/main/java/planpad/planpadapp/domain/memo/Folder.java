@@ -1,13 +1,13 @@
-package planpad.planpadapp.domain;
+package planpad.planpadapp.domain.memo;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import planpad.planpadapp.domain.User;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,4 +1,4 @@
-package planpad.planpadapp.domain;
+package planpad.planpadapp.domain.memo;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -7,6 +7,7 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import planpad.planpadapp.domain.User;
 
 import java.util.HashSet;
 import java.util.Set;

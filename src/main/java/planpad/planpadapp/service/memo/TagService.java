@@ -3,8 +3,8 @@ package planpad.planpadapp.service.memo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import planpad.planpadapp.domain.Memo;
-import planpad.planpadapp.domain.Tag;
+import planpad.planpadapp.domain.memo.Memo;
+import planpad.planpadapp.domain.memo.Tag;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.repository.memo.TagRepository;
 

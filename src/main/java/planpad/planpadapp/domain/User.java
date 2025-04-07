@@ -7,6 +7,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import planpad.planpadapp.domain.memo.Folder;
+import planpad.planpadapp.domain.memo.Memo;
+import planpad.planpadapp.domain.memo.Tag;
 import planpad.planpadapp.dto.user.UserDto;
 
 import java.util.ArrayList;

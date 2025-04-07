@@ -1,4 +1,4 @@
-package planpad.planpadapp.domain;
+package planpad.planpadapp.domain.memo;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import planpad.planpadapp.domain.User;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;

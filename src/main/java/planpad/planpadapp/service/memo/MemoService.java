@@ -3,9 +3,9 @@ package planpad.planpadapp.service.memo;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import planpad.planpadapp.domain.Folder;
-import planpad.planpadapp.domain.Memo;
-import planpad.planpadapp.domain.Tag;
+import planpad.planpadapp.domain.memo.Folder;
+import planpad.planpadapp.domain.memo.Memo;
+import planpad.planpadapp.domain.memo.Tag;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.MemoRequestDto;
 import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
@@ -13,9 +13,7 @@ import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 import planpad.planpadapp.repository.memo.MemoRepository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
