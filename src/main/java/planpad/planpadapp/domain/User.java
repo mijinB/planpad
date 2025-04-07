@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import planpad.planpadapp.domain.Calendar.Anniversary;
+import planpad.planpadapp.domain.Calendar.Schedule;
 import planpad.planpadapp.domain.memo.Folder;
 import planpad.planpadapp.domain.memo.Memo;
 import planpad.planpadapp.domain.memo.Tag;
@@ -52,6 +54,12 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tag> tags = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Schedule> schedules = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Anniversary> anniversaries = new ArrayList<>();
 
 
     @PrePersist
