@@ -8,7 +8,7 @@ import lombok.Getter;
 @Getter
 public class TagRequestDto {
 
-    @NotEmpty(message = "태그 이름은 필수입니다.")
+    @NotEmpty
     @Size(min = 1)
     @Schema(description = "태그 이름", example = "tag (필수)")
     private String name;

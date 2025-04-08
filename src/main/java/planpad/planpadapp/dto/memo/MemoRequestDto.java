@@ -11,11 +11,11 @@ import java.util.List;
 @Getter
 public class MemoRequestDto {
 
-    @NotNull(message = "폴더 id는 필수입니다.")
+    @NotNull
     @Schema(description = "폴더 id", example = "1 (필수)")
     private Long folderId;
 
-    @NotEmpty(message = "폴더 제목은 필수입니다.")
+    @NotEmpty
     @Size(min = 1)
     @Schema(description = "메모 제목", example = "memo (필수)")
     private String title;

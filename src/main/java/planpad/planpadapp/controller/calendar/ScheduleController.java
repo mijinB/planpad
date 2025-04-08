@@ -1,4 +1,4 @@
-package planpad.planpadapp.controller;
+package planpad.planpadapp.controller.calendar;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -22,7 +22,7 @@ import planpad.planpadapp.service.user.UserService;
 
 @RestController
 @RequiredArgsConstructor
-public class CalendarController {
+public class ScheduleController {
 
     private final UserService userService;
     private final GroupService groupService;

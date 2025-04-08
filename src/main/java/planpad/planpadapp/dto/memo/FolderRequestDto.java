@@ -8,12 +8,12 @@ import lombok.Getter;
 @Getter
 public class FolderRequestDto {
 
-    @NotEmpty(message = "폴더 이름은 필수입니다.")
+    @NotEmpty
     @Size(min = 1, max = 20)
     @Schema(description = "폴더 이름", example = "folder (필수)")
     private String name;
 
-    @NotEmpty(message = "폴더 색상 코드는 필수입니다.")
+    @NotEmpty
     @Schema(description = "폴더 색상 코드", example = "#FFFFFF (필수)")
     private String colorCode;
 }
