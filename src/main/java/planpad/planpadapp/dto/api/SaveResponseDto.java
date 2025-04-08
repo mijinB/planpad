@@ -1,4 +1,4 @@
-package planpad.planpadapp.dto.memo;
+package planpad.planpadapp.dto.api;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class FolderResponseDto {
+public class SaveResponseDto {
 
-    @Schema(description = "폴더 id", example = "1")
+    @Schema(description = "id", example = "1")
     private Long id;
 }

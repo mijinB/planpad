@@ -14,8 +14,9 @@ import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
+import planpad.planpadapp.dto.api.SaveResponseDto;
+import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.calendar.GroupRequestDto;
-import planpad.planpadapp.dto.calendar.GroupResponseDto;
 import planpad.planpadapp.service.calendar.GroupService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -29,7 +30,7 @@ public class CalendarController {
     @PostMapping("/group")
     @Operation(summary = "그룹 생성", description = "새로운 그룹을 생성합니다.")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "그룹 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupResponseDto.class))),
+            @ApiResponse(responseCode = "200", description = "그룹 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "그룹 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
     public ResponseEntity<Object> createGroup(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid GroupRequestDto request) {
@@ -39,7 +40,7 @@ public class CalendarController {
             User user = userService.getUserByUserToken(userToken);
             Long groupId = groupService.saveGroup(user, request);
 
-            return ResponseEntity.ok(new GroupResponseDto(groupId));
+            return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(groupId), "그룹 생성에 성공하였습니다."));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("그룹 생성에 실패하였습니다."));
