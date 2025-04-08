@@ -1,4 +1,4 @@
-package planpad.planpadapp.domain.Calendar;
+package planpad.planpadapp.domain.calendar;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
