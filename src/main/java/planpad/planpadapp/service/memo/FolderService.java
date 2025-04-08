@@ -48,9 +48,8 @@ public class FolderService {
     }
 
     public List<FoldersResponseDto> getFolders(User user) {
-        List<Folder> folders = folderRepository.findAllByUser(user);
 
-        return folders.stream()
+        return user.getFolders().stream()
                 .map(FoldersResponseDto::new)
                 .collect(Collectors.toList());
     }

@@ -54,7 +54,7 @@ public class MemoService {
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
 
-        return memoRepository.findAllByFolder(folder).stream()
+        return folder.getMemos().stream()
                 .map(memo -> new MemosResponseDto(
                         memo.getTags().stream()
                                 .map(Tag::getName)

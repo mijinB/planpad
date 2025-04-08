@@ -1,6 +1,7 @@
 package planpad.planpadapp.service.user;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
@@ -73,7 +74,7 @@ public class UserService {
         return new org.springframework.security.core.userdetails.User(
                 user.getEmail(),
                 "SOCIAL_LOGIN",
-                Collections.singletonList(() -> "ROLE_USER")
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))
         );
     }
 
