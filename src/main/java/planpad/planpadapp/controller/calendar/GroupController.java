@@ -8,21 +8,22 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
+import planpad.planpadapp.dto.api.calendar.GroupsResponseWrapper;
 import planpad.planpadapp.dto.calendar.GroupRequestDto;
+import planpad.planpadapp.dto.calendar.GroupsResponseDto;
 import planpad.planpadapp.service.calendar.GroupService;
 import planpad.planpadapp.service.user.UserService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
-public class ScheduleController {
+public class GroupController {
 
     private final UserService userService;
     private final GroupService groupService;
@@ -44,6 +45,26 @@ public class ScheduleController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("그룹 생성에 실패하였습니다."));
+        }
+    }
+
+    @GetMapping("/groups")
+    @Operation(summary = "그룹 리스트 조회", description = "그룹 리스트를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "그룹 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = GroupsResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "그룹 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getGroups(@RequestHeader("Authorization") String bearerToken) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByUserToken(userToken);
+            List<GroupsResponseDto> groups = groupService.getGroups(user);
+
+            return ResponseEntity.ok(new GroupsResponseWrapper(groups, "그룹 리스트 조회에 성공하였습니다"));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("그룹 리스트 조회에 실패하였습니다."));
         }
     }
 }

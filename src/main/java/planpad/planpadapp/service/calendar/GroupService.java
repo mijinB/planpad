@@ -6,7 +6,11 @@ import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.Group;
 import planpad.planpadapp.dto.calendar.GroupRequestDto;
+import planpad.planpadapp.dto.calendar.GroupsResponseDto;
 import planpad.planpadapp.repository.calendar.GroupRepository;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -24,5 +28,12 @@ public class GroupService {
 
         groupRepository.save(group);
         return group.getGroupId();
+    }
+
+    public List<GroupsResponseDto> getGroups(User user) {
+
+        return user.getGroups().stream()
+                .map(GroupsResponseDto::new)
+                .collect(Collectors.toList());
     }
 }
