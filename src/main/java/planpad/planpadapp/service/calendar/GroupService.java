@@ -43,4 +43,11 @@ public class GroupService {
 
         group.updateGroup(data.getName());
     }
+
+    public void deleteGroup(Long id) {
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
+
+        groupRepository.delete(group);
+    }
 }
