@@ -67,4 +67,19 @@ public class GroupController {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("그룹 리스트 조회에 실패하였습니다."));
         }
     }
+
+    @PatchMapping("/group/{id}")
+    public ResponseEntity<Void> updateGroup(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid GroupRequestDto request) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            userService.getUserByUserToken(userToken);
+            groupService.updateGroup(id, request);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

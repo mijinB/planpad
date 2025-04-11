@@ -41,4 +41,8 @@ public class Group {
         this.user = user;
         this.name = name;
     }
+
+    public void updateGroup(String name) {
+        this.name = name;
+    }
 }

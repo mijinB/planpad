@@ -36,4 +36,11 @@ public class GroupService {
                 .map(GroupsResponseDto::new)
                 .collect(Collectors.toList());
     }
+
+    public void updateGroup(Long id, GroupRequestDto data) {
+        Group group = groupRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
+
+        group.updateGroup(data.getName());
+    }
 }
