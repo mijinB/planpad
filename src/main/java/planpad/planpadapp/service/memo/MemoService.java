@@ -64,7 +64,9 @@ public class MemoService {
             throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
         }
 
-        return folder.getMemos().stream()
+        List<Memo> memos = memoRepository.findAllByFolder(folder);
+
+        return memos.stream()
                 .map(memo -> new MemosResponseDto(
                         memo.getMemoId(),
                         memo.getTags().stream()
@@ -78,8 +80,9 @@ public class MemoService {
     }
 
     public List<MemosResponseDto> getMemos(User user) {
+        List<Memo> memos = memoRepository.findAllByUser(user);
 
-        return user.getMemos().stream()
+        return memos.stream()
                 .map(memo -> new MemosResponseDto(
                         memo.getMemoId(),
                         memo.getTags().stream()
