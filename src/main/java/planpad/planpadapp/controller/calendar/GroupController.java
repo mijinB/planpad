@@ -80,8 +80,8 @@ public class GroupController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
-            groupService.updateGroup(id, request);
+            User user = userService.getUserByUserToken(userToken);
+            groupService.updateGroup(user, id, request);
 
             return ResponseEntity.ok().build();
 
@@ -100,8 +100,8 @@ public class GroupController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
-            groupService.deleteGroup(id);
+            User user = userService.getUserByUserToken(userToken);
+            groupService.deleteGroup(user, id);
 
             return ResponseEntity.ok().build();
 

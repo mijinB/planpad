@@ -60,7 +60,7 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            List<MemosResponseDto> memos = memoService.getMemosByFolder(folderId);
+            List<MemosResponseDto> memos = memoService.getMemosByFolder(user, folderId);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));
 
@@ -99,8 +99,8 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
-            memoService.updateMemo(id, request);
+            User user = userService.getUserByUserToken(userToken);
+            memoService.updateMemo(user, id, request);
 
             return ResponseEntity.ok().build();
 
@@ -119,8 +119,8 @@ public class MemoController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
-            memoService.deleteMemo(id);
+            User user = userService.getUserByUserToken(userToken);
+            memoService.deleteMemo(user, id);
 
             return ResponseEntity.ok().build();
 

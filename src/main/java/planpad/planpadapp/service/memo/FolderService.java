@@ -1,6 +1,7 @@
 package planpad.planpadapp.service.memo;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.memo.Folder;
@@ -56,14 +57,14 @@ public class FolderService {
                 .collect(Collectors.toList());
     }
 
-    public Optional<Folder> getFolder(Long id) {
-        return folderRepository.findById(id);
-    }
-
     @Transactional
-    public void updateFolder(Long id, FolderUpdateRequestDto data) {
+    public void updateFolder(User user, Long id, FolderUpdateRequestDto data) {
         Folder folder = folderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+        if (!folder.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        }
 
         folder.updateFolderInfo(data.getName(), data.getColorCode());
 
@@ -95,9 +96,14 @@ public class FolderService {
     }
 
     @Transactional
-    public void deleteFolder(Long id) {
+    public void deleteFolder(User user, Long id) {
         Folder folder = folderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+        if (!folder.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        }
+
         folderRepository.delete(folder);
     }
 

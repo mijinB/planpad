@@ -1,6 +1,7 @@
 package planpad.planpadapp.service.memo;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.memo.Folder;
@@ -30,6 +31,11 @@ public class MemoService {
         Long folderId = data.getFolderId();
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+        if (!folder.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        }
+
         int nextOrder = memoRepository.findNextOrderByUser(user);
         List<String> tags = data.getTags();
 
@@ -50,9 +56,13 @@ public class MemoService {
         return memo.getMemoId();
     }
 
-    public List<MemosResponseDto> getMemosByFolder(Long folderId) {
+    public List<MemosResponseDto> getMemosByFolder(User user, Long folderId) {
         Folder folder = folderRepository.findById(folderId)
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+        if (!folder.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        }
 
         return folder.getMemos().stream()
                 .map(memo -> new MemosResponseDto(
@@ -81,11 +91,15 @@ public class MemoService {
     }
 
     @Transactional
-    public void updateMemo(Long id, MemoUpdateRequestDto data) {
+    public void updateMemo(User user, Long id, MemoUpdateRequestDto data) {
         Memo memo = memoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
         Folder folder = folderRepository.findById(data.getFolderId())
                 .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+        if (!folder.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        }
 
         memo.updateMemoInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
 
@@ -113,9 +127,14 @@ public class MemoService {
     }
 
     @Transactional
-    public void deleteMemo(Long id) {
+    public void deleteMemo(User user, Long id) {
         Memo memo = memoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
+
+        if (!memo.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 메모에 접근할 수 없습니다.");
+        }
+
         memoRepository.delete(memo);
     }
 

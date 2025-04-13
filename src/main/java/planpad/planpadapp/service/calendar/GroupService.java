@@ -1,6 +1,7 @@
 package planpad.planpadapp.service.calendar;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
@@ -37,16 +38,24 @@ public class GroupService {
                 .collect(Collectors.toList());
     }
 
-    public void updateGroup(Long id, GroupRequestDto data) {
+    public void updateGroup(User user, Long id, GroupRequestDto data) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
+
+        if (!group.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 그룹에 접근할 수 없습니다.");
+        }
 
         group.updateGroup(data.getName());
     }
 
-    public void deleteGroup(Long id) {
+    public void deleteGroup(User user, Long id) {
         Group group = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
+
+        if (!group.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 그룹에 접근할 수 없습니다.");
+        }
 
         groupRepository.delete(group);
     }

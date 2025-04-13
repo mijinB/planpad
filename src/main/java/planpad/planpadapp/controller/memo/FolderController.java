@@ -81,8 +81,8 @@ public class FolderController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
-            folderService.updateFolder(id, request);
+            User user = userService.getUserByUserToken(userToken);
+            folderService.updateFolder(user, id, request);
 
             return ResponseEntity.ok().build();
 
@@ -101,8 +101,8 @@ public class FolderController {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
-            userService.getUserByUserToken(userToken);
-            folderService.deleteFolder(id);
+            User user = userService.getUserByUserToken(userToken);
+            folderService.deleteFolder(user, id);
 
             return ResponseEntity.ok().build();
 
