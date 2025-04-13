@@ -8,7 +8,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.calendar.Anniversary;
-import planpad.planpadapp.domain.calendar.Group;
+import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.Schedule;
 import planpad.planpadapp.domain.memo.Folder;
 import planpad.planpadapp.domain.memo.Memo;
@@ -57,7 +57,7 @@ public class User {
     private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Group> groups = new ArrayList<>();
+    private List<CalendarGroup> groups = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();

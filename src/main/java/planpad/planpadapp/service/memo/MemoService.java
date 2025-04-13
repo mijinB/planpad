@@ -70,6 +70,8 @@ public class MemoService {
         return memos.stream()
                 .map(memo -> new MemosResponseDto(
                         memo.getMemoId(),
+                        memo.getFolder().getFolderId(),
+                        memo.getMemoOrder(),
                         memo.getTags().stream()
                                 .map(Tag::getName)
                                 .collect(Collectors.toList()),
@@ -86,6 +88,8 @@ public class MemoService {
         return memos.stream()
                 .map(memo -> new MemosResponseDto(
                         memo.getMemoId(),
+                        memo.getFolder().getFolderId(),
+                        memo.getMemoOrder(),
                         memo.getTags().stream()
                                 .map(Tag::getName)
                                 .collect(Collectors.toList()),
@@ -120,21 +124,24 @@ public class MemoService {
     public void updateMemo(User user, Long id, MemoUpdateRequestDto data) {
         Memo memo = memoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
-        Folder folder = folderRepository.findById(data.getFolderId())
-                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
 
-        if (!folder.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        if (!memo.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 메모에 접근할 수 없습니다.");
         }
 
-        memo.updateMemoInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
+        if (data.getFolderId() != null) {
+            Folder folder = folderRepository.findById(data.getFolderId())
+                    .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+
+            memo.updateMemoInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
+        }
 
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {
-            changeMemoOrder(data.getTargetOrder(), data.getNextOrder());
+            changeMemoOrder(id, data.getTargetOrder(), data.getNextOrder());
         }
     }
 
-    public void changeMemoOrder(Integer targetOrder, Integer nextOrder) {
+    public void changeMemoOrder(Long id,Integer targetOrder, Integer nextOrder) {
 
         if (targetOrder < nextOrder) {
             List<Memo> memos = memoRepository.findByMemoOrderBetween(targetOrder + 1, nextOrder);
@@ -144,12 +151,16 @@ public class MemoService {
             }
 
         } else if (targetOrder > nextOrder) {
-            List<Memo> memos = memoRepository.findByMemoOrderBetween(targetOrder - 1, nextOrder);
+            List<Memo> memos = memoRepository.findByMemoOrderBetween(nextOrder, targetOrder - 1);
 
             for (Memo memo : memos) {
                 memo.updateMemoOrder(memo.getMemoOrder() + 1);
             }
         }
+
+        Memo targetMemo = memoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
+        targetMemo.updateMemoOrder(nextOrder);
     }
 
     @Transactional

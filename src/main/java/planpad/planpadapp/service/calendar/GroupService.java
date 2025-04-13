@@ -5,7 +5,7 @@ import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.domain.calendar.Group;
+import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.dto.calendar.GroupRequestDto;
 import planpad.planpadapp.dto.calendar.GroupsResponseDto;
 import planpad.planpadapp.repository.calendar.GroupRepository;
@@ -22,7 +22,7 @@ public class GroupService {
 
     @Transactional
     public Long saveGroup(User user, GroupRequestDto data) {
-        Group group = Group.builder()
+        CalendarGroup group = CalendarGroup.builder()
                 .user(user)
                 .name(data.getName())
                 .build();
@@ -39,7 +39,7 @@ public class GroupService {
     }
 
     public void updateGroup(User user, Long id, GroupRequestDto data) {
-        Group group = groupRepository.findById(id)
+        CalendarGroup group = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
 
         if (!group.getUser().getUserId().equals(user.getUserId())) {
@@ -50,7 +50,7 @@ public class GroupService {
     }
 
     public void deleteGroup(User user, Long id) {
-        Group group = groupRepository.findById(id)
+        CalendarGroup group = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
 
         if (!group.getUser().getUserId().equals(user.getUserId())) {

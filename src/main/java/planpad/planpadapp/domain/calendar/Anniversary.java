@@ -46,5 +46,5 @@ public class Anniversary {
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "group_id")
-    private Group group;
+    private CalendarGroup group;
 }

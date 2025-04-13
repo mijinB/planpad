@@ -22,7 +22,7 @@ public interface MemoRepository extends JpaRepository<Memo, Long> {
     @Query("SELECT COALESCE(MAX(m.memoOrder) + 1, 1) FROM Memo m WHERE m.user = :user")
     Integer findNextOrderByUser(@Param("user") User user);
 
-    List<Memo> findByMemoOrderBetween(Integer targetOrder, Integer nextOrder);
+    List<Memo> findByMemoOrderBetween(Integer minOrder, Integer maxOrder);
 
     void deleteAllByUser(User user);
 }

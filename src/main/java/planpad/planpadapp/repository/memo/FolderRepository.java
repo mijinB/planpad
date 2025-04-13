@@ -18,7 +18,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
     @Query("SELECT COALESCE(MAX(f.folderOrder) + 1, 1) FROM Folder f WHERE f.user = :user")
     Integer findNextOrderByUser(@Param("user") User user);
 
-    List<Folder> findByFolderOrderBetween(Integer startOrder, Integer endOrder);
+    List<Folder> findByFolderOrderBetween(Integer minOrder, Integer maxOrder);
 
     void deleteAllByUser(User user);
 }

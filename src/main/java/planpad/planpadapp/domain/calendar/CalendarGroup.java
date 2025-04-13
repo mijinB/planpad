@@ -15,7 +15,7 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class Group {
+public class CalendarGroup {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class Group {
     private List<Anniversary> anniversaries = new ArrayList<>();
 
     @Builder
-    public Group(User user, String name) {
+    public CalendarGroup(User user, String name) {
         this.user = user;
         this.name = name;
     }

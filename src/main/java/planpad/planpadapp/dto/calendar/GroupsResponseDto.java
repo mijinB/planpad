@@ -3,7 +3,7 @@ package planpad.planpadapp.dto.calendar;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.domain.calendar.Group;
+import planpad.planpadapp.domain.calendar.CalendarGroup;
 
 @Getter
 @NoArgsConstructor
@@ -15,7 +15,7 @@ public class GroupsResponseDto {
     @Schema(description = "그룹 이름", example = "group")
     private String name;
 
-    public GroupsResponseDto(Group group) {
+    public GroupsResponseDto(CalendarGroup group) {
         this.id = group.getGroupId();
         this.name = group.getName();
     }
