@@ -66,6 +66,7 @@ public class MemoService {
 
         return folder.getMemos().stream()
                 .map(memo -> new MemosResponseDto(
+                        memo.getMemoId(),
                         memo.getTags().stream()
                                 .map(Tag::getName)
                                 .collect(Collectors.toList()),
@@ -80,6 +81,7 @@ public class MemoService {
 
         return user.getMemos().stream()
                 .map(memo -> new MemosResponseDto(
+                        memo.getMemoId(),
                         memo.getTags().stream()
                                 .map(Tag::getName)
                                 .collect(Collectors.toList()),
