@@ -6,6 +6,9 @@ import lombok.Getter;
 @Getter
 public class MemoUpdateRequestDto {
 
+    @Schema(description = "이동할 폴더 id", example = "1")
+    private Long folderId;
+
     @Schema(description = "메모 제목", example = "memo title")
     private String title;
 

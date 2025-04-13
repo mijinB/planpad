@@ -84,8 +84,10 @@ public class MemoService {
     public void updateMemo(Long id, MemoUpdateRequestDto data) {
         Memo memo = memoRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
+        Folder folder = folderRepository.findById(data.getFolderId())
+                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
 
-        memo.updateMemoInfo(data.getTitle(), data.getContents(), data.isFixed());
+        memo.updateMemoInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
 
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {
             changeMemoOrder(data.getTargetOrder(), data.getNextOrder());

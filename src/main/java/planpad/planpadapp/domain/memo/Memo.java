@@ -80,8 +80,11 @@ public class Memo {
         this.tags.add(tag);
     }
 
-    public void updateMemoInfo(String title, String contents, boolean isFixed) {
+    public void updateMemoInfo(Folder folder, String title, String contents, boolean isFixed) {
 
+        if (folder != null) {
+            this.folder = folder;
+        }
         if (title != null) {
             this.title = title;
         }
