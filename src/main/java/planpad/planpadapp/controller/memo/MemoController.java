@@ -14,6 +14,7 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
+import planpad.planpadapp.dto.api.memo.MemoResponseWrapper;
 import planpad.planpadapp.dto.api.memo.MemosResponseWrapper;
 import planpad.planpadapp.dto.memo.*;
 import planpad.planpadapp.service.memo.MemoService;
@@ -86,6 +87,26 @@ public class MemoController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("전체 메모 리스트 조회에 실패하였습니다."));
+        }
+    }
+
+    @GetMapping("/memo/{id}")
+    @Operation(summary = "메모 조회", description = "특정 메모를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemoResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "메모 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByUserToken(userToken);
+            MemoResponseDto memo = memoService.getMemo(user, id);
+
+            return ResponseEntity.ok(new MemoResponseWrapper(memo, "메모 조회에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("메모 조회에 실패하였습니다."));
         }
     }
 

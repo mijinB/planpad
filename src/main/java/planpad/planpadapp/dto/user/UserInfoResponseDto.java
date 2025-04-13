@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-@Schema(description = "사용자 정보 조회 응답 데이터")
 public class UserInfoResponseDto {
 
     @Schema(description = "소셜 타입", example = "kakao")

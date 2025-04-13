@@ -9,6 +9,7 @@ import planpad.planpadapp.domain.memo.Memo;
 import planpad.planpadapp.domain.memo.Tag;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.memo.MemoRequestDto;
+import planpad.planpadapp.dto.memo.MemoResponseDto;
 import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
 import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
@@ -93,6 +94,26 @@ public class MemoService {
                         memo.isFixed()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    public MemoResponseDto getMemo(User user, Long id) {
+        Memo memo = memoRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("메모를 찾을 수 없습니다."));
+
+        if (!memo.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 메모에 접근할 수 없습니다.");
+        }
+
+        return new MemoResponseDto(
+                id,
+                memo.getFolder().getFolderId(),
+                memo.getTags().stream()
+                        .map(Tag::getName)
+                        .collect(Collectors.toList()),
+                memo.getTitle(),
+                memo.getContents(),
+                memo.isFixed()
+        );
     }
 
     @Transactional
