@@ -49,7 +49,9 @@ public class FolderService {
 
     public List<FoldersResponseDto> getFolders(User user) {
 
-        return user.getFolders().stream()
+        List<Folder> folders = folderRepository.findAllByUser(user);
+
+        return folders.stream()
                 .map(FoldersResponseDto::new)
                 .collect(Collectors.toList());
     }
@@ -66,11 +68,11 @@ public class FolderService {
         folder.updateFolderInfo(data.getName(), data.getColorCode());
 
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {
-            changeFolderOrder(data.getTargetOrder(), data.getNextOrder());
+            changeFolderOrder(id, data.getTargetOrder(), data.getNextOrder());
         }
     }
 
-    public void changeFolderOrder(Integer targetOrder, Integer nextOrder) {
+    public void changeFolderOrder(Long id,Integer targetOrder, Integer nextOrder) {
 
         if (targetOrder < nextOrder) {
             List<Folder> folders = folderRepository.findByFolderOrderBetween(targetOrder + 1, nextOrder);
@@ -86,6 +88,10 @@ public class FolderService {
                 folder.updateFolderOrder(folder.getFolderOrder() + 1);
             }
         }
+
+        Folder targetFolder = folderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+        targetFolder.updateFolderOrder(nextOrder);
     }
 
     @Transactional
