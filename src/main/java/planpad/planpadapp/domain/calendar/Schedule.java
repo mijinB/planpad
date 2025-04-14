@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.User;
@@ -26,6 +27,11 @@ public class Schedule {
     private User user;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "group_id", nullable = false)
+    private CalendarGroup group;
+
+    @NotNull
     @Column(name = "start_datetime")
     private LocalDateTime startDateTime;
 
@@ -43,11 +49,14 @@ public class Schedule {
     @Column(name = "color_code")
     private String colorCode;
 
-    @Column(name = "color_name")
-    private String colorName;
-
-    @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "group_id")
-    private CalendarGroup group;
+    @Builder
+    public Schedule(User user, CalendarGroup group, LocalDateTime startDateTime, LocalDateTime endDateTime, String title, String description, String colorCode) {
+        this.user = user;
+        this.group = group;
+        this.startDateTime = startDateTime;
+        this.endDateTime = endDateTime;
+        this.title = title;
+        this.description = description;
+        this.colorCode = colorCode;
+    }
 }
