@@ -12,7 +12,6 @@ import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,12 +63,7 @@ public class FolderService {
 
     @Transactional
     public void updateFolder(User user, Long id, FolderUpdateRequestDto data) {
-        Folder folder = folderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
-
-        if (!folder.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
-        }
+        Folder folder = getAuthorizedFolderOrThrow(user, id);
 
         folder.updateFolderInfo(data.getName(), data.getColorCode());
 
@@ -95,25 +89,34 @@ public class FolderService {
             }
         }
 
-        Folder targetFolder = folderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+        Folder targetFolder = getFolderOrThrow(id);
         targetFolder.updateFolderOrder(nextOrder);
     }
 
     @Transactional
     public void deleteFolder(User user, Long id) {
-        Folder folder = folderRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
-
-        if (!folder.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
-        }
-
+        Folder folder = getAuthorizedFolderOrThrow(user, id);
         folderRepository.delete(folder);
     }
 
     @Transactional
     public void deleteFolderByUser(User user) {
         folderRepository.deleteAllByUser(user);
+    }
+
+    public Folder getFolderOrThrow(Long id) {
+
+        return folderRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("폴더를 찾을 수 없습니다."));
+    }
+
+    public Folder getAuthorizedFolderOrThrow(User user, Long id) {
+        Folder folder = getFolderOrThrow(id);
+
+        if (!folder.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 폴더에 접근할 수 없습니다.");
+        }
+
+        return folder;
     }
 }

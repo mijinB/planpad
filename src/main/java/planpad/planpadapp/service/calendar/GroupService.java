@@ -45,17 +45,17 @@ public class GroupService {
     }
 
     public void updateGroup(User user, Long id, GroupRequestDto data) {
-        CalendarGroup group = groupRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
-
-        if (!group.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 그룹에 접근할 수 없습니다.");
-        }
+        CalendarGroup group = getAuthorizedGroupOrThrow(user, id);
 
         group.updateGroup(data.getName());
     }
 
     public void deleteGroup(User user, Long id) {
+        CalendarGroup group = getAuthorizedGroupOrThrow(user, id);
+        groupRepository.delete(group);
+    }
+
+    public CalendarGroup getAuthorizedGroupOrThrow(User user, Long id) {
         CalendarGroup group = groupRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
 
@@ -63,6 +63,6 @@ public class GroupService {
             throw new AccessDeniedException("해당 그룹에 접근할 수 없습니다.");
         }
 
-        groupRepository.delete(group);
+        return group;
     }
 }

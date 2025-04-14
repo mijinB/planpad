@@ -10,7 +10,6 @@ import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
 import planpad.planpadapp.dto.calendar.ScheduleRequestDto;
 import planpad.planpadapp.repository.calendar.ColorPaletteRepository;
-import planpad.planpadapp.repository.calendar.GroupRepository;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
 @Service
@@ -19,25 +18,14 @@ import planpad.planpadapp.repository.calendar.ScheduleRepository;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
-    private final GroupRepository groupRepository;
+    private final GroupService groupService;
     private final ColorPaletteRepository colorPaletteRepository;
 
     @Transactional
     public Long saveSchedule(User user, ScheduleRequestDto data) {
 
-        CalendarGroup group = groupRepository.findById(data.getGroupId())
-                .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
-
-        if (!group.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 그룹에 접근할 수 없습니다.");
-        }
-
-        ColorPalette colorPalette = colorPaletteRepository.findById(data.getPaletteId())
-                .orElseThrow(() -> new IllegalArgumentException("이 색상은 팔레트에 포함되어 있지 않습니다."));
-
-        if (!colorPalette.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("이 색상 팔레트에 접근할 수 없습니다.");
-        }
+        CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
+        ColorPalette colorPalette = getAuthorizedPaletteOrThrow(user, data.getPaletteId());
 
         Schedule schedule = Schedule.builder()
                 .user(user)
@@ -51,5 +39,16 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
 
         return schedule.getScheduleId();
+    }
+
+    public ColorPalette getAuthorizedPaletteOrThrow(User user, Long id) {
+        ColorPalette colorPalette = colorPaletteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("이 색상은 팔레트에 포함되어 있지 않습니다."));
+
+        if (!colorPalette.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("이 색상 팔레트에 접근할 수 없습니다.");
+        }
+
+        return colorPalette;
     }
 }
