@@ -15,6 +15,14 @@ import java.util.List;
 @Entity
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
+@Table(
+        uniqueConstraints = {
+                @UniqueConstraint(name = "unique_user_folder", columnNames = {"user_id", "name"})
+        },
+        indexes = {
+                @Index(name = "idx_user_folder", columnList = "user_id, name")
+        }
+)
 public class Folder {
 
     @Id

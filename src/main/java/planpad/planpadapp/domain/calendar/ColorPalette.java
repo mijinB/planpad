@@ -51,7 +51,7 @@ public class ColorPalette {
     @Builder
     public ColorPalette(User user, String colorCode, String colorName) {
         this.user = user;
-        this.colorCode = colorCode;
+        this.colorCode = colorCode.toUpperCase();
         this.colorName = colorName;
     }
 }

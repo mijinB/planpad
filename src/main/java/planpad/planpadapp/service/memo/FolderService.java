@@ -24,6 +24,12 @@ public class FolderService {
 
     @Transactional
     public Long saveFolder(User user, FolderRequestDto data) {
+
+        boolean exists = folderRepository.existsByUserAndName(user, data.getName());
+        if (exists) {
+            throw new IllegalArgumentException("이미 같은 이름의 폴더가 존재합니다.");
+        }
+
         Integer nextOrder = folderRepository.findNextOrderByUser(user);
         Folder folder = Folder.builder()
                 .user(user)
@@ -49,7 +55,6 @@ public class FolderService {
     }
 
     public List<FoldersResponseDto> getFolders(User user) {
-
         List<Folder> folders = folderRepository.findAllByUser(user);
 
         return folders.stream()

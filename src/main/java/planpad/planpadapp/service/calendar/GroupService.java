@@ -22,6 +22,12 @@ public class GroupService {
 
     @Transactional
     public Long saveGroup(User user, GroupRequestDto data) {
+
+        boolean exists = groupRepository.existsByUserAndName(user, data.getName());
+        if (exists) {
+            throw new IllegalArgumentException("이미 같은 이름의 그룹이 존재합니다.");
+        }
+
         CalendarGroup group = CalendarGroup.builder()
                 .user(user)
                 .name(data.getName())

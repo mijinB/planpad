@@ -20,5 +20,7 @@ public interface FolderRepository extends JpaRepository<Folder, Long> {
 
     List<Folder> findByFolderOrderBetween(Integer minOrder, Integer maxOrder);
 
+    boolean existsByUserAndName(User user, String name);
+
     void deleteAllByUser(User user);
 }

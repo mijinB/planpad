@@ -24,6 +24,7 @@ public class ScheduleService {
 
     @Transactional
     public Long saveSchedule(User user, ScheduleRequestDto data) {
+
         CalendarGroup group = groupRepository.findById(data.getGroupId())
                 .orElseThrow(() -> new IllegalArgumentException("그룹을 찾을 수 없습니다."));
 
