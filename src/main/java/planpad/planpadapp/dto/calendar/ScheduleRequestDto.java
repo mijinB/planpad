@@ -14,6 +14,10 @@ public class ScheduleRequestDto {
     @Schema(description = "그룹 id", example = "1 (필수)")
     private Long groupId;
 
+    @NotEmpty
+    @Schema(description = "색상 팔레트 id", example = "#000000 (필수)")
+    private Long paletteId;
+
     @NotNull
     @Schema(description = "일정 시작 일시", example = "2025-04-14T08:10:25 (필수)")
     private LocalDateTime startDateTime;
@@ -28,8 +32,4 @@ public class ScheduleRequestDto {
 
     @Schema(description = "일정 설명", example = "동물병원 업무시간 : AM09:00 ~ PM06:00")
     private String description;
-
-    @NotEmpty
-    @Schema(description = "색상 코드", example = "#000000 (필수)")
-    private String colorCode;
 }

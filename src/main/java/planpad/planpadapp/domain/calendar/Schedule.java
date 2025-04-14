@@ -32,6 +32,11 @@ public class Schedule {
     private CalendarGroup group;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "palette_id", nullable = false)
+    private ColorPalette colorPalette;
+
+    @NotNull
     @Column(name = "start_datetime")
     private LocalDateTime startDateTime;
 
@@ -45,18 +50,14 @@ public class Schedule {
     @Column(columnDefinition = "TEXT")
     private String description;
 
-    @NotEmpty
-    @Column(name = "color_code")
-    private String colorCode;
-
     @Builder
-    public Schedule(User user, CalendarGroup group, LocalDateTime startDateTime, LocalDateTime endDateTime, String title, String description, String colorCode) {
+    public Schedule(User user, CalendarGroup group, ColorPalette colorPalette, LocalDateTime startDateTime, LocalDateTime endDateTime, String title, String description) {
         this.user = user;
         this.group = group;
+        this.colorPalette = colorPalette;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
         this.title = title;
         this.description = description;
-        this.colorCode = colorCode;
     }
 }

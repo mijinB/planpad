@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.calendar.Anniversary;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
+import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
 import planpad.planpadapp.domain.memo.Folder;
 import planpad.planpadapp.domain.memo.Memo;
@@ -58,6 +59,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<CalendarGroup> groups = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<ColorPalette> colorPalettes = new ArrayList<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();

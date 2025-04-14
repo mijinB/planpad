@@ -31,6 +31,11 @@ public class Anniversary {
     private CalendarGroup group;
 
     @NotNull
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "palette_id", nullable = false)
+    private ColorPalette colorPalette;
+
+    @NotNull
     @Column(name = "start_date")
     private LocalDate startDate;
 
@@ -40,8 +45,4 @@ public class Anniversary {
 
     @NotEmpty
     private String title;
-
-    @NotEmpty
-    @Column(name = "color_code")
-    private String colorCode;
 }
