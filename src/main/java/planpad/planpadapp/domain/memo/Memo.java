@@ -13,6 +13,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import planpad.planpadapp.domain.User;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -99,5 +100,16 @@ public class Memo {
         if (memoOrder != null) {
             this.memoOrder = memoOrder;
         }
+    }
+
+    public void clearTags() {
+        for (Tag tag : new ArrayList<>(tags)) {
+            removeTag(tag);
+        }
+    }
+
+    public void removeTag(Tag tag) {
+        this.tags.remove(tag);
+        tag.getMemos().remove(this);
     }
 }

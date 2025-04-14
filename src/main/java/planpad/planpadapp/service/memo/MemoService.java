@@ -14,7 +14,9 @@ import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
 import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.FolderRepository;
 import planpad.planpadapp.repository.memo.MemoRepository;
+import planpad.planpadapp.repository.memo.TagRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,6 +28,7 @@ public class MemoService {
     private final MemoRepository memoRepository;
     private final FolderRepository folderRepository;
     private final TagService tagService;
+    private final TagRepository tagRepository;
 
     @Transactional
     public Long saveMemo(User user, MemoRequestDto data) {
@@ -38,7 +41,6 @@ public class MemoService {
         }
 
         int nextOrder = memoRepository.findNextOrderByUser(user);
-        List<String> tags = data.getTags();
 
         Memo memo = Memo.builder()
                 .user(user)
@@ -50,8 +52,8 @@ public class MemoService {
                 .build();
         memoRepository.save(memo);
 
-        if (tags != null) {
-            tagService.saveTag(user, memo, tags);
+        if (data.getTags() != null) {
+            tagService.saveTag(user, memo, data.getTags());
         }
 
         return memo.getMemoId();
@@ -136,9 +138,26 @@ public class MemoService {
             memo.updateMemoInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
         }
 
+        if (data.getTags() != null) {
+            updateTags(user, memo, data.getTags());
+        }
+
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {
             changeMemoOrder(id, data.getTargetOrder(), data.getNextOrder());
         }
+    }
+
+    private void updateTags(User user, Memo memo, List<String> tags) {
+        List<Tag> oldTags = new ArrayList<>(memo.getTags());
+        memo.clearTags();
+
+        for (Tag oldTag : oldTags) {
+            if (oldTag.getMemos().isEmpty()) {
+                tagRepository.delete(oldTag);
+            }
+        }
+
+        tagService.saveTag(user, memo, tags);
     }
 
     public void changeMemoOrder(Long id,Integer targetOrder, Integer nextOrder) {
