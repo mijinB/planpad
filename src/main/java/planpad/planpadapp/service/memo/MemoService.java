@@ -176,6 +176,28 @@ public class MemoService {
         }
     }
 
+    @Transactional
+    public void deleteMemos(User user, List<Long> ids) {
+        List<Memo> memos = memoRepository.findAllById(ids);
+
+        for (Long id : ids) {
+            getAuthorizedMemoOrThrow(user, id);
+        }
+
+        for (Memo memo : memos) {
+            memo.clearTags();
+
+            Set<Tag> tags = new HashSet<>(memo.getTags());
+            for (Tag tag : tags) {
+                if (tag.getMemos().isEmpty()) {
+                    tagRepository.delete(tag);
+                }
+            }
+        }
+
+        memoRepository.deleteAll(memos);
+    }
+
     public Memo getMemoOrThrow(Long id) {
 
         return memoRepository.findById(id)
