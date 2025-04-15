@@ -27,8 +27,8 @@ public class ColorPalette {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "palette_id")
-    private Long paletteId;
+    @Column(name = "color_id")
+    private Long colorId;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
