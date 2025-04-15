@@ -64,7 +64,6 @@ public class FolderService {
     @Transactional
     public void updateFolder(User user, Long id, FolderUpdateRequestDto data) {
         Folder folder = getAuthorizedFolderOrThrow(user, id);
-
         folder.updateFolderInfo(data.getName(), data.getColorCode());
 
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {

@@ -54,4 +54,14 @@ public class ColorPalette {
         this.colorCode = colorCode.toUpperCase();
         this.colorName = colorName;
     }
+
+    public void updateColor(String colorCode, String colorName) {
+
+        if (colorCode != null) {
+            this.colorCode = colorCode;
+        }
+        if (colorName != null) {
+            this.colorName = colorName;
+        }
+    }
 }

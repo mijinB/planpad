@@ -44,12 +44,13 @@ public class GroupService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
     public void updateGroup(User user, Long id, GroupRequestDto data) {
         CalendarGroup group = getAuthorizedGroupOrThrow(user, id);
-
         group.updateGroup(data.getName());
     }
 
+    @Transactional
     public void deleteGroup(User user, Long id) {
         CalendarGroup group = getAuthorizedGroupOrThrow(user, id);
         groupRepository.delete(group);

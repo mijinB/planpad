@@ -1,11 +1,13 @@
 package planpad.planpadapp.service.calendar;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.dto.calendar.ColorPaletteRequestDto;
+import planpad.planpadapp.dto.calendar.ColorPaletteUpdateRequestDto;
 import planpad.planpadapp.dto.calendar.ColorPalettesResponseDto;
 import planpad.planpadapp.repository.calendar.ColorPaletteRepository;
 
@@ -46,5 +48,22 @@ public class ColorPaletteService {
                         palette.getColorName()
                 ))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void updateColor(User user, Long id, ColorPaletteUpdateRequestDto data) {
+        ColorPalette colorPalette = getAuthorizedPaletteOrThrow(user, id);
+        colorPalette.updateColor(data.getColorCode(), data.getColorName());
+    }
+
+    public ColorPalette getAuthorizedPaletteOrThrow(User user, Long id) {
+        ColorPalette colorPalette = colorPaletteRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("색상 팔레트를 찾을 수 없습니다."));
+
+        if (!colorPalette.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 색상 팔레트에 접근할 수 없습니다.");
+        }
+
+        return colorPalette;
     }
 }
