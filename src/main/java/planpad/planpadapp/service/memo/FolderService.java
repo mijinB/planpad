@@ -98,11 +98,6 @@ public class FolderService {
         folderRepository.delete(folder);
     }
 
-    @Transactional
-    public void deleteFolderByUser(User user) {
-        folderRepository.deleteAllByUser(user);
-    }
-
     public Folder getFolderOrThrow(Long id) {
 
         return folderRepository.findById(id)

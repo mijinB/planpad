@@ -17,11 +17,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findByEmail(String email);
 
-    @Modifying
-    @Query("DELETE FROM User u WHERE u.socialId = :socialId")
-    void deleteBySocialId(@Param("socialId") String socialId);
+    void deleteBySocialId(String socialId);
 
-    @Modifying
-    @Query("DELETE FROM User u WHERE u.accessToken = :accessToken")
-    void deleteByAccessToken(@Param("accessToken") String accessToken);
+    void deleteByAccessToken(String accessToken);
 }

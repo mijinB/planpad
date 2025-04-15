@@ -37,7 +37,7 @@ public class User {
     private String socialType;
 
     @NotEmpty
-    @Column(name = "access_token", nullable = false)
+    @Column(name = "access_token", unique = true, nullable = false)
     private String accessToken;
 
     @NotEmpty

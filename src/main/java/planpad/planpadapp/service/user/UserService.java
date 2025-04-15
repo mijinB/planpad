@@ -11,8 +11,6 @@ import planpad.planpadapp.dto.user.UserDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
 import planpad.planpadapp.service.memo.FolderService;
-import planpad.planpadapp.service.memo.MemoService;
-import planpad.planpadapp.service.memo.TagService;
 
 import java.util.Collections;
 import java.util.Optional;
@@ -28,40 +26,15 @@ public class UserService {
     private final NaverService naverService;
     private final GoogleService googleService;
     private final FolderService folderService;
-    private final MemoService memoService;
-    private final TagService tagService;
 
     public String join(User user) {
         userRepository.save(user);
         return user.getUserId();
     }
 
-    public User getUserById(String id) {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("getUserById 실패 userId = " + id));
-    }
-
-    public Optional<User> getUserByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
     public User getUserByUserToken(String userToken) {
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
         return getUserById(userId);
-    }
-
-    public void deleteUserById(String socialId) {
-        userRepository.deleteBySocialId(socialId);
-    }
-
-    public void deleteUserByAccessToken(String accessToken) {
-        userRepository.deleteByAccessToken(accessToken);
-    }
-
-    public void deleteFolderMemoTag(User user) {
-        folderService.deleteFolderByUser(user);
-        memoService.deleteMemoByUser(user);
-        tagService.deleteTagByUser(user);
     }
 
     public UserDetails loadUser(String id) {
@@ -97,7 +70,7 @@ public class UserService {
         }
 
         String userEmail = socialUser.getEmail();
-        Optional<User> existingUserOptional = getUserByEmail(userEmail);
+        Optional<User> existingUserOptional = userRepository.findByEmail(userEmail);
 
         if (existingUserOptional.isPresent()) {
             User existingUser = existingUserOptional.get();
@@ -123,18 +96,20 @@ public class UserService {
 
         if ("kakao".equalsIgnoreCase(socialType)) {
             String socialId = kakaoService.kakaoUnLink(accessToken);
-            deleteFolderMemoTag(user);
-            deleteUserById(socialId);
+            userRepository.deleteBySocialId(socialId);
 
         } else if ("naver".equalsIgnoreCase(socialType)) {
             naverService.naverUnLink(accessToken);
-            deleteFolderMemoTag(user);
-            deleteUserByAccessToken(accessToken);
+            userRepository.deleteByAccessToken(accessToken);
 
         } else if ("google".equalsIgnoreCase(socialType)) {
             googleService.googleUnLink(accessToken);
-            deleteFolderMemoTag(user);
-            deleteUserByAccessToken(accessToken);
+            userRepository.deleteByAccessToken(accessToken);
         }
+    }
+
+    public User getUserById(String id) {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UsernameNotFoundException("getUserById 실패 userId = " + id));
     }
 }

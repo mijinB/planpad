@@ -16,7 +16,9 @@ import planpad.planpadapp.repository.memo.MemoRepository;
 import planpad.planpadapp.repository.memo.TagRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -161,12 +163,17 @@ public class MemoService {
     @Transactional
     public void deleteMemo(User user, Long id) {
         Memo memo = getAuthorizedMemoOrThrow(user, id);
-        memoRepository.delete(memo);
-    }
 
-    @Transactional
-    public void deleteMemoByUser(User user) {
-        memoRepository.deleteAllByUser(user);
+        Set<Tag> tags = new HashSet<>(memo.getTags());
+        memo.clearTags();
+
+        memoRepository.delete(memo);
+
+        for (Tag tag : tags) {
+            if (tag.getMemos().isEmpty()) {
+                tagRepository.delete(tag);
+            }
+        }
     }
 
     public Memo getMemoOrThrow(Long id) {
