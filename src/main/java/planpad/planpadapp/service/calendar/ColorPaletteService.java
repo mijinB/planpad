@@ -56,6 +56,12 @@ public class ColorPaletteService {
         colorPalette.updateColor(data.getColorCode(), data.getColorName());
     }
 
+    @Transactional
+    public void deleteColor(User user, Long id) {
+        ColorPalette colorPalette = getAuthorizedPaletteOrThrow(user, id);
+        colorPaletteRepository.delete(colorPalette);
+    }
+
     public ColorPalette getAuthorizedPaletteOrThrow(User user, Long id) {
         ColorPalette colorPalette = colorPaletteRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("색상 팔레트를 찾을 수 없습니다."));

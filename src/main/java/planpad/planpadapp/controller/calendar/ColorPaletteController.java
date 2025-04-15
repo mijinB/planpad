@@ -90,4 +90,24 @@ public class ColorPaletteController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/color-palette/{id}")
+    @Operation(summary = "색상 삭제", description = "색상 팔레트의 색상을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "색상 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "색상 삭제 실패")
+    })
+    public ResponseEntity<Void> deleteColor(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByUserToken(userToken);
+            colorPaletteService.deleteColor(user, id);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
