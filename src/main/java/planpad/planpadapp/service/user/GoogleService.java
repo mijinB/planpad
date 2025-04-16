@@ -41,7 +41,7 @@ public class GoogleService {
                 .block();
 
         if (response == null || !response.containsKey("access_token")) {
-            throw new RuntimeException("googleGetAccessToken 실패");
+            throw new RuntimeException("googleGetAccessToken API 호출을 실패하였습니다.");
         }
 
         return response.get("access_token");
@@ -58,7 +58,7 @@ public class GoogleService {
                 .block();
 
         if (response == null) {
-            throw new RuntimeException("googleGetUserInfo 실패");
+            throw new RuntimeException("googleGetUserInfo API 호출을 실패하였습니다.");
         }
 
         String id = response.get("id");

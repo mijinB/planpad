@@ -42,7 +42,7 @@ public class NaverService {
                 .block();
 
         if (response == null || !response.containsKey("access_token")) {
-            throw new RuntimeException("naverGetAccessToken 실패");
+            throw new RuntimeException("naverGetAccessToken API 호출을 실패하였습니다.");
         }
 
         return response.get("access_token");
@@ -66,7 +66,7 @@ public class NaverService {
             name = URLDecoder.decode(rootNode.path("response").path("name").asText(), "UTF-8");
 
         } catch (JsonProcessingException | UnsupportedEncodingException e) {
-            throw new RuntimeException("naverGetUserInfo 처리 중 오류 발생: " + e.getMessage(), e);
+            throw new RuntimeException("naverGetUserInfo 중 name을 가져오는데 실패하였습니다.");
         }
 
         String id = rootNode.path("response").path("id").asText();
@@ -90,7 +90,7 @@ public class NaverService {
                 .block();
 
         if (response == null || !response.containsKey("access_token")) {
-            throw new RuntimeException("naverUnLink 실패");
+            throw new RuntimeException("naverUnLink API 호출을 실패하였습니다.");
         }
 
         return response.get("access_token");

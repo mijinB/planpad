@@ -21,6 +21,8 @@ import planpad.planpadapp.dto.user.UserInfoResponseDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.service.user.UserService;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @Tag(name = "User API", description = "사용자 관리 API")
@@ -40,10 +42,6 @@ public class UserController {
         try {
             String socialType = request.getSocialType();
             String code = request.getCode();
-
-            if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType) && !"google".equalsIgnoreCase(socialType)) {
-                throw new IllegalArgumentException("지원하지 않는 소셜 타입");
-            }
 
             User user = userService.socialLoginOrJoin(socialType, code);
             String userToken = jwtTokenProvider.createToken(user.getUserId());
@@ -65,13 +63,8 @@ public class UserController {
 
         try {
             String socialType = request.getSocialType();
-
-            if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType) && !"google".equalsIgnoreCase(socialType)) {
-                throw new IllegalArgumentException("지원하지 않는 소셜 타입");
-            }
-
             User user = userService.getUserByBearerToken(bearerToken);
-            userService.socialUnLink(user, bearerToken);
+            userService.socialUnLink(user, socialType);
 
             return ResponseEntity.ok().build();
 

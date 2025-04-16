@@ -41,10 +41,10 @@ public class KakaoService {
                         "&code=" + code)
                 .retrieve()
                 .bodyToMono(new ParameterizedTypeReference<Map<String, String>>() {})
-                .block();       // 동기적으로 응답 값을 반환
+                .block();
 
         if (response == null || !response.containsKey("access_token")) {
-            throw new RuntimeException("kakaoGetAccessToken 실패");
+            throw new RuntimeException("kakaoGetAccessToken API 호출을 실패하였습니다.");
         }
 
         return response.get("access_token");
@@ -64,7 +64,7 @@ public class KakaoService {
         try {
             rootNode = objectMapper.readTree(response);
         } catch (JsonProcessingException e) {
-            throw new RuntimeException("kakaoGetUserInfo 에서 JSON 파싱 실패 = ", e);
+            throw new RuntimeException("kakaoGetUserInfo API 처리 중 JSON 파싱을 실패하였습니다.");
         }
 
         String id = rootNode.path("id").toString();
@@ -86,7 +86,7 @@ public class KakaoService {
                 .block();
 
         if (response == null || !response.containsKey("id")) {
-            throw new RuntimeException("kakaoUnLink 실패");
+            throw new RuntimeException("kakaoUnLink API 호출을 실패하였습니다.");
         }
 
         return response.get("id").toString();
