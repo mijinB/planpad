@@ -38,8 +38,7 @@ public class ScheduleController {
     public ResponseEntity<Object> createSchedule(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid ScheduleRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             Long scheduleId = scheduleService.createSchedule(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(scheduleId), "일정 생성에 성공하였습니다."));

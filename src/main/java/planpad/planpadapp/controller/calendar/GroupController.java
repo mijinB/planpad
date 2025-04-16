@@ -39,8 +39,7 @@ public class GroupController {
     public ResponseEntity<Object> createGroup(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid GroupRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             Long groupId = groupService.createGroup(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(groupId), "그룹 생성에 성공하였습니다."));
@@ -59,8 +58,7 @@ public class GroupController {
     public ResponseEntity<Object> getGroups(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             List<GroupsResponseDto> groups = groupService.getGroups(user);
 
             return ResponseEntity.ok(new GroupsResponseWrapper(groups, "그룹 리스트 조회에 성공하였습니다"));
@@ -79,8 +77,7 @@ public class GroupController {
     public ResponseEntity<Void> updateGroup(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid GroupRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             groupService.updateGroup(user, id, request);
 
             return ResponseEntity.ok().build();
@@ -99,8 +96,7 @@ public class GroupController {
     public ResponseEntity<Void> deleteGroup(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             groupService.deleteGroup(user, id);
 
             return ResponseEntity.ok().build();

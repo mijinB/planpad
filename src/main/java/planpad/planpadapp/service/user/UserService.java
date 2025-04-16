@@ -32,8 +32,10 @@ public class UserService {
         return user.getUserId();
     }
 
-    public User getUserByUserToken(String userToken) {
+    public User getUserByBearerToken(String bearerToken) {
+        String userToken = bearerToken.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
+
         return getUserOrThrow(userId);
     }
 
@@ -88,10 +90,7 @@ public class UserService {
     }
 
     @Transactional
-    public void socialUnLink(String socialType, String bearerToken) {
-        String userToken = bearerToken.replace("Bearer ", "");
-        String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-        User user = getUserOrThrow(userId);
+    public void socialUnLink(User user, String socialType) {
         String accessToken = user.getAccessToken();
 
         if ("kakao".equalsIgnoreCase(socialType)) {

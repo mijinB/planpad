@@ -37,10 +37,10 @@ public class UserController {
     })
     public ResponseEntity<Object> socialLogin(@RequestBody @Valid LoginRequestDto request) {
 
-        String socialType = request.getSocialType();
-        String code = request.getCode();
-
         try {
+            String socialType = request.getSocialType();
+            String code = request.getCode();
+
             if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType) && !"google".equalsIgnoreCase(socialType)) {
                 throw new IllegalArgumentException("지원하지 않는 소셜 타입");
             }
@@ -61,16 +61,17 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "소셜 로그인 연결 끊기 성공"),
             @ApiResponse(responseCode = "400", description = "소셜 로그인 연결 끊기 실패")
     })
-    public ResponseEntity<Void> socialUnLink(@RequestBody @Valid SocialUnLinkRequestDto request, @RequestHeader("Authorization") String bearerToken) {
-
-        String socialType = request.getSocialType();
+    public ResponseEntity<Void> socialUnLink(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid SocialUnLinkRequestDto request) {
 
         try {
+            String socialType = request.getSocialType();
+
             if (!"kakao".equalsIgnoreCase(socialType) && !"naver".equalsIgnoreCase(socialType) && !"google".equalsIgnoreCase(socialType)) {
                 throw new IllegalArgumentException("지원하지 않는 소셜 타입");
             }
 
-            userService.socialUnLink(socialType, bearerToken);
+            User user = userService.getUserByBearerToken(bearerToken);
+            userService.socialUnLink(user, bearerToken);
 
             return ResponseEntity.ok().build();
 
@@ -88,10 +89,10 @@ public class UserController {
     public ResponseEntity<Object> getUserInfo(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
+            UserInfoResponseDto userInfo = new UserInfoResponseDto(user.getSocialType(), user.getName(), user.getEmail(), user.getAvatar());
 
-            return ResponseEntity.ok(new UserResponseWrapper(new UserInfoResponseDto(user.getSocialType(), user.getName(), user.getEmail(), user.getAvatar()), "사용자 정보 조회를 성공하였습니다."));
+            return ResponseEntity.ok(new UserResponseWrapper(userInfo, "사용자 정보 조회를 성공하였습니다."));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("사용자 정보 조회를 실패하였습니다."));

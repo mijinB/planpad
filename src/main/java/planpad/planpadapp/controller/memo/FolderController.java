@@ -40,8 +40,7 @@ public class FolderController {
     public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             Long folderId = folderService.createFolder(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(folderId), "폴더 생성에 성공하였습니다."));
@@ -60,8 +59,7 @@ public class FolderController {
     public ResponseEntity<Object> getFolders(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             List<FoldersResponseDto> folders = folderService.getFolders(user);
 
             return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
@@ -80,8 +78,7 @@ public class FolderController {
     public ResponseEntity<Void> updateFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid FolderUpdateRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             folderService.updateFolder(user, id, request);
 
             return ResponseEntity.ok().build();
@@ -100,8 +97,7 @@ public class FolderController {
     public ResponseEntity<Void> deleteFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             folderService.deleteFolder(user, id);
 
             return ResponseEntity.ok().build();

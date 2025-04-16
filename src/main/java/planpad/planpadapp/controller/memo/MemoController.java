@@ -39,8 +39,7 @@ public class MemoController {
     public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             Long memoId = memoService.createMemo(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(memoId), "메모 생성에 성공하였습니다."));
@@ -59,8 +58,7 @@ public class MemoController {
     public ResponseEntity<Object> getMemosInFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("folderId") Long folderId) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             List<MemosResponseDto> memos = memoService.getMemosInFolder(user, folderId);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));
@@ -79,8 +77,7 @@ public class MemoController {
     public ResponseEntity<Object> getMemos(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             List<MemosResponseDto> memos = memoService.getMemosByUser(user);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "전체 메모 리스트 조회에 성공하였습니다."));
@@ -99,8 +96,7 @@ public class MemoController {
     public ResponseEntity<Object> getMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             MemoResponseDto memo = memoService.getMemo(user, id);
 
             return ResponseEntity.ok(new MemoResponseWrapper(memo, "메모 조회에 성공하였습니다."));
@@ -119,8 +115,7 @@ public class MemoController {
     public ResponseEntity<Void> updateMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid MemoUpdateRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             memoService.updateMemo(user, id, request);
 
             return ResponseEntity.ok().build();
@@ -139,8 +134,7 @@ public class MemoController {
     public ResponseEntity<Void> moveMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosMoveRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             memoService.moveMemosToFolder(user, request.getFolderId(), request.getMemoIds());
 
             return ResponseEntity.ok().build();
@@ -159,8 +153,7 @@ public class MemoController {
     public ResponseEntity<Void> deleteMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             memoService.deleteMemo(user, id);
 
             return ResponseEntity.ok().build();
@@ -179,8 +172,7 @@ public class MemoController {
     public ResponseEntity<Void> deleteMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosDeleteRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             memoService.deleteMemos(user, request.getIds());
 
             return ResponseEntity.ok().build();

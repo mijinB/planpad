@@ -40,8 +40,7 @@ public class ColorPaletteController {
     public ResponseEntity<Object> createColor(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid ColorPaletteRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             Long colorId = colorPaletteService.createColor(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(colorId), "색상 추가에 성공하였습니다."));
@@ -60,8 +59,7 @@ public class ColorPaletteController {
     public ResponseEntity<Object> getColors(@RequestHeader("Authorization") String bearerToken) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             List<ColorPalettesResponseDto> colors = colorPaletteService.getColors(user);
 
             return ResponseEntity.ok(new ColorPalettesResponseWrapper(colors, "색상 리스트 조회에 성공하였습니다."));
@@ -80,8 +78,7 @@ public class ColorPaletteController {
     public ResponseEntity<Void> updateColor(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid ColorPaletteUpdateRequestDto request) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             colorPaletteService.updateColor(user, id, request);
 
             return ResponseEntity.ok().build();
@@ -100,8 +97,7 @@ public class ColorPaletteController {
     public ResponseEntity<Void> deleteColor(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
 
         try {
-            String userToken = bearerToken.replace("Bearer ", "");
-            User user = userService.getUserByUserToken(userToken);
+            User user = userService.getUserByBearerToken(bearerToken);
             colorPaletteService.deleteColor(user, id);
 
             return ResponseEntity.ok().build();
