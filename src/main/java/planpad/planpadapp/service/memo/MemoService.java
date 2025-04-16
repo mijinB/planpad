@@ -161,6 +161,19 @@ public class MemoService {
     }
 
     @Transactional
+    public void moveMemos(User user, Long folderId, List<Long> memoIds) {
+        Folder folder = folderService.getAuthorizedFolderOrThrow(user, folderId);
+        List<Memo> memos = memoRepository.findAllById(memoIds);
+
+        for (Memo memo : memos) {
+            if (!memo.getUser().getUserId().equals(user.getUserId())) {
+                throw new AccessDeniedException("권한이 없는 메모가 포함되어 있습니다.");
+            }
+            memo.moveMemo(folder);
+        }
+    }
+
+    @Transactional
     public void deleteMemo(User user, Long id) {
         Memo memo = getAuthorizedMemoOrThrow(user, id);
 
@@ -180,11 +193,11 @@ public class MemoService {
     public void deleteMemos(User user, List<Long> ids) {
         List<Memo> memos = memoRepository.findAllById(ids);
 
-        for (Long id : ids) {
-            getAuthorizedMemoOrThrow(user, id);
-        }
-
         for (Memo memo : memos) {
+            if (!memo.getUser().getUserId().equals(user.getUserId())) {
+                throw new AccessDeniedException("권한이 없는 메모가 포함되어 있습니다.");
+            }
+
             memo.clearTags();
 
             Set<Tag> tags = new HashSet<>(memo.getTags());

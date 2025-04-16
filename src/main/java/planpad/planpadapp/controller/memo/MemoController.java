@@ -130,6 +130,26 @@ public class MemoController {
         }
     }
 
+    @PatchMapping("/memos")
+    @Operation(summary = "메모 일괄 이동", description = "선택한 메모를 일괄 이동합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "메모 일괄 이동 성공"),
+            @ApiResponse(responseCode = "400", description = "메모 일괄 이동 실패")
+    })
+    public ResponseEntity<Void> moveMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosMoveRequestDto request) {
+
+        try {
+            String userToken = bearerToken.replace("Bearer ", "");
+            User user = userService.getUserByUserToken(userToken);
+            memoService.moveMemos(user, request.getFolderId(), request.getMemoIds());
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
+
     @DeleteMapping("/memo/{id}")
     @Operation(summary = "메모 삭제", description = "메모를 삭제합니다.")
     @ApiResponses(value = {
@@ -156,7 +176,7 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 일괄 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "메모 일괄 삭제 실패")
     })
-    public ResponseEntity<Void> deleteMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosDeleteDto request) {
+    public ResponseEntity<Void> deleteMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosDeleteRequestDto request) {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");

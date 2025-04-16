@@ -102,6 +102,10 @@ public class Memo {
         }
     }
 
+    public void moveMemo(Folder folder) {
+        this.folder = folder;
+    }
+
     public void clearTags() {
         for (Tag tag : new ArrayList<>(tags)) {
             removeTag(tag);
