@@ -41,7 +41,7 @@ public class GroupController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            Long groupId = groupService.saveGroup(user, request);
+            Long groupId = groupService.createGroup(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(groupId), "그룹 생성에 성공하였습니다."));
 

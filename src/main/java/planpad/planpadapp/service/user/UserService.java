@@ -34,11 +34,11 @@ public class UserService {
 
     public User getUserByUserToken(String userToken) {
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-        return getUserById(userId);
+        return getUserOrThrow(userId);
     }
 
     public UserDetails loadUser(String id) {
-        User user = getUserById(id);
+        User user = getUserOrThrow(id);
 
         if (user == null) {
             throw new UsernameNotFoundException("회원을 찾을 수 없습니다. id = " + id);
@@ -81,7 +81,7 @@ public class UserService {
         } else {
             User newUser = new User(socialUser);
             join(newUser);
-            folderService.saveDefaultFolder(newUser);
+            folderService.createDefaultFolder(newUser);
 
             return newUser;
         }
@@ -91,7 +91,7 @@ public class UserService {
     public void socialUnLink(String socialType, String bearerToken) {
         String userToken = bearerToken.replace("Bearer ", "");
         String userId = jwtTokenProvider.getUserIdFromToken(userToken);
-        User user = getUserById(userId);
+        User user = getUserOrThrow(userId);
         String accessToken = user.getAccessToken();
 
         if ("kakao".equalsIgnoreCase(socialType)) {
@@ -108,8 +108,9 @@ public class UserService {
         }
     }
 
-    public User getUserById(String id) {
+    public User getUserOrThrow(String id) {
+
         return userRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("getUserById 실패 userId = " + id));
+                .orElseThrow(() -> new UsernameNotFoundException("사용자를 찾을 수 없습니다."));
     }
 }

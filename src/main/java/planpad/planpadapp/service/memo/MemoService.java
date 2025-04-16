@@ -32,7 +32,7 @@ public class MemoService {
     private final TagRepository tagRepository;
 
     @Transactional
-    public Long saveMemo(User user, MemoRequestDto data) {
+    public Long createMemo(User user, MemoRequestDto data) {
         Long folderId = data.getFolderId();
         Folder folder = folderService.getAuthorizedFolderOrThrow(user, folderId);
 
@@ -49,13 +49,13 @@ public class MemoService {
         memoRepository.save(memo);
 
         if (data.getTags() != null) {
-            tagService.saveTag(user, memo, data.getTags());
+            tagService.createTag(user, memo, data.getTags());
         }
 
         return memo.getMemoId();
     }
 
-    public List<MemosResponseDto> getMemosByFolder(User user, Long folderId) {
+    public List<MemosResponseDto> getMemosInFolder(User user, Long folderId) {
         Folder folder = folderService.getAuthorizedFolderOrThrow(user, folderId);
 
         List<Memo> memos = memoRepository.findAllByFolder(folder);
@@ -75,7 +75,7 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
-    public List<MemosResponseDto> getMemos(User user) {
+    public List<MemosResponseDto> getMemosByUser(User user) {
         List<Memo> memos = memoRepository.findAllByUser(user);
 
         return memos.stream()
@@ -114,7 +114,7 @@ public class MemoService {
 
         if (data.getFolderId() != null) {
             Folder folder = folderService.getFolderOrThrow(data.getFolderId());
-            memo.updateMemoInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
+            memo.updateInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
         }
 
         if (data.getTags() != null) {
@@ -122,7 +122,7 @@ public class MemoService {
         }
 
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {
-            changeMemoOrder(id, data.getTargetOrder(), data.getNextOrder());
+            updateMemoOrder(id, data.getTargetOrder(), data.getNextOrder());
         }
     }
 
@@ -136,32 +136,32 @@ public class MemoService {
             }
         }
 
-        tagService.saveTag(user, memo, tags);
+        tagService.createTag(user, memo, tags);
     }
 
-    public void changeMemoOrder(Long id,Integer targetOrder, Integer nextOrder) {
+    public void updateMemoOrder(Long id,Integer targetOrder, Integer nextOrder) {
 
         if (targetOrder < nextOrder) {
             List<Memo> memos = memoRepository.findByMemoOrderBetween(targetOrder + 1, nextOrder);
 
             for (Memo memo : memos) {
-                memo.updateMemoOrder(memo.getMemoOrder() - 1);
+                memo.changeOrder(memo.getMemoOrder() - 1);
             }
 
         } else if (targetOrder > nextOrder) {
             List<Memo> memos = memoRepository.findByMemoOrderBetween(nextOrder, targetOrder - 1);
 
             for (Memo memo : memos) {
-                memo.updateMemoOrder(memo.getMemoOrder() + 1);
+                memo.changeOrder(memo.getMemoOrder() + 1);
             }
         }
 
         Memo targetMemo = getMemoOrThrow(id);
-        targetMemo.updateMemoOrder(nextOrder);
+        targetMemo.changeOrder(nextOrder);
     }
 
     @Transactional
-    public void moveMemos(User user, Long folderId, List<Long> memoIds) {
+    public void moveMemosToFolder(User user, Long folderId, List<Long> memoIds) {
         Folder folder = folderService.getAuthorizedFolderOrThrow(user, folderId);
         List<Memo> memos = memoRepository.findAllById(memoIds);
 
@@ -169,7 +169,7 @@ public class MemoService {
             if (!memo.getUser().getUserId().equals(user.getUserId())) {
                 throw new AccessDeniedException("권한이 없는 메모가 포함되어 있습니다.");
             }
-            memo.moveMemo(folder);
+            memo.moveToFolder(folder);
         }
     }
 

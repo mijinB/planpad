@@ -42,7 +42,7 @@ public class FolderController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            Long folderId = folderService.saveFolder(user, request);
+            Long folderId = folderService.createFolder(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(folderId), "폴더 생성에 성공하였습니다."));
 

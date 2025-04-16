@@ -22,7 +22,7 @@ public class FolderService {
     private final FolderRepository folderRepository;
 
     @Transactional
-    public Long saveFolder(User user, FolderRequestDto data) {
+    public Long createFolder(User user, FolderRequestDto data) {
 
         boolean exists = folderRepository.existsByUserAndName(user, data.getName());
         if (exists) {
@@ -42,7 +42,7 @@ public class FolderService {
     }
 
     @Transactional
-    public void saveDefaultFolder(User user) {
+    public void createDefaultFolder(User user) {
         Folder defaultFolder = Folder.builder()
                 .user(user)
                 .name("내 메모")
@@ -64,32 +64,32 @@ public class FolderService {
     @Transactional
     public void updateFolder(User user, Long id, FolderUpdateRequestDto data) {
         Folder folder = getAuthorizedFolderOrThrow(user, id);
-        folder.updateFolderInfo(data.getName(), data.getColorCode());
+        folder.updateInfo(data.getName(), data.getColorCode());
 
         if (data.getTargetOrder() != null && data.getNextOrder() != null) {
-            changeFolderOrder(id, data.getTargetOrder(), data.getNextOrder());
+            updateFolderOrder(id, data.getTargetOrder(), data.getNextOrder());
         }
     }
 
-    public void changeFolderOrder(Long id,Integer targetOrder, Integer nextOrder) {
+    public void updateFolderOrder(Long id,Integer targetOrder, Integer nextOrder) {
 
         if (targetOrder < nextOrder) {
             List<Folder> folders = folderRepository.findByFolderOrderBetween(targetOrder + 1, nextOrder);
 
             for (Folder folder : folders) {
-                folder.updateFolderOrder(folder.getFolderOrder() - 1);
+                folder.changeOrder(folder.getFolderOrder() - 1);
             }
 
         } else if (targetOrder > nextOrder) {
             List<Folder> folders = folderRepository.findByFolderOrderBetween(nextOrder, targetOrder - 1);
 
             for (Folder folder : folders) {
-                folder.updateFolderOrder(folder.getFolderOrder() + 1);
+                folder.changeOrder(folder.getFolderOrder() + 1);
             }
         }
 
         Folder targetFolder = getFolderOrThrow(id);
-        targetFolder.updateFolderOrder(nextOrder);
+        targetFolder.changeOrder(nextOrder);
     }
 
     @Transactional

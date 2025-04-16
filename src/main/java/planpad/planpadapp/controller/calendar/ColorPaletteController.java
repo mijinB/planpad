@@ -42,7 +42,7 @@ public class ColorPaletteController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            Long colorId = colorPaletteService.saveColor(user, request);
+            Long colorId = colorPaletteService.createColor(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(colorId), "색상 추가에 성공하였습니다."));
 

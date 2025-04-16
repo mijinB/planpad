@@ -41,7 +41,7 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            Long memoId = memoService.saveMemo(user, request);
+            Long memoId = memoService.createMemo(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(memoId), "메모 생성에 성공하였습니다."));
 
@@ -56,12 +56,12 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "특정 폴더 내 메모 리스트 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = MemosResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "특정 폴더 내 메모 리스트 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> getMemosByFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("folderId") Long folderId) {
+    public ResponseEntity<Object> getMemosInFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("folderId") Long folderId) {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            List<MemosResponseDto> memos = memoService.getMemosByFolder(user, folderId);
+            List<MemosResponseDto> memos = memoService.getMemosInFolder(user, folderId);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));
 
@@ -81,7 +81,7 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            List<MemosResponseDto> memos = memoService.getMemos(user);
+            List<MemosResponseDto> memos = memoService.getMemosByUser(user);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "전체 메모 리스트 조회에 성공하였습니다."));
 
@@ -141,7 +141,7 @@ public class MemoController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            memoService.moveMemos(user, request.getFolderId(), request.getMemoIds());
+            memoService.moveMemosToFolder(user, request.getFolderId(), request.getMemoIds());
 
             return ResponseEntity.ok().build();
 

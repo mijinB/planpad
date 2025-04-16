@@ -22,7 +22,7 @@ public class ColorPaletteService {
     private final ColorPaletteRepository colorPaletteRepository;
 
     @Transactional
-    public Long saveColor(User user, ColorPaletteRequestDto data) {
+    public Long createColor(User user, ColorPaletteRequestDto data) {
 
         boolean exists = colorPaletteRepository.existsByUserAndColorCode(user, data.getColorCode());
         if (exists) {

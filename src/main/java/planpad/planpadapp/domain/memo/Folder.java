@@ -57,7 +57,7 @@ public class Folder {
         this.folderOrder = folderOrder;
     }
 
-    public void updateFolderInfo(String name, String colorCode) {
+    public void updateInfo(String name, String colorCode) {
 
         if (name != null) {
             this.name = name;
@@ -67,7 +67,7 @@ public class Folder {
         }
     }
 
-    public void updateFolderOrder(Integer folderOrder) {
+    public void changeOrder(Integer folderOrder) {
 
         if (folderOrder != null) {
             this.folderOrder = folderOrder;

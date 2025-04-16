@@ -22,7 +22,7 @@ public class ScheduleService {
     private final ColorPaletteRepository colorPaletteRepository;
 
     @Transactional
-    public Long saveSchedule(User user, ScheduleRequestDto data) {
+    public Long createSchedule(User user, ScheduleRequestDto data) {
 
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette colorPalette = getAuthorizedPaletteOrThrow(user, data.getPaletteId());

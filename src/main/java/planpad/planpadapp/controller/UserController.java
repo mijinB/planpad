@@ -85,7 +85,7 @@ public class UserController {
             @ApiResponse(responseCode = "200", description = "사용자 정보 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = UserResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "사용자 정보 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> userInfo(@RequestHeader("Authorization") String bearerToken) {
+    public ResponseEntity<Object> getUserInfo(@RequestHeader("Authorization") String bearerToken) {
 
         try {
             String userToken = bearerToken.replace("Bearer ", "");

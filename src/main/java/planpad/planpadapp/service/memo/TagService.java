@@ -18,7 +18,7 @@ public class TagService {
     private final TagRepository tagRepository;
 
     @Transactional
-    public void saveTag(User user, Memo memo, List<String> tags) {
+    public void createTag(User user, Memo memo, List<String> tags) {
 
         for (String tagName : tags) {
             Tag tag = tagRepository.findByUserAndName(user, tagName)

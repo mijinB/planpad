@@ -40,7 +40,7 @@ public class ScheduleController {
         try {
             String userToken = bearerToken.replace("Bearer ", "");
             User user = userService.getUserByUserToken(userToken);
-            Long scheduleId = scheduleService.saveSchedule(user, request);
+            Long scheduleId = scheduleService.createSchedule(user, request);
 
             return ResponseEntity.ok(new SaveResponseWrapper(new SaveResponseDto(scheduleId), "일정 생성에 성공하였습니다."));
 

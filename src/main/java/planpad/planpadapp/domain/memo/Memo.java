@@ -81,7 +81,7 @@ public class Memo {
         this.tags.add(tag);
     }
 
-    public void updateMemoInfo(Folder folder, String title, String contents, boolean isFixed) {
+    public void updateInfo(Folder folder, String title, String contents, boolean isFixed) {
 
         if (folder != null) {
             this.folder = folder;
@@ -95,14 +95,14 @@ public class Memo {
         this.isFixed = isFixed;
     }
 
-    public void updateMemoOrder(Integer memoOrder) {
+    public void changeOrder(Integer memoOrder) {
 
         if (memoOrder != null) {
             this.memoOrder = memoOrder;
         }
     }
 
-    public void moveMemo(Folder folder) {
+    public void moveToFolder(Folder folder) {
         this.folder = folder;
     }
 

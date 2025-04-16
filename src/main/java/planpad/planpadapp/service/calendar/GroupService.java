@@ -21,7 +21,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
 
     @Transactional
-    public Long saveGroup(User user, GroupRequestDto data) {
+    public Long createGroup(User user, GroupRequestDto data) {
 
         boolean exists = groupRepository.existsByUserAndName(user, data.getName());
         if (exists) {
