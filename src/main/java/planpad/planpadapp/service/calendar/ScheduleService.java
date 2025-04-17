@@ -7,10 +7,7 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
-import planpad.planpadapp.dto.calendar.MonthSchedulesRequestDto;
-import planpad.planpadapp.dto.calendar.ScheduleRequestDto;
-import planpad.planpadapp.dto.calendar.SchedulesResponseDto;
-import planpad.planpadapp.dto.calendar.WeekSchedulesRequestDto;
+import planpad.planpadapp.dto.calendar.*;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
 import java.time.LocalDate;
@@ -96,5 +93,23 @@ public class ScheduleService {
                         )
                     )
                 ));
+    }
+
+    public List<SchedulesResponseDto> getSchedulesByDay(User user, DaySchedulesRequestDto data) {
+
+        return user.getSchedules().stream()
+                .filter(schedule -> {
+                    LocalDate date = schedule.getStartDateTime().toLocalDate();
+                    return date.equals(data.getDate());
+                })
+                .map(schedule -> {
+                    String colorCode = schedule.getColorPalette().getColorCode();
+                    LocalTime startTime = schedule.getStartDateTime().toLocalTime();
+                    LocalTime endTime = schedule.getEndDateTime().toLocalTime();
+
+                    return new SchedulesResponseDto(colorCode, startTime, endTime, schedule.getTitle());
+                })
+                .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
+                .collect(Collectors.toList());
     }
 }
