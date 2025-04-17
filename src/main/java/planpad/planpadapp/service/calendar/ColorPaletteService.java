@@ -64,7 +64,7 @@ public class ColorPaletteService {
 
     public ColorPalette getAuthorizedPaletteOrThrow(User user, Long id) {
         ColorPalette colorPalette = colorPaletteRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("색상 팔레트를 찾을 수 없습니다."));
+                .orElseThrow(() -> new IllegalArgumentException("이 색상은 팔레트에 포함되어 있지 않습니다."));
 
         if (!colorPalette.getUser().getUserId().equals(user.getUserId())) {
             throw new AccessDeniedException("해당 색상 팔레트에 접근할 수 없습니다.");
