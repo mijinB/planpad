@@ -7,8 +7,17 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
+import planpad.planpadapp.dto.calendar.MonthScheduleResponseDto;
+import planpad.planpadapp.dto.calendar.MonthSchedulesRequestDto;
 import planpad.planpadapp.dto.calendar.ScheduleRequestDto;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
+
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -37,5 +46,34 @@ public class ScheduleService {
         scheduleRepository.save(schedule);
 
         return schedule.getScheduleId();
+    }
+
+    public Map<Integer, List<Object>> getSchedulesByMonth(User user, MonthSchedulesRequestDto data) {
+
+        return user.getSchedules().stream()
+                .filter(schedule -> {
+                    LocalDateTime start = schedule.getStartDateTime();
+                    return start.getYear() == data.getYear() && start.getMonthValue() == data.getMonth();
+                })
+                .map(schedule -> {
+                    String colorCode = schedule.getColorPalette().getColorCode();
+                    int day = schedule.getStartDateTime().getDayOfMonth();
+                    LocalTime startTime = schedule.getStartDateTime().toLocalTime();
+                    LocalTime endTime = schedule.getEndDateTime().toLocalTime();
+
+                    return Map.entry(day, new MonthScheduleResponseDto(colorCode, startTime, endTime, schedule.getTitle()));
+                })
+                .collect(Collectors.groupingBy(
+                        Map.Entry::getKey,
+                        Collectors.mapping(
+                                Map.Entry::getValue,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        list -> list.stream()
+                                                .sorted(Comparator.comparing(MonthScheduleResponseDto::getStartTime))
+                                                .collect(Collectors.toList())
+                                )
+                        )
+                ));
     }
 }
