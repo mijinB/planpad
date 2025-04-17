@@ -8,10 +8,10 @@ import lombok.Getter;
 public class MonthSchedulesRequestDto {
 
     @NotNull
-    @Schema(description = "연도", example = "2025")
+    @Schema(description = "조회 연도", example = "2025 (필수)")
     private Integer year;
 
     @NotNull
-    @Schema(description = "월", example = "4")
+    @Schema(description = "조회 월", example = "4 (필수)")
     private Integer month;
 }

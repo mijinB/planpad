@@ -10,7 +10,7 @@ import java.time.LocalTime;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MonthScheduleResponseDto {
+public class SchedulesResponseDto {
 
     @Schema(description = "색상 코드", example = "#FFFFFF")
     private String colorCode;

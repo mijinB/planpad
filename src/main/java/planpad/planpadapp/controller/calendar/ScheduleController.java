@@ -15,9 +15,10 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.SchedulesResponseWrapper;
-import planpad.planpadapp.dto.calendar.MonthScheduleResponseDto;
 import planpad.planpadapp.dto.calendar.MonthSchedulesRequestDto;
 import planpad.planpadapp.dto.calendar.ScheduleRequestDto;
+import planpad.planpadapp.dto.calendar.SchedulesResponseDto;
+import planpad.planpadapp.dto.calendar.WeekSchedulesRequestDto;
 import planpad.planpadapp.service.calendar.ScheduleService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -57,16 +58,35 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "월별 일정 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SchedulesResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "월별 일정 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> getMonthSchedules(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MonthSchedulesRequestDto request) {
+    public ResponseEntity<Object> getSchedulesByMonth(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MonthSchedulesRequestDto request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            Map<Integer, List<Object>> monthSchedule = scheduleService.getSchedulesByMonth(user, request);
+            Map<Integer, List<SchedulesResponseDto>> monthSchedules = scheduleService.getSchedulesByMonth(user, request);
 
-            return ResponseEntity.ok(new SchedulesResponseWrapper(monthSchedule, "월별 일정 조회에 성공하였습니다."));
+            return ResponseEntity.ok(new SchedulesResponseWrapper(monthSchedules, "월별 일정 조회에 성공하였습니다."));
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("월별 일정 조회에 실패하였습니다."));
+        }
+    }
+
+    @GetMapping("/schedules/week")
+    @Operation(summary = "주별 일정 조회", description = "주별 일정을 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "주별 일정 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SchedulesResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "주별 일정 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getSchedulesByWeek(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid WeekSchedulesRequestDto request) {
+
+        try {
+            User user = userService.getUserByBearerToken(bearerToken);
+            Map<Integer, List<SchedulesResponseDto>> weekSchedules = scheduleService.getSchedulesByWeek(user, request);
+
+            return ResponseEntity.ok(new SchedulesResponseWrapper(weekSchedules, "주별 일정 조회에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("주별 일정 조회에 실패하였습니다."));
         }
     }
 }
