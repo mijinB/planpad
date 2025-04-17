@@ -53,7 +53,9 @@ public class ScheduleService {
         Stream<Schedule> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
                     LocalDateTime start = schedule.getStartDateTime();
-                    return start.getYear() == data.getYear() && start.getMonthValue() == data.getMonth();
+                    boolean isSameMonth = start.getYear() == data.getYear() && start.getMonthValue() == data.getMonth();
+
+                    return isSameMonth && isInGroup(data.getGroupIds(), schedule);
                 });
 
         return toGroupedScheduleMap(filtered);
@@ -64,10 +66,32 @@ public class ScheduleService {
         Stream<Schedule> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
                     LocalDate date = schedule.getStartDateTime().toLocalDate();
-                    return (!date.isBefore(data.getStartDate())) && (!date.isAfter(data.getEndDate()));
+                    boolean isWithinRange = (!date.isBefore(data.getStartDate())) && (!date.isAfter(data.getEndDate()));
+
+                    return isWithinRange && isInGroup(data.getGroupIds(), schedule);
                 });
 
         return toGroupedScheduleMap(filtered);
+    }
+
+    public List<SchedulesResponseDto> getSchedulesByDay(User user, DaySchedulesRequestDto data) {
+
+        return user.getSchedules().stream()
+                .filter(schedule -> {
+                    LocalDate date = schedule.getStartDateTime().toLocalDate();
+                    boolean isSameDate = date.equals(data.getDate());
+
+                    return isSameDate && isInGroup(data.getGroupIds(), schedule);
+                })
+                .map(schedule -> {
+                    String colorCode = schedule.getColorPalette().getColorCode();
+                    LocalTime startTime = schedule.getStartDateTime().toLocalTime();
+                    LocalTime endTime = schedule.getEndDateTime().toLocalTime();
+
+                    return new SchedulesResponseDto(colorCode, startTime, endTime, schedule.getTitle());
+                })
+                .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
+                .collect(Collectors.toList());
     }
 
     private Map<Integer, List<SchedulesResponseDto>> toGroupedScheduleMap(Stream<Schedule> scheduleStream) {
@@ -82,34 +106,22 @@ public class ScheduleService {
                     return Map.entry(day, new SchedulesResponseDto(colorCode, startTime, endTime, schedule.getTitle()));
                 })
                 .collect(Collectors.groupingBy(
-                    Map.Entry::getKey,
-                    Collectors.mapping(
-                        Map.Entry::getValue,
-                        Collectors.collectingAndThen(
-                            Collectors.toList(),
-                            list -> list.stream()
-                                        .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
-                                        .collect(Collectors.toList())
+                        Map.Entry::getKey,
+                        Collectors.mapping(
+                                Map.Entry::getValue,
+                                Collectors.collectingAndThen(
+                                        Collectors.toList(),
+                                        list -> list.stream()
+                                                .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
+                                                .collect(Collectors.toList())
+                                )
                         )
-                    )
                 ));
     }
 
-    public List<SchedulesResponseDto> getSchedulesByDay(User user, DaySchedulesRequestDto data) {
+    private boolean isInGroup(List<Long> groupIds, Schedule schedule) {
 
-        return user.getSchedules().stream()
-                .filter(schedule -> {
-                    LocalDate date = schedule.getStartDateTime().toLocalDate();
-                    return date.equals(data.getDate());
-                })
-                .map(schedule -> {
-                    String colorCode = schedule.getColorPalette().getColorCode();
-                    LocalTime startTime = schedule.getStartDateTime().toLocalTime();
-                    LocalTime endTime = schedule.getEndDateTime().toLocalTime();
-
-                    return new SchedulesResponseDto(colorCode, startTime, endTime, schedule.getTitle());
-                })
-                .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
-                .collect(Collectors.toList());
+        return groupIds.stream()
+                .anyMatch(groupId -> groupId.equals(schedule.getGroup().getGroupId()));
     }
 }

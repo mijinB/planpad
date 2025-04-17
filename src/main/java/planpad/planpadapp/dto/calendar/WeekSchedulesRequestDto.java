@@ -5,9 +5,14 @@ import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Getter
 public class WeekSchedulesRequestDto {
+
+    @NotNull
+    @Schema(description = "조회 그룹 id 리스트", example = "[1, 2, 3] (필수)")
+    private List<Long> groupIds;
 
     @NotNull
     @Schema(description = "조회 시작 일자", example = "2025-03-30 (필수)")
