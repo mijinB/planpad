@@ -16,6 +16,9 @@ public class MemoResponse {
     @Schema(description = "폴더 id", example = "1")
     private Long folderId;
 
+    @Schema(description = "폴더 색상 코드", example = "#FFFFFF")
+    private String colorCode;
+
     @Schema(description = "태그 리스트", example = "['A', 'B', 'C']")
     private List<String> tags;
 
@@ -28,9 +31,10 @@ public class MemoResponse {
     @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;
 
-    public MemoResponse(Long id, Long folderId, List<String> tags, String title, String content, boolean isFixed) {
+    public MemoResponse(Long id, Long folderId, String colorCode, List<String> tags, String title, String content, boolean isFixed) {
         this.id = id;
         this.folderId = folderId;
+        this.colorCode = colorCode;
         this.tags = tags;
         this.title = title;
         this.content = content;

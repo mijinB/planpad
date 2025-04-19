@@ -16,6 +16,9 @@ public class MemosResponse {
     @Schema(description = "폴더 id", example = "1")
     private Long folderId;
 
+    @Schema(description = "폴더 색상 코드", example = "#FFFFFF")
+    private String colorCode;
+
     @Schema(description = "메모 순서", example = "1")
     private Integer memoOrder;
 
@@ -31,9 +34,10 @@ public class MemosResponse {
     @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;
 
-    public MemosResponse(Long id, Long folderId, Integer memoOrder, List<String> tags, String title, String content, boolean isFixed) {
+    public MemosResponse(Long id, Long folderId, String colorCode, Integer memoOrder, List<String> tags, String title, String content, boolean isFixed) {
         this.id = id;
         this.folderId = folderId;
+        this.colorCode = colorCode;
         this.memoOrder = memoOrder;
         this.tags = tags;
         this.title = title;

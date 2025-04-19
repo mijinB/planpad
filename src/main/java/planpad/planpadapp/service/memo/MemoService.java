@@ -68,6 +68,7 @@ public class MemoService {
                     return new MemosResponse(
                             memo.getMemoId(),
                             memo.getFolder().getFolderId(),
+                            memo.getFolder().getColorCode(),
                             memo.getMemoOrder(),
                             memo.getTags().stream()
                                     .map(Tag::getName)
@@ -90,6 +91,7 @@ public class MemoService {
                     return new MemosResponse(
                             memo.getMemoId(),
                             memo.getFolder().getFolderId(),
+                            memo.getFolder().getColorCode(),
                             memo.getMemoOrder(),
                             memo.getTags().stream()
                                     .map(Tag::getName)
@@ -109,6 +111,7 @@ public class MemoService {
         return new MemoResponse(
                 id,
                 memo.getFolder().getFolderId(),
+                memo.getFolder().getColorCode(),
                 memo.getTags().stream()
                         .map(Tag::getName)
                         .collect(Collectors.toList()),
