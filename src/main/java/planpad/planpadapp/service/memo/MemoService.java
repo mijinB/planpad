@@ -128,6 +128,8 @@ public class MemoService {
         if (data.getFolderId() != null) {
             Folder folder = folderService.getFolderOrThrow(data.getFolderId());
             memo.updateInfo(folder, data.getTitle(), data.getContent(), data.isFixed());
+        } else {
+            memo.updateInfo(null, data.getTitle(), data.getContent(), data.isFixed());
         }
 
         if (data.getTags() != null) {
