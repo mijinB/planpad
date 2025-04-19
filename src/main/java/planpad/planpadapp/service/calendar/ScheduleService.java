@@ -112,6 +112,12 @@ public class ScheduleService {
         );
     }
 
+    @Transactional
+    public void deleteSchedule(User user, Long id) {
+        Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
+        scheduleRepository.delete(schedule);
+    }
+
     private Map<Integer, List<SchedulesResponseDto>> toGroupedScheduleMap(Stream<Schedule> scheduleStream) {
 
         return scheduleStream

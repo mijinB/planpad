@@ -125,4 +125,23 @@ public class ScheduleController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/schedule/{id}")
+    @Operation(summary = "일정 삭제", description = "일정을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "일정 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "일정 삭제 실패")
+    })
+    public ResponseEntity<Void> deleteSchedule(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            User user = userService.getUserByBearerToken(bearerToken);
+            scheduleService.deleteSchedule(user, id);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }
