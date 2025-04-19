@@ -14,7 +14,6 @@ import planpad.planpadapp.dto.memo.UpdateMemoRequest;
 import planpad.planpadapp.dto.memo.MemosResponse;
 import planpad.planpadapp.repository.memo.MemoRepository;
 import planpad.planpadapp.repository.memo.TagRepository;
-import planpad.planpadapp.util.MarkdownUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -62,10 +61,7 @@ public class MemoService {
         List<Memo> memos = memoRepository.findAllByFolder(folder);
 
         return memos.stream()
-                .map(memo -> {
-                    String htmlContent = MarkdownUtils.toHtml(memo.getContent());
-
-                    return new MemosResponse(
+                .map(memo ->  new MemosResponse(
                             memo.getMemoId(),
                             memo.getFolder().getFolderId(),
                             memo.getFolder().getColorCode(),
@@ -74,10 +70,9 @@ public class MemoService {
                                     .map(Tag::getName)
                                     .collect(Collectors.toList()),
                             memo.getTitle(),
-                            htmlContent,
+                            memo.getContent(),
                             memo.isFixed()
-                    );
-                })
+                    ))
                 .collect(Collectors.toList());
     }
 
@@ -85,10 +80,7 @@ public class MemoService {
         List<Memo> memos = memoRepository.findAllByUser(user);
 
         return memos.stream()
-                .map(memo -> {
-                    String htmlContent = MarkdownUtils.toHtml(memo.getContent());
-
-                    return new MemosResponse(
+                .map(memo ->  new MemosResponse(
                             memo.getMemoId(),
                             memo.getFolder().getFolderId(),
                             memo.getFolder().getColorCode(),
@@ -97,16 +89,14 @@ public class MemoService {
                                     .map(Tag::getName)
                                     .collect(Collectors.toList()),
                             memo.getTitle(),
-                            htmlContent,
+                            memo.getContent(),
                             memo.isFixed()
-                    );
-                })
+                    ))
                 .collect(Collectors.toList());
     }
 
     public MemoResponse getMemo(User user, Long id) {
         Memo memo = getAuthorizedMemoOrThrow(user, id);
-        String htmlContent = MarkdownUtils.toHtml(memo.getContent());
 
         return new MemoResponse(
                 id,
@@ -116,7 +106,7 @@ public class MemoService {
                         .map(Tag::getName)
                         .collect(Collectors.toList()),
                 memo.getTitle(),
-                htmlContent,
+                memo.getContent(),
                 memo.isFixed()
         );
     }
