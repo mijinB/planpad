@@ -3,7 +3,7 @@ package planpad.planpadapp.dto.api.memo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.dto.memo.MemosResponseDto;
+import planpad.planpadapp.dto.memo.MemosResponse;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MemosResponseWrapper {
-    private List<MemosResponseDto> data;
+    private List<MemosResponse> data;
     private String message;
 }

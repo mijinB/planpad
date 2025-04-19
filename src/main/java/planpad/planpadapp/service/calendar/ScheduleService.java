@@ -31,7 +31,7 @@ public class ScheduleService {
     private final ColorPaletteService colorPaletteService;
 
     @Transactional
-    public Long createSchedule(User user, ScheduleRequestDto data) {
+    public Long createSchedule(User user, ScheduleRequest data) {
 
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette colorPalette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
@@ -50,7 +50,7 @@ public class ScheduleService {
         return schedule.getScheduleId();
     }
 
-    public Map<Integer, List<SchedulesResponseDto>> getSchedulesByMonth(User user, MonthSchedulesRequestDto data) {
+    public Map<Integer, List<SchedulesResponse>> getSchedulesByMonth(User user, MonthSchedulesRequest data) {
 
         Stream<Schedule> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
@@ -63,7 +63,7 @@ public class ScheduleService {
         return toGroupedScheduleMap(filtered);
     }
 
-    public Map<Integer, List<SchedulesResponseDto>> getSchedulesByWeek(User user, WeekSchedulesRequestDto data) {
+    public Map<Integer, List<SchedulesResponse>> getSchedulesByWeek(User user, WeekSchedulesRequest data) {
 
         Stream<Schedule> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
@@ -76,7 +76,7 @@ public class ScheduleService {
         return toGroupedScheduleMap(filtered);
     }
 
-    public List<SchedulesResponseDto> getSchedulesByDay(User user, DaySchedulesRequestDto data) {
+    public List<SchedulesResponse> getSchedulesByDay(User user, DaySchedulesRequest data) {
 
         return user.getSchedules().stream()
                 .filter(schedule -> {
@@ -90,14 +90,14 @@ public class ScheduleService {
                     LocalTime startTime = schedule.getStartDateTime().toLocalTime();
                     LocalTime endTime = schedule.getEndDateTime().toLocalTime();
 
-                    return new SchedulesResponseDto(colorCode, startTime, endTime, schedule.getTitle());
+                    return new SchedulesResponse(colorCode, startTime, endTime, schedule.getTitle());
                 })
-                .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
+                .sorted(Comparator.comparing(SchedulesResponse::getStartTime))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void updateSchedule(User user, Long id, ScheduleUpdateRequestDto data) {
+    public void updateSchedule(User user, Long id, UpdateScheduleRequest data) {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette palette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
@@ -118,7 +118,7 @@ public class ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
-    private Map<Integer, List<SchedulesResponseDto>> toGroupedScheduleMap(Stream<Schedule> scheduleStream) {
+    private Map<Integer, List<SchedulesResponse>> toGroupedScheduleMap(Stream<Schedule> scheduleStream) {
 
         return scheduleStream
                 .map(schedule -> {
@@ -127,7 +127,7 @@ public class ScheduleService {
                     LocalTime startTime = schedule.getStartDateTime().toLocalTime();
                     LocalTime endTime = schedule.getEndDateTime().toLocalTime();
 
-                    return Map.entry(day, new SchedulesResponseDto(colorCode, startTime, endTime, schedule.getTitle()));
+                    return Map.entry(day, new SchedulesResponse(colorCode, startTime, endTime, schedule.getTitle()));
                 })
                 .collect(Collectors.groupingBy(
                         Map.Entry::getKey,
@@ -136,7 +136,7 @@ public class ScheduleService {
                                 Collectors.collectingAndThen(
                                         Collectors.toList(),
                                         list -> list.stream()
-                                                .sorted(Comparator.comparing(SchedulesResponseDto::getStartTime))
+                                                .sorted(Comparator.comparing(SchedulesResponse::getStartTime))
                                                 .collect(Collectors.toList())
                                 )
                         )

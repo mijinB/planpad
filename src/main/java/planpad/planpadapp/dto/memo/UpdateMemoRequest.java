@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class MemoUpdateRequestDto {
+public class UpdateMemoRequest {
 
     @Schema(description = "이동할 폴더 id", example = "1")
     private Long folderId;

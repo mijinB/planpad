@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 
 @Getter
-public class GroupRequestDto {
+public class GroupRequest {
 
     @NotEmpty
     @Schema(description = "그룹 이름", example = "group")

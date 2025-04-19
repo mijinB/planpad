@@ -7,7 +7,7 @@ import planpad.planpadapp.domain.memo.Folder;
 
 @Getter
 @NoArgsConstructor
-public class FoldersResponseDto {
+public class FoldersResponse {
 
     @Schema(description = "폴더 id", example = "1")
     private Long id;
@@ -21,7 +21,7 @@ public class FoldersResponseDto {
     @Schema(description = "폴더 순서", example = "1")
     private Integer folderOrder;
 
-    public FoldersResponseDto(Folder folder) {
+    public FoldersResponse(Folder folder) {
         this.id = folder.getFolderId();
         this.name = folder.getName();
         this.colorCode = folder.getColorCode();

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginResponseDto {
+public class LoginResponse {
 
     @Schema(description = "사용자 인증 토큰", example = "eyJhbGciOiJIUzI1...")
     private String token;

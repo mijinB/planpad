@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.memo.Folder;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.memo.FolderRequestDto;
-import planpad.planpadapp.dto.memo.FoldersResponseDto;
-import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
+import planpad.planpadapp.dto.memo.FolderRequest;
+import planpad.planpadapp.dto.memo.FoldersResponse;
+import planpad.planpadapp.dto.memo.UpdateFolderRequest;
 import planpad.planpadapp.repository.memo.FolderRepository;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class FolderService {
     private final FolderRepository folderRepository;
 
     @Transactional
-    public Long createFolder(User user, FolderRequestDto data) {
+    public Long createFolder(User user, FolderRequest data) {
 
         boolean exists = folderRepository.existsByUserAndName(user, data.getName());
         if (exists) {
@@ -53,16 +53,16 @@ public class FolderService {
         folderRepository.save(defaultFolder);
     }
 
-    public List<FoldersResponseDto> getFolders(User user) {
+    public List<FoldersResponse> getFolders(User user) {
         List<Folder> folders = folderRepository.findAllByUser(user);
 
         return folders.stream()
-                .map(FoldersResponseDto::new)
+                .map(FoldersResponse::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void updateFolder(User user, Long id, FolderUpdateRequestDto data) {
+    public void updateFolder(User user, Long id, UpdateFolderRequest data) {
         Folder folder = getAuthorizedFolderOrThrow(user, id);
         folder.updateInfo(data.getName(), data.getColorCode());
 

@@ -3,7 +3,7 @@ package planpad.planpadapp.dto.api.calendar;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.dto.calendar.SchedulesResponseDto;
+import planpad.planpadapp.dto.calendar.SchedulesResponse;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,6 @@ import java.util.Map;
 @AllArgsConstructor
 public class SchedulesResponseWrapper {
 
-    private Map<Integer, List<SchedulesResponseDto>> data;
+    private Map<Integer, List<SchedulesResponse>> data;
     private String message;
 }

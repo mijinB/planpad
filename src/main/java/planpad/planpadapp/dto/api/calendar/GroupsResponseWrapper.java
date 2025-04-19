@@ -3,7 +3,7 @@ package planpad.planpadapp.dto.api.calendar;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.dto.calendar.GroupsResponseDto;
+import planpad.planpadapp.dto.calendar.GroupsResponse;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GroupsResponseWrapper {
-    private List<GroupsResponseDto> data;
+    private List<GroupsResponse> data;
     private String message;
 }

@@ -7,7 +7,7 @@ import planpad.planpadapp.domain.calendar.CalendarGroup;
 
 @Getter
 @NoArgsConstructor
-public class GroupsResponseDto {
+public class GroupsResponse {
 
     @Schema(description = "그룹 id", example = "1")
     private Long id;
@@ -15,7 +15,7 @@ public class GroupsResponseDto {
     @Schema(description = "그룹 이름", example = "group")
     private String name;
 
-    public GroupsResponseDto(CalendarGroup group) {
+    public GroupsResponse(CalendarGroup group) {
         this.id = group.getGroupId();
         this.name = group.getName();
     }

@@ -6,9 +6,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.ColorPalette;
-import planpad.planpadapp.dto.calendar.ColorPaletteRequestDto;
-import planpad.planpadapp.dto.calendar.ColorPaletteUpdateRequestDto;
-import planpad.planpadapp.dto.calendar.ColorPalettesResponseDto;
+import planpad.planpadapp.dto.calendar.ColorPaletteRequest;
+import planpad.planpadapp.dto.calendar.UpdateColorPaletteRequest;
+import planpad.planpadapp.dto.calendar.ColorPalettesResponse;
 import planpad.planpadapp.repository.calendar.ColorPaletteRepository;
 
 import java.util.List;
@@ -22,7 +22,7 @@ public class ColorPaletteService {
     private final ColorPaletteRepository colorPaletteRepository;
 
     @Transactional
-    public Long createColor(User user, ColorPaletteRequestDto data) {
+    public Long createColor(User user, ColorPaletteRequest data) {
 
         boolean exists = colorPaletteRepository.existsByUserAndColorCode(user, data.getColorCode());
         if (exists) {
@@ -39,10 +39,10 @@ public class ColorPaletteService {
         return colorPalette.getColorId();
     }
 
-    public List<ColorPalettesResponseDto> getColors(User user) {
+    public List<ColorPalettesResponse> getColors(User user) {
 
         return user.getColorPalettes().stream()
-                .map(palette -> new ColorPalettesResponseDto(
+                .map(palette -> new ColorPalettesResponse(
                         palette.getColorId(),
                         palette.getColorCode(),
                         palette.getColorName()
@@ -51,7 +51,7 @@ public class ColorPaletteService {
     }
 
     @Transactional
-    public void updateColor(User user, Long id, ColorPaletteUpdateRequestDto data) {
+    public void updateColor(User user, Long id, UpdateColorPaletteRequest data) {
         ColorPalette colorPalette = getAuthorizedPaletteOrThrow(user, id);
         colorPalette.updateColor(data.getColorCode(), data.getColorName());
     }

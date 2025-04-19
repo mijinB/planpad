@@ -3,12 +3,12 @@ package planpad.planpadapp.dto.api.user;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.dto.user.UserInfoResponseDto;
+import planpad.planpadapp.dto.user.UserInfoResponse;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserResponseWrapper {
-    private UserInfoResponseDto data;
+    private UserInfoResponse data;
     private String message;
 }

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 
 @Getter
-public class SocialUnLinkRequestDto {
+public class SocialUnLinkRequest {
 
     @NotEmpty
     @Schema(description = "소셜 타입", example = "kakao (필수)")

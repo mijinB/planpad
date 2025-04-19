@@ -37,7 +37,7 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "일정 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createSchedule(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid ScheduleRequestDto request) {
+    public ResponseEntity<Object> createSchedule(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid ScheduleRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -56,11 +56,11 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "월별 일정 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SchedulesResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "월별 일정 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> getSchedulesByMonth(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MonthSchedulesRequestDto request) {
+    public ResponseEntity<Object> getSchedulesByMonth(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MonthSchedulesRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            Map<Integer, List<SchedulesResponseDto>> monthSchedules = scheduleService.getSchedulesByMonth(user, request);
+            Map<Integer, List<SchedulesResponse>> monthSchedules = scheduleService.getSchedulesByMonth(user, request);
 
             return ResponseEntity.ok(new SchedulesResponseWrapper(monthSchedules, "월별 일정 조회에 성공하였습니다."));
 
@@ -75,11 +75,11 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "주별 일정 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SchedulesResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "주별 일정 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> getSchedulesByWeek(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid WeekSchedulesRequestDto request) {
+    public ResponseEntity<Object> getSchedulesByWeek(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid WeekSchedulesRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            Map<Integer, List<SchedulesResponseDto>> weekSchedules = scheduleService.getSchedulesByWeek(user, request);
+            Map<Integer, List<SchedulesResponse>> weekSchedules = scheduleService.getSchedulesByWeek(user, request);
 
             return ResponseEntity.ok(new SchedulesResponseWrapper(weekSchedules, "주별 일정 조회에 성공하였습니다."));
 
@@ -94,11 +94,11 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일별 일정 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = DaySchedulesResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "일별 일정 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> getSchedulesByDay(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid DaySchedulesRequestDto request) {
+    public ResponseEntity<Object> getSchedulesByDay(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid DaySchedulesRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            List<SchedulesResponseDto> daySchedules = scheduleService.getSchedulesByDay(user, request);
+            List<SchedulesResponse> daySchedules = scheduleService.getSchedulesByDay(user, request);
 
             return ResponseEntity.ok(new DaySchedulesResponseWrapper(daySchedules, "일별 일정 조회에 성공하였습니다."));
 
@@ -113,7 +113,7 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "일정 수정 성공"),
             @ApiResponse(responseCode = "400", description = "일정 수정 실패")
     })
-    public ResponseEntity<Void> updateSchedule(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid ScheduleUpdateRequestDto request) {
+    public ResponseEntity<Void> updateSchedule(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid UpdateScheduleRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);

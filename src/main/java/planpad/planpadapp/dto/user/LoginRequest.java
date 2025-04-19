@@ -5,7 +5,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 
 @Getter
-public class LoginRequestDto {
+public class LoginRequest {
 
     @NotEmpty
     @Schema(description = "소셜 코드", example = "4a2f79d45d7f41e8b7a0 (필수)")

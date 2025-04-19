@@ -9,7 +9,7 @@ import lombok.Getter;
 import java.util.List;
 
 @Getter
-public class MemoRequestDto {
+public class MemoRequest {
 
     @NotNull
     @Schema(description = "폴더 id", example = "1 (필수)")

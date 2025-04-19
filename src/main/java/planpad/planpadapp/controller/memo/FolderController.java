@@ -15,9 +15,9 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.memo.FoldersResponseWrapper;
-import planpad.planpadapp.dto.memo.FolderRequestDto;
-import planpad.planpadapp.dto.memo.FolderUpdateRequestDto;
-import planpad.planpadapp.dto.memo.FoldersResponseDto;
+import planpad.planpadapp.dto.memo.FolderRequest;
+import planpad.planpadapp.dto.memo.UpdateFolderRequest;
+import planpad.planpadapp.dto.memo.FoldersResponse;
 import planpad.planpadapp.service.memo.FolderService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -37,7 +37,7 @@ public class FolderController {
             @ApiResponse(responseCode = "200", description = "폴더 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "폴더 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderRequestDto request) {
+    public ResponseEntity<Object> createFolder(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid FolderRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -60,7 +60,7 @@ public class FolderController {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            List<FoldersResponseDto> folders = folderService.getFolders(user);
+            List<FoldersResponse> folders = folderService.getFolders(user);
 
             return ResponseEntity.ok(new FoldersResponseWrapper(folders, "폴더 리스트 조회에 성공하였습니다."));
 
@@ -75,7 +75,7 @@ public class FolderController {
             @ApiResponse(responseCode = "200", description = "폴더 수정 성공"),
             @ApiResponse(responseCode = "400", description = "폴더 수정 실패")
     })
-    public ResponseEntity<Void> updateFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid FolderUpdateRequestDto request) {
+    public ResponseEntity<Void> updateFolder(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid UpdateFolderRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);

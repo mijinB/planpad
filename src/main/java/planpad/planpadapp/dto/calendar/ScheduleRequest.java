@@ -8,7 +8,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ScheduleRequestDto {
+public class ScheduleRequest {
 
     @NotNull
     @Schema(description = "그룹 id", example = "1 (필수)")

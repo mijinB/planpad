@@ -36,7 +36,7 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "메모 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequestDto request) {
+    public ResponseEntity<Object> createMemo(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemoRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -59,7 +59,7 @@ public class MemoController {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            List<MemosResponseDto> memos = memoService.getMemosInFolder(user, folderId);
+            List<MemosResponse> memos = memoService.getMemosInFolder(user, folderId);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "특정 폴더 내 메모 리스트 조회에 성공하였습니다."));
 
@@ -78,7 +78,7 @@ public class MemoController {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            List<MemosResponseDto> memos = memoService.getMemosByUser(user);
+            List<MemosResponse> memos = memoService.getMemosByUser(user);
 
             return ResponseEntity.ok(new MemosResponseWrapper(memos, "전체 메모 리스트 조회에 성공하였습니다."));
 
@@ -97,7 +97,7 @@ public class MemoController {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            MemoResponseDto memo = memoService.getMemo(user, id);
+            MemoResponse memo = memoService.getMemo(user, id);
 
             return ResponseEntity.ok(new MemoResponseWrapper(memo, "메모 조회에 성공하였습니다."));
 
@@ -112,7 +112,7 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 수정 성공"),
             @ApiResponse(responseCode = "400", description = "메모 수정 실패")
     })
-    public ResponseEntity<Void> updateMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid MemoUpdateRequestDto request) {
+    public ResponseEntity<Void> updateMemo(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid UpdateMemoRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -131,7 +131,7 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 일괄 이동 성공"),
             @ApiResponse(responseCode = "400", description = "메모 일괄 이동 실패")
     })
-    public ResponseEntity<Void> moveMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosMoveRequestDto request) {
+    public ResponseEntity<Void> moveMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MoveMemosRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -169,7 +169,7 @@ public class MemoController {
             @ApiResponse(responseCode = "200", description = "메모 일괄 삭제 성공"),
             @ApiResponse(responseCode = "400", description = "메모 일괄 삭제 실패")
     })
-    public ResponseEntity<Void> deleteMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MemosDeleteRequestDto request) {
+    public ResponseEntity<Void> deleteMemos(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid DeleteMemosRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);

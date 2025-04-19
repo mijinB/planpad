@@ -8,10 +8,10 @@ import planpad.planpadapp.domain.memo.Folder;
 import planpad.planpadapp.domain.memo.Memo;
 import planpad.planpadapp.domain.memo.Tag;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.dto.memo.MemoRequestDto;
-import planpad.planpadapp.dto.memo.MemoResponseDto;
-import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
-import planpad.planpadapp.dto.memo.MemosResponseDto;
+import planpad.planpadapp.dto.memo.MemoRequest;
+import planpad.planpadapp.dto.memo.MemoResponse;
+import planpad.planpadapp.dto.memo.UpdateMemoRequest;
+import planpad.planpadapp.dto.memo.MemosResponse;
 import planpad.planpadapp.repository.memo.MemoRepository;
 import planpad.planpadapp.repository.memo.TagRepository;
 import planpad.planpadapp.util.MarkdownUtils;
@@ -33,7 +33,7 @@ public class MemoService {
     private final TagRepository tagRepository;
 
     @Transactional
-    public Long createMemo(User user, MemoRequestDto data) {
+    public Long createMemo(User user, MemoRequest data) {
         Long folderId = data.getFolderId();
         Folder folder = folderService.getAuthorizedFolderOrThrow(user, folderId);
 
@@ -56,7 +56,7 @@ public class MemoService {
         return memo.getMemoId();
     }
 
-    public List<MemosResponseDto> getMemosInFolder(User user, Long folderId) {
+    public List<MemosResponse> getMemosInFolder(User user, Long folderId) {
         Folder folder = folderService.getAuthorizedFolderOrThrow(user, folderId);
 
         List<Memo> memos = memoRepository.findAllByFolder(folder);
@@ -65,7 +65,7 @@ public class MemoService {
                 .map(memo -> {
                     String htmlContent = MarkdownUtils.toHtml(memo.getContent());
 
-                    return new MemosResponseDto(
+                    return new MemosResponse(
                             memo.getMemoId(),
                             memo.getFolder().getFolderId(),
                             memo.getMemoOrder(),
@@ -80,14 +80,14 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
-    public List<MemosResponseDto> getMemosByUser(User user) {
+    public List<MemosResponse> getMemosByUser(User user) {
         List<Memo> memos = memoRepository.findAllByUser(user);
 
         return memos.stream()
                 .map(memo -> {
                     String htmlContent = MarkdownUtils.toHtml(memo.getContent());
 
-                    return new MemosResponseDto(
+                    return new MemosResponse(
                             memo.getMemoId(),
                             memo.getFolder().getFolderId(),
                             memo.getMemoOrder(),
@@ -102,11 +102,11 @@ public class MemoService {
                 .collect(Collectors.toList());
     }
 
-    public MemoResponseDto getMemo(User user, Long id) {
+    public MemoResponse getMemo(User user, Long id) {
         Memo memo = getAuthorizedMemoOrThrow(user, id);
         String htmlContent = MarkdownUtils.toHtml(memo.getContent());
 
-        return new MemoResponseDto(
+        return new MemoResponse(
                 id,
                 memo.getFolder().getFolderId(),
                 memo.getTags().stream()
@@ -119,7 +119,7 @@ public class MemoService {
     }
 
     @Transactional
-    public void updateMemo(User user, Long id, MemoUpdateRequestDto data) {
+    public void updateMemo(User user, Long id, UpdateMemoRequest data) {
         Memo memo = getAuthorizedMemoOrThrow(user, id);
 
         if (data.getFolderId() != null) {

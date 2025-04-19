@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 
 @Getter
-public class FolderUpdateRequestDto {
+public class UpdateFolderRequest {
 
     @Schema(description = "폴더 이름", example = "folder")
     private String name;

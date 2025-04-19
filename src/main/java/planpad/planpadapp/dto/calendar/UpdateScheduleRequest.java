@@ -6,7 +6,7 @@ import lombok.Getter;
 import java.time.LocalDateTime;
 
 @Getter
-public class ScheduleUpdateRequestDto {
+public class UpdateScheduleRequest {
 
     @Schema(description = "그룹 id", example = "1")
     private Long groupId;

@@ -6,8 +6,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
-import planpad.planpadapp.dto.calendar.GroupRequestDto;
-import planpad.planpadapp.dto.calendar.GroupsResponseDto;
+import planpad.planpadapp.dto.calendar.GroupRequest;
+import planpad.planpadapp.dto.calendar.GroupsResponse;
 import planpad.planpadapp.repository.calendar.GroupRepository;
 
 import java.util.List;
@@ -21,7 +21,7 @@ public class GroupService {
     private final GroupRepository groupRepository;
 
     @Transactional
-    public Long createGroup(User user, GroupRequestDto data) {
+    public Long createGroup(User user, GroupRequest data) {
 
         boolean exists = groupRepository.existsByUserAndName(user, data.getName());
         if (exists) {
@@ -37,15 +37,15 @@ public class GroupService {
         return group.getGroupId();
     }
 
-    public List<GroupsResponseDto> getGroups(User user) {
+    public List<GroupsResponse> getGroups(User user) {
 
         return user.getGroups().stream()
-                .map(GroupsResponseDto::new)
+                .map(GroupsResponse::new)
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void updateGroup(User user, Long id, GroupRequestDto data) {
+    public void updateGroup(User user, Long id, GroupRequest data) {
         CalendarGroup group = getAuthorizedGroupOrThrow(user, id);
         group.updateGroup(data.getName());
     }

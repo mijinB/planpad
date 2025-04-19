@@ -3,7 +3,7 @@ package planpad.planpadapp.dto.api.memo;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.dto.memo.FoldersResponseDto;
+import planpad.planpadapp.dto.memo.FoldersResponse;
 
 import java.util.List;
 
@@ -11,6 +11,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FoldersResponseWrapper {
-    private List<FoldersResponseDto> data;
+    private List<FoldersResponse> data;
     private String message;
 }

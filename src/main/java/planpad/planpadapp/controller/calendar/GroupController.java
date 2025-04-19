@@ -15,8 +15,8 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.GroupsResponseWrapper;
-import planpad.planpadapp.dto.calendar.GroupRequestDto;
-import planpad.planpadapp.dto.calendar.GroupsResponseDto;
+import planpad.planpadapp.dto.calendar.GroupRequest;
+import planpad.planpadapp.dto.calendar.GroupsResponse;
 import planpad.planpadapp.service.calendar.GroupService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -36,7 +36,7 @@ public class GroupController {
             @ApiResponse(responseCode = "200", description = "그룹 생성 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "그룹 생성 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createGroup(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid GroupRequestDto request) {
+    public ResponseEntity<Object> createGroup(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid GroupRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -59,7 +59,7 @@ public class GroupController {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            List<GroupsResponseDto> groups = groupService.getGroups(user);
+            List<GroupsResponse> groups = groupService.getGroups(user);
 
             return ResponseEntity.ok(new GroupsResponseWrapper(groups, "그룹 리스트 조회에 성공하였습니다"));
 
@@ -74,7 +74,7 @@ public class GroupController {
             @ApiResponse(responseCode = "200", description = "그룹 수정 성공"),
             @ApiResponse(responseCode = "400", description = "그룹 수정 실패")
     })
-    public ResponseEntity<Void> updateGroup(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid GroupRequestDto request) {
+    public ResponseEntity<Void> updateGroup(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid GroupRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);

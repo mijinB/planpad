@@ -15,9 +15,9 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.ColorPalettesResponseWrapper;
-import planpad.planpadapp.dto.calendar.ColorPaletteRequestDto;
-import planpad.planpadapp.dto.calendar.ColorPaletteUpdateRequestDto;
-import planpad.planpadapp.dto.calendar.ColorPalettesResponseDto;
+import planpad.planpadapp.dto.calendar.ColorPaletteRequest;
+import planpad.planpadapp.dto.calendar.UpdateColorPaletteRequest;
+import planpad.planpadapp.dto.calendar.ColorPalettesResponse;
 import planpad.planpadapp.service.calendar.ColorPaletteService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -37,7 +37,7 @@ public class ColorPaletteController {
             @ApiResponse(responseCode = "200", description = "색상 추가 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SaveResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "색상 추가 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> createColor(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid ColorPaletteRequestDto request) {
+    public ResponseEntity<Object> createColor(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid ColorPaletteRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
@@ -60,7 +60,7 @@ public class ColorPaletteController {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);
-            List<ColorPalettesResponseDto> colors = colorPaletteService.getColors(user);
+            List<ColorPalettesResponse> colors = colorPaletteService.getColors(user);
 
             return ResponseEntity.ok(new ColorPalettesResponseWrapper(colors, "색상 리스트 조회에 성공하였습니다."));
 
@@ -75,7 +75,7 @@ public class ColorPaletteController {
             @ApiResponse(responseCode = "200", description = "색상 수정 성공"),
             @ApiResponse(responseCode = "400", description = "색상 수정 실패")
     })
-    public ResponseEntity<Void> updateColor(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid ColorPaletteUpdateRequestDto request) {
+    public ResponseEntity<Void> updateColor(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid UpdateColorPaletteRequest request) {
 
         try {
             User user = userService.getUserByBearerToken(bearerToken);

@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class UserInfoResponseDto {
+public class UserInfoResponse {
 
     @Schema(description = "소셜 타입", example = "kakao")
     private String socialType;

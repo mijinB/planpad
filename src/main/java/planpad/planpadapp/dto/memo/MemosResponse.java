@@ -8,7 +8,7 @@ import java.util.List;
 
 @Getter
 @NoArgsConstructor
-public class MemosResponseDto {
+public class MemosResponse {
 
     @Schema(description = "메모 id", example = "1")
     private Long id;
@@ -31,7 +31,7 @@ public class MemosResponseDto {
     @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;
 
-    public MemosResponseDto(Long id, Long folderId, Integer memoOrder, List<String> tags, String title, String content, boolean isFixed) {
+    public MemosResponse(Long id, Long folderId, Integer memoOrder, List<String> tags, String title, String content, boolean isFixed) {
         this.id = id;
         this.folderId = folderId;
         this.memoOrder = memoOrder;
