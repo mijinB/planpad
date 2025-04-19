@@ -18,7 +18,7 @@ public class UpdateMemoRequest {
     private String content;
 
     @Schema(description = "고정 여부", example = "true")
-    private boolean isFixed;
+    private Boolean fixed;
 
     @Schema(description = "메모 태그 리스트", example = "['tag1', 'tag2']")
     private List<String> tags;

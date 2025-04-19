@@ -49,7 +49,7 @@ public class Memo {
     private String content;
 
     @Column(name = "is_fixed")
-    private boolean isFixed;
+    private Boolean isFixed;
 
     @CreatedDate
     @Column(name = "created_at", updatable = false)
@@ -68,7 +68,7 @@ public class Memo {
     private Set<Tag> tags = new HashSet<>();
 
     @Builder
-    public Memo(User user, Folder folder, int memoOrder, String title, String content, boolean isFixed) {
+    public Memo(User user, Folder folder, int memoOrder, String title, String content, Boolean isFixed) {
         this.user = user;
         this.folder = folder;
         this.memoOrder = memoOrder;
@@ -81,7 +81,7 @@ public class Memo {
         this.tags.add(tag);
     }
 
-    public void updateInfo(Folder folder, String title, String content, boolean isFixed) {
+    public void updateInfo(Folder folder, String title, String content, Boolean fixed) {
 
         if (folder != null) {
             this.folder = folder;
@@ -92,7 +92,9 @@ public class Memo {
         if (content != null) {
             this.content = content;
         }
-        this.isFixed = isFixed;
+        if (isFixed != null) {
+            this.isFixed = fixed;
+        }
     }
 
     public void changeOrder(Integer memoOrder) {

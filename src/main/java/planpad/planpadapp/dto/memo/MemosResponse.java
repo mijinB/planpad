@@ -32,9 +32,9 @@ public class MemosResponse {
     private String content;
 
     @Schema(description = "고정 여부", example = "true")
-    private boolean isFixed;
+    private Boolean fixed;
 
-    public MemosResponse(Long id, Long folderId, String colorCode, Integer memoOrder, List<String> tags, String title, String content, boolean isFixed) {
+    public MemosResponse(Long id, Long folderId, String colorCode, Integer memoOrder, List<String> tags, String title, String content, Boolean fixed) {
         this.id = id;
         this.folderId = folderId;
         this.colorCode = colorCode;
@@ -42,6 +42,6 @@ public class MemosResponse {
         this.tags = tags;
         this.title = title;
         this.content = content;
-        this.isFixed = isFixed;
+        this.fixed = fixed;
     }
 }

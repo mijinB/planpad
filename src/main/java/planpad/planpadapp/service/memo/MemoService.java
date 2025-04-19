@@ -15,10 +15,7 @@ import planpad.planpadapp.dto.memo.MemosResponse;
 import planpad.planpadapp.repository.memo.MemoRepository;
 import planpad.planpadapp.repository.memo.TagRepository;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -44,7 +41,7 @@ public class MemoService {
                 .memoOrder(nextOrder)
                 .title(data.getTitle())
                 .content(data.getContent())
-                .isFixed(data.isFixed())
+                .isFixed(Objects.requireNonNullElse(data.getFixed(), false))
                 .build();
         memoRepository.save(memo);
 
@@ -71,7 +68,7 @@ public class MemoService {
                                     .collect(Collectors.toList()),
                             memo.getTitle(),
                             memo.getContent(),
-                            memo.isFixed()
+                            memo.getIsFixed()
                     ))
                 .collect(Collectors.toList());
     }
@@ -90,7 +87,7 @@ public class MemoService {
                                     .collect(Collectors.toList()),
                             memo.getTitle(),
                             memo.getContent(),
-                            memo.isFixed()
+                            memo.getIsFixed()
                     ))
                 .collect(Collectors.toList());
     }
@@ -107,7 +104,7 @@ public class MemoService {
                         .collect(Collectors.toList()),
                 memo.getTitle(),
                 memo.getContent(),
-                memo.isFixed()
+                memo.getIsFixed()
         );
     }
 
@@ -117,9 +114,9 @@ public class MemoService {
 
         if (data.getFolderId() != null) {
             Folder folder = folderService.getFolderOrThrow(data.getFolderId());
-            memo.updateInfo(folder, data.getTitle(), data.getContent(), data.isFixed());
+            memo.updateInfo(folder, data.getTitle(), data.getContent(), data.getFixed());
         } else {
-            memo.updateInfo(null, data.getTitle(), data.getContent(), data.isFixed());
+            memo.updateInfo(null, data.getTitle(), data.getContent(), data.getFixed());
         }
 
         if (data.getTags() != null) {

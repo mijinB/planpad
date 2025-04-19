@@ -24,7 +24,7 @@ public class MemoRequest {
     private String content;
 
     @Schema(description = "메모 고정 여부", example = "true (필수)")
-    private boolean isFixed;
+    private Boolean fixed;
 
     @Schema(description = "메모 태그 리스트", example = "['tag1', 'tag2']")
     private List<String> tags;
