@@ -1,6 +1,7 @@
 package planpad.planpadapp.service.calendar;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
@@ -10,6 +11,7 @@ import planpad.planpadapp.domain.calendar.Schedule;
 import planpad.planpadapp.dto.calendar.*;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
+import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -94,6 +96,22 @@ public class ScheduleService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional
+    public void updateSchedule(User user, Long id, ScheduleUpdateRequestDto data) {
+        Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
+        CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
+        ColorPalette palette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
+
+        schedule.updateSchedule(
+                group,
+                palette,
+                data.getStartDateTime(),
+                data.getEndDateTime(),
+                data.getTitle(),
+                data.getDescription()
+        );
+    }
+
     private Map<Integer, List<SchedulesResponseDto>> toGroupedScheduleMap(Stream<Schedule> scheduleStream) {
 
         return scheduleStream
@@ -123,5 +141,16 @@ public class ScheduleService {
 
         return groupIds.stream()
                 .anyMatch(groupId -> groupId.equals(schedule.getGroup().getGroupId()));
+    }
+
+    private Schedule getAuthorizedScheduleOrThrow(User user, Long id) {
+        Schedule schedule = scheduleRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("일정을 찾을 수 없습니다."));
+
+        if (!schedule.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 일정에 접근할 수 없습니다.");
+        }
+
+        return schedule;
     }
 }

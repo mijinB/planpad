@@ -106,4 +106,23 @@ public class ScheduleController {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("일별 일정 조회에 실패하였습니다."));
         }
     }
+
+    @PatchMapping("/schedule/{id}")
+    @Operation(summary = "일정 수정", description = "일정을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "일정 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "일정 수정 실패")
+    })
+    public ResponseEntity<Void> updateSchedule(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid ScheduleUpdateRequestDto request) {
+
+        try {
+            User user = userService.getUserByBearerToken(bearerToken);
+            scheduleService.updateSchedule(user, id, request);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

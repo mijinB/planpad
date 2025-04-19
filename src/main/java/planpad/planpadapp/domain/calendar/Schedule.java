@@ -60,4 +60,26 @@ public class Schedule {
         this.title = title;
         this.description = description;
     }
+
+    public void updateSchedule(CalendarGroup group, ColorPalette palette, LocalDateTime startDateTime, LocalDateTime endDateTime, String title, String description) {
+
+        if (group != null) {
+            this.group = group;
+        }
+        if (palette != null) {
+            this.colorPalette = palette;
+        }
+        if (startDateTime != null) {
+            this.startDateTime = startDateTime;
+        }
+        if (endDateTime != null) {
+            this.endDateTime = endDateTime;
+        }
+        if (title != null) {
+            this.title = title;
+        }
+        if (description != null) {
+            this.description = description;
+        }
+    }
 }
