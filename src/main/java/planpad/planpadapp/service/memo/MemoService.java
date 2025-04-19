@@ -14,6 +14,7 @@ import planpad.planpadapp.dto.memo.MemoUpdateRequestDto;
 import planpad.planpadapp.dto.memo.MemosResponseDto;
 import planpad.planpadapp.repository.memo.MemoRepository;
 import planpad.planpadapp.repository.memo.TagRepository;
+import planpad.planpadapp.util.MarkdownUtils;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -43,7 +44,7 @@ public class MemoService {
                 .folder(folder)
                 .memoOrder(nextOrder)
                 .title(data.getTitle())
-                .contents(data.getContents())
+                .content(data.getContent())
                 .isFixed(data.isFixed())
                 .build();
         memoRepository.save(memo);
@@ -61,17 +62,21 @@ public class MemoService {
         List<Memo> memos = memoRepository.findAllByFolder(folder);
 
         return memos.stream()
-                .map(memo -> new MemosResponseDto(
-                        memo.getMemoId(),
-                        memo.getFolder().getFolderId(),
-                        memo.getMemoOrder(),
-                        memo.getTags().stream()
-                                .map(Tag::getName)
-                                .collect(Collectors.toList()),
-                        memo.getTitle(),
-                        memo.getContents(),
-                        memo.isFixed()
-                ))
+                .map(memo -> {
+                    String htmlContent = MarkdownUtils.toHtml(memo.getContent());
+
+                    return new MemosResponseDto(
+                            memo.getMemoId(),
+                            memo.getFolder().getFolderId(),
+                            memo.getMemoOrder(),
+                            memo.getTags().stream()
+                                    .map(Tag::getName)
+                                    .collect(Collectors.toList()),
+                            memo.getTitle(),
+                            htmlContent,
+                            memo.isFixed()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
@@ -79,22 +84,27 @@ public class MemoService {
         List<Memo> memos = memoRepository.findAllByUser(user);
 
         return memos.stream()
-                .map(memo -> new MemosResponseDto(
-                        memo.getMemoId(),
-                        memo.getFolder().getFolderId(),
-                        memo.getMemoOrder(),
-                        memo.getTags().stream()
-                                .map(Tag::getName)
-                                .collect(Collectors.toList()),
-                        memo.getTitle(),
-                        memo.getContents(),
-                        memo.isFixed()
-                ))
+                .map(memo -> {
+                    String htmlContent = MarkdownUtils.toHtml(memo.getContent());
+
+                    return new MemosResponseDto(
+                            memo.getMemoId(),
+                            memo.getFolder().getFolderId(),
+                            memo.getMemoOrder(),
+                            memo.getTags().stream()
+                                    .map(Tag::getName)
+                                    .collect(Collectors.toList()),
+                            memo.getTitle(),
+                            htmlContent,
+                            memo.isFixed()
+                    );
+                })
                 .collect(Collectors.toList());
     }
 
     public MemoResponseDto getMemo(User user, Long id) {
         Memo memo = getAuthorizedMemoOrThrow(user, id);
+        String htmlContent = MarkdownUtils.toHtml(memo.getContent());
 
         return new MemoResponseDto(
                 id,
@@ -103,7 +113,7 @@ public class MemoService {
                         .map(Tag::getName)
                         .collect(Collectors.toList()),
                 memo.getTitle(),
-                memo.getContents(),
+                htmlContent,
                 memo.isFixed()
         );
     }
@@ -114,7 +124,7 @@ public class MemoService {
 
         if (data.getFolderId() != null) {
             Folder folder = folderService.getFolderOrThrow(data.getFolderId());
-            memo.updateInfo(folder, data.getTitle(), data.getContents(), data.isFixed());
+            memo.updateInfo(folder, data.getTitle(), data.getContent(), data.isFixed());
         }
 
         if (data.getTags() != null) {

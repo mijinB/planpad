@@ -20,8 +20,8 @@ public class MemoRequestDto {
     @Schema(description = "메모 제목", example = "memo (필수)")
     private String title;
 
-    @Schema(description = "메모 내용", example = "contents")
-    private String contents;
+    @Schema(description = "메모 내용", example = "content")
+    private String content;
 
     @Schema(description = "메모 고정 여부", example = "true (필수)")
     private boolean isFixed;

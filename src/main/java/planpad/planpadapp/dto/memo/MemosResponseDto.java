@@ -26,18 +26,18 @@ public class MemosResponseDto {
     private String title;
 
     @Schema(description = "내용", example = "메모 내용")
-    private String contents;
+    private String content;
 
     @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;
 
-    public MemosResponseDto(Long id, Long folderId, Integer memoOrder, List<String> tags, String title, String contents, boolean isFixed) {
+    public MemosResponseDto(Long id, Long folderId, Integer memoOrder, List<String> tags, String title, String content, boolean isFixed) {
         this.id = id;
         this.folderId = folderId;
         this.memoOrder = memoOrder;
         this.tags = tags;
         this.title = title;
-        this.contents = contents;
+        this.content = content;
         this.isFixed = isFixed;
     }
 }

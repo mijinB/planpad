@@ -46,7 +46,7 @@ public class Memo {
     private String title;
 
     @Column(columnDefinition = "TEXT")
-    private String contents;
+    private String content;
 
     @Column(name = "is_fixed")
     private boolean isFixed;
@@ -68,12 +68,12 @@ public class Memo {
     private Set<Tag> tags = new HashSet<>();
 
     @Builder
-    public Memo(User user, Folder folder, int memoOrder, String title, String contents, boolean isFixed) {
+    public Memo(User user, Folder folder, int memoOrder, String title, String content, boolean isFixed) {
         this.user = user;
         this.folder = folder;
         this.memoOrder = memoOrder;
         this.title = title;
-        this.contents = contents;
+        this.content = content;
         this.isFixed = isFixed;
     }
 
@@ -81,7 +81,7 @@ public class Memo {
         this.tags.add(tag);
     }
 
-    public void updateInfo(Folder folder, String title, String contents, boolean isFixed) {
+    public void updateInfo(Folder folder, String title, String content, boolean isFixed) {
 
         if (folder != null) {
             this.folder = folder;
@@ -89,8 +89,8 @@ public class Memo {
         if (title != null) {
             this.title = title;
         }
-        if (contents != null) {
-            this.contents = contents;
+        if (content != null) {
+            this.content = content;
         }
         this.isFixed = isFixed;
     }

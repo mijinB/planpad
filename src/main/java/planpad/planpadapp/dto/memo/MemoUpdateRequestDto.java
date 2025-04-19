@@ -14,8 +14,8 @@ public class MemoUpdateRequestDto {
     @Schema(description = "메모 제목", example = "memo title")
     private String title;
 
-    @Schema(description = "메모 내용", example = "memo contents")
-    private String contents;
+    @Schema(description = "메모 내용", example = "memo content")
+    private String content;
 
     @Schema(description = "고정 여부", example = "true")
     private boolean isFixed;

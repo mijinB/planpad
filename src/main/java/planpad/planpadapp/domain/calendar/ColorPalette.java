@@ -42,10 +42,10 @@ public class ColorPalette {
     @Column(name = "color_name")
     private String colorName;
 
-    @OneToMany(mappedBy = "color_palette", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "colorPalette", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Schedule> schedules = new ArrayList<>();
 
-    @OneToMany(mappedBy = "color_palette", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "colorPalette", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Anniversary> anniversaries = new ArrayList<>();
 
     @Builder
