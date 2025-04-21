@@ -20,11 +20,11 @@ public class AnniversaryRequest {
     private Long paletteId;
 
     @NotNull
-    @Schema(description = "기념일 시작 일자", example = "2025-04-14 (필수)")
+    @Schema(description = "기념일 시작 일자", example = "2019-12-25 (필수)")
     private LocalDate startDate;
 
     @NotNull
-    @Schema(description = "기념일 종료 일자", example = "2025-04-14 (필수)")
+    @Schema(description = "기념일 종료 일자", example = "2026-01-01 (필수)")
     private LocalDate endDate;
 
     @NotNull

@@ -11,6 +11,7 @@ import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
+import planpad.planpadapp.dto.calendar.anniversary.AnniversaryResponse;
 import planpad.planpadapp.dto.calendar.anniversary.UpdateAnniversaryRequest;
 import planpad.planpadapp.repository.calendar.AnniversaryRepository;
 
@@ -69,6 +70,19 @@ public class AnniversaryService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    public AnniversaryResponse getAnniversary(User user, Long id) {
+        Anniversary anniversary = getAuthorizedAnniversaryOrThrow(user, id);
+
+        return new AnniversaryResponse(
+                anniversary.getGroup().getGroupId(),
+                anniversary.getColorPalette().getColorId(),
+                anniversary.getStartDate(),
+                anniversary.getEndDate(),
+                anniversary.getRecurrenceType(),
+                anniversary.getTitle()
+        );
     }
 
     @Transactional

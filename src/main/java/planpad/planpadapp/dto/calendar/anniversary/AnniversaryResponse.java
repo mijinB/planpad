@@ -1,18 +1,22 @@
 package planpad.planpadapp.dto.calendar.anniversary;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
 
 import java.time.LocalDate;
 
 @Getter
-public class UpdateAnniversaryRequest {
+@NoArgsConstructor
+@AllArgsConstructor
+public class AnniversaryResponse {
 
     @Schema(description = "그룹 id", example = "1")
     private Long groupId;
 
-    @Schema(description = "색상 팔레트 id", example = "#000000")
+    @Schema(description = "색상 팔레트 id", example = "1")
     private Long paletteId;
 
     @Schema(description = "기념일 시작 일자", example = "2019-12-25")
