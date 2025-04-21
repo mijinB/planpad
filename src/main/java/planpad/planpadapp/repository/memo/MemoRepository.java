@@ -13,10 +13,10 @@ import java.util.List;
 @Repository
 public interface MemoRepository extends JpaRepository<Memo, Long> {
 
-    @Query("SELECT m FROM Memo m WHERE m.folder = :folder ORDER BY m.memoOrder")
+    @Query("SELECT m FROM Memo m WHERE m.folder = :folder ORDER BY m.isFixed DESC, m.memoOrder ASC")
     List<Memo> findAllByFolder(@Param("folder") Folder folder);
 
-    @Query("SELECT m FROM Memo m WHERE m.user = :user ORDER BY m.memoOrder")
+    @Query("SELECT m FROM Memo m WHERE m.user = :user ORDER BY m.isFixed DESC, m.memoOrder ASC")
     List<Memo> findAllByUser(@Param("user") User user);
 
     @Query("SELECT COALESCE(MAX(m.memoOrder) + 1, 1) FROM Memo m WHERE m.user = :user")
