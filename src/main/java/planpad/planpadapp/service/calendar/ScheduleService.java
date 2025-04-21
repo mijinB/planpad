@@ -8,10 +8,9 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
-import planpad.planpadapp.dto.calendar.*;
+import planpad.planpadapp.dto.calendar.schedule.*;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
-import java.awt.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;

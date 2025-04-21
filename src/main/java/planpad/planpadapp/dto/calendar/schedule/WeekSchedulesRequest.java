@@ -1,4 +1,4 @@
-package planpad.planpadapp.dto.calendar;
+package planpad.planpadapp.dto.calendar.schedule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;

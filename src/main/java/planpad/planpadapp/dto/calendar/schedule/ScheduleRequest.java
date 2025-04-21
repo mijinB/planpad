@@ -1,4 +1,4 @@
-package planpad.planpadapp.dto.calendar;
+package planpad.planpadapp.dto.calendar.schedule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
@@ -14,8 +14,8 @@ public class ScheduleRequest {
     @Schema(description = "그룹 id", example = "1 (필수)")
     private Long groupId;
 
-    @NotEmpty
-    @Schema(description = "색상 팔레트 id", example = "#000000 (필수)")
+    @NotNull
+    @Schema(description = "색상 팔레트 id", example = "1 (필수)")
     private Long paletteId;
 
     @NotNull

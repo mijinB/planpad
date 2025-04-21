@@ -4,9 +4,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.User;
+import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
 
 import java.time.LocalDate;
 
@@ -43,6 +45,22 @@ public class Anniversary {
     @Column(name = "end_date")
     private LocalDate endDate;
 
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recurrence_type")
+    private RecurrenceType recurrenceType;
+
     @NotEmpty
     private String title;
+
+    @Builder
+    public Anniversary(User user, CalendarGroup group, ColorPalette colorPalette, LocalDate startDate, LocalDate endDate, RecurrenceType recurrenceType, String title) {
+        this.user = user;
+        this.group = group;
+        this.colorPalette = colorPalette;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.recurrenceType = recurrenceType;
+        this.title = title;
+    }
 }

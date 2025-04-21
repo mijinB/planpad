@@ -16,7 +16,7 @@ import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.DaySchedulesResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.SchedulesResponseWrapper;
-import planpad.planpadapp.dto.calendar.*;
+import planpad.planpadapp.dto.calendar.schedule.*;
 import planpad.planpadapp.service.calendar.ScheduleService;
 import planpad.planpadapp.service.user.UserService;
 

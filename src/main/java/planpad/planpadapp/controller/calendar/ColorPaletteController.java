@@ -16,7 +16,7 @@ import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.ColorPalettesResponseWrapper;
 import planpad.planpadapp.dto.calendar.ColorPaletteRequest;
-import planpad.planpadapp.dto.calendar.UpdateColorPaletteRequest;
+import planpad.planpadapp.dto.calendar.schedule.UpdateColorPaletteRequest;
 import planpad.planpadapp.dto.calendar.ColorPalettesResponse;
 import planpad.planpadapp.service.calendar.ColorPaletteService;
 import planpad.planpadapp.service.user.UserService;

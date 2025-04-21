@@ -3,7 +3,7 @@ package planpad.planpadapp.dto.api.calendar;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import planpad.planpadapp.dto.calendar.SchedulesResponse;
+import planpad.planpadapp.dto.calendar.schedule.SchedulesResponse;
 
 import java.util.List;
 import java.util.Map;
