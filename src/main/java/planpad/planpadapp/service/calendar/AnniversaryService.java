@@ -8,8 +8,15 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.Anniversary;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
+import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
+import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
 import planpad.planpadapp.repository.calendar.AnniversaryRepository;
+
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -40,7 +47,30 @@ public class AnniversaryService {
         return anniversary.getAnniversaryId();
     }
 
-    private Anniversary getAuthorizedAnniversaryOrThrow (User user, Long id) {
+    public List<AnniversariesResponse> getAnniversaries(User user) {
+        List<Anniversary> anniversaries = user.getAnniversaries();
+        LocalDate today = LocalDate.now();
+
+        return anniversaries.stream()
+                .map(anniversary -> {
+                    LocalDate startDate = anniversary.getStartDate();
+                    LocalDate nextDate = calculateNextDate(startDate, anniversary.getRecurrenceType());
+                    long dDay = ChronoUnit.DAYS.between(today, nextDate);
+                    long anniversaryYear = ChronoUnit.YEARS.between(startDate, nextDate);
+
+                    return new AnniversariesResponse(
+                            anniversary.getGroup().getGroupId(),
+                            startDate,
+                            nextDate,
+                            dDay,
+                            anniversaryYear,
+                            anniversary.getTitle()
+                    );
+                })
+                .collect(Collectors.toList());
+    }
+
+    private Anniversary getAuthorizedAnniversaryOrThrow(User user, Long id) {
         Anniversary anniversary = anniversaryRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("기념일을 찾을 수 없습니다."));
 
@@ -49,5 +79,29 @@ public class AnniversaryService {
         }
 
         return anniversary;
+    }
+
+    private LocalDate calculateNextDate(LocalDate startDate, RecurrenceType recurrenceType) {
+
+        return switch (recurrenceType) {
+            case YEARLY -> getNextYearlyDate(startDate);
+            case D100 -> getNextDdayDate(startDate, 100);
+            case D1000 -> getNextDdayDate(startDate, 1000);
+        };
+    }
+
+    private LocalDate getNextYearlyDate(LocalDate startDate) {
+        LocalDate today = LocalDate.now();
+        LocalDate thisYear = startDate.withYear(today.getYear());
+
+        return thisYear.isBefore(today) ? thisYear.plusYears(1) : thisYear;
+    }
+
+    private LocalDate getNextDdayDate(LocalDate startDate, int intervalDays) {
+        LocalDate today = LocalDate.now();
+        long daysBetween = ChronoUnit.DAYS.between(startDate, today);
+        long nextInterval = (daysBetween / intervalDays) + 1;
+
+        return startDate.plusDays(nextInterval * intervalDays);
     }
 }
