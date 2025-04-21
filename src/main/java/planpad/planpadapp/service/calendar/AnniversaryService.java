@@ -11,6 +11,7 @@ import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
+import planpad.planpadapp.dto.calendar.anniversary.UpdateAnniversaryRequest;
 import planpad.planpadapp.repository.calendar.AnniversaryRepository;
 
 import java.time.LocalDate;
@@ -70,15 +71,20 @@ public class AnniversaryService {
                 .collect(Collectors.toList());
     }
 
-    private Anniversary getAuthorizedAnniversaryOrThrow(User user, Long id) {
-        Anniversary anniversary = anniversaryRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("기념일을 찾을 수 없습니다."));
+    @Transactional
+    public void updateAnniversary(User user, Long id, UpdateAnniversaryRequest data) {
+        Anniversary anniversary = getAuthorizedAnniversaryOrThrow(user, id);
+        CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
+        ColorPalette palette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
 
-        if (!anniversary.getUser().getUserId().equals(user.getUserId())) {
-            throw new AccessDeniedException("해당 기념일에 접근할 수 없습니다.");
-        }
-
-        return anniversary;
+        anniversary.updateAnniversary(
+                group,
+                palette,
+                data.getStartDate(),
+                data.getEndDate(),
+                data.getRecurrenceType(),
+                data.getTitle()
+        );
     }
 
     private LocalDate calculateNextDate(LocalDate startDate, RecurrenceType recurrenceType) {
@@ -103,5 +109,16 @@ public class AnniversaryService {
         long nextInterval = (daysBetween / intervalDays) + 1;
 
         return startDate.plusDays(nextInterval * intervalDays);
+    }
+
+    private Anniversary getAuthorizedAnniversaryOrThrow(User user, Long id) {
+        Anniversary anniversary = anniversaryRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("기념일을 찾을 수 없습니다."));
+
+        if (!anniversary.getUser().getUserId().equals(user.getUserId())) {
+            throw new AccessDeniedException("해당 기념일에 접근할 수 없습니다.");
+        }
+
+        return anniversary;
     }
 }

@@ -17,6 +17,7 @@ import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.AnniversariesResponseWrapper;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
+import planpad.planpadapp.dto.calendar.anniversary.UpdateAnniversaryRequest;
 import planpad.planpadapp.service.calendar.AnniversaryService;
 import planpad.planpadapp.service.user.UserService;
 
@@ -65,6 +66,25 @@ public class AnniversaryController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("전체 기념일 리스트 조회에 실패하였습니다."));
+        }
+    }
+
+    @PatchMapping("/anniversary/{id}")
+    @Operation(summary = "기념일 수정", description = "기념일을 수정합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "기념일 수정 성공"),
+            @ApiResponse(responseCode = "400", description = "기념일 수정 실패")
+    })
+    public ResponseEntity<Void> updateAnniversary(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id, @RequestBody @Valid UpdateAnniversaryRequest request) {
+
+        try {
+            User user = userService.getUserByBearerToken(bearerToken);
+            anniversaryService.updateAnniversary(user, id, request);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
         }
     }
 }

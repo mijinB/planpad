@@ -63,4 +63,26 @@ public class Anniversary {
         this.recurrenceType = recurrenceType;
         this.title = title;
     }
+
+    public void updateAnniversary(CalendarGroup group, ColorPalette palette, LocalDate startDate, LocalDate endDate, RecurrenceType recurrenceType, String title) {
+
+        if (group != null) {
+            this.group = group;
+        }
+        if (palette != null) {
+            this.colorPalette = palette;
+        }
+        if (startDate != null) {
+            this.startDate = startDate;
+        }
+        if (endDate != null) {
+            this.endDate = endDate;
+        }
+        if (recurrenceType != null) {
+            this.recurrenceType = recurrenceType;
+        }
+        if (title != null && !title.isBlank()) {
+            this.title = title;
+        }
+    }
 }
