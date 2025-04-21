@@ -86,7 +86,7 @@ public class Memo {
         if (folder != null) {
             this.folder = folder;
         }
-        if (title != null) {
+        if (title != null && !title.isBlank()) {
             this.title = title;
         }
         if (content != null) {

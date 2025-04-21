@@ -1,4 +1,4 @@
-package planpad.planpadapp.dto.calendar.schedule;
+package planpad.planpadapp.dto.calendar;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;

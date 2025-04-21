@@ -75,7 +75,7 @@ public class Schedule {
         if (endDateTime != null) {
             this.endDateTime = endDateTime;
         }
-        if (title != null) {
+        if (title != null && !title.isBlank()) {
             this.title = title;
         }
         if (description != null) {

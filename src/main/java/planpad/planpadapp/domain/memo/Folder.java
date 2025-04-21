@@ -59,10 +59,10 @@ public class Folder {
 
     public void updateInfo(String name, String colorCode) {
 
-        if (name != null) {
+        if (name != null && !name.isBlank()) {
             this.name = name;
         }
-        if (colorCode != null) {
+        if (colorCode != null && !colorCode.isBlank()) {
             this.colorCode = colorCode;
         }
     }

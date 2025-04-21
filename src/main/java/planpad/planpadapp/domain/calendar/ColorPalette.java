@@ -57,7 +57,7 @@ public class ColorPalette {
 
     public void updateColor(String colorCode, String colorName) {
 
-        if (colorCode != null) {
+        if (colorCode != null && !colorCode.isBlank()) {
             this.colorCode = colorCode;
         }
         if (colorName != null) {

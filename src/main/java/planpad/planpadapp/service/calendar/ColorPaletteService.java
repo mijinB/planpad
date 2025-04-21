@@ -7,7 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.dto.calendar.ColorPaletteRequest;
-import planpad.planpadapp.dto.calendar.schedule.UpdateColorPaletteRequest;
+import planpad.planpadapp.dto.calendar.UpdateColorPaletteRequest;
 import planpad.planpadapp.dto.calendar.ColorPalettesResponse;
 import planpad.planpadapp.repository.calendar.ColorPaletteRepository;
 
