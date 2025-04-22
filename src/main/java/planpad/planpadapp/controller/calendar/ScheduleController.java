@@ -15,6 +15,7 @@ import planpad.planpadapp.dto.api.OnlyMessageResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseDto;
 import planpad.planpadapp.dto.api.SaveResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.DaySchedulesResponseWrapper;
+import planpad.planpadapp.dto.api.calendar.ScheduleResponseWrapper;
 import planpad.planpadapp.dto.api.calendar.SchedulesResponseWrapper;
 import planpad.planpadapp.dto.calendar.schedule.*;
 import planpad.planpadapp.service.calendar.ScheduleService;
@@ -104,6 +105,25 @@ public class ScheduleController {
 
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("일별 일정 조회에 실패하였습니다."));
+        }
+    }
+
+    @GetMapping("/schedule/{id}")
+    @Operation(summary = "일정 상세 조회", description = "일정 상세 정보를 조회합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "일정 상세 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = ScheduleResponseWrapper.class))),
+            @ApiResponse(responseCode = "400", description = "일정 상세 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
+    })
+    public ResponseEntity<Object> getSchedule(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            User user = userService.getUserByBearerToken(bearerToken);
+            ScheduleResponse schedule = scheduleService.getSchedule(user, id);
+
+            return ResponseEntity.ok(new ScheduleResponseWrapper(schedule, "일정 상세 조회에 성공하였습니다."));
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("일정 상세 조회에 실패하였습니다."));
         }
     }
 

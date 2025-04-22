@@ -95,6 +95,19 @@ public class ScheduleService {
                 .collect(Collectors.toList());
     }
 
+    public ScheduleResponse getSchedule(User user, Long id) {
+        Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
+
+        return new ScheduleResponse(
+                schedule.getGroup().getGroupId(),
+                schedule.getColorPalette().getColorId(),
+                schedule.getStartDateTime(),
+                schedule.getEndDateTime(),
+                schedule.getTitle(),
+                schedule.getDescription()
+        );
+    }
+
     @Transactional
     public void updateSchedule(User user, Long id, UpdateScheduleRequest data) {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
