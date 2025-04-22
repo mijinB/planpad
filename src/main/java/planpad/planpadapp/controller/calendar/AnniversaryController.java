@@ -108,4 +108,23 @@ public class AnniversaryController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    @DeleteMapping("/anniversary/{id}")
+    @Operation(summary = "기념일 삭제", description = "기념일을 삭제합니다.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "기념일 삭제 성공"),
+            @ApiResponse(responseCode = "400", description = "기념일 삭제 실패")
+    })
+    public ResponseEntity<Void> deleteAnniversary(@RequestHeader("Authorization") String bearerToken, @PathVariable("id") Long id) {
+
+        try {
+            User user = userService.getUserByBearerToken(bearerToken);
+            anniversaryService.deleteAnniversary(user, id);
+
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().build();
+        }
+    }
 }

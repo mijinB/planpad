@@ -101,6 +101,12 @@ public class AnniversaryService {
         );
     }
 
+    @Transactional
+    public void deleteAnniversary(User user, Long id) {
+        Anniversary anniversary = getAuthorizedAnniversaryOrThrow(user, id);
+        anniversaryRepository.delete(anniversary);
+    }
+
     private LocalDate calculateNextDate(LocalDate startDate, RecurrenceType recurrenceType) {
 
         return switch (recurrenceType) {
