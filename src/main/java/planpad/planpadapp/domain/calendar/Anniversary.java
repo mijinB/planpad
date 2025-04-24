@@ -8,7 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.User;
-import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
+import planpad.planpadapp.domain.calendar.enums.AnniversaryRecurrenceType;
 
 import java.time.LocalDate;
 
@@ -48,13 +48,13 @@ public class Anniversary {
     @NotNull
     @Enumerated(EnumType.STRING)
     @Column(name = "recurrence_type")
-    private RecurrenceType recurrenceType;
+    private AnniversaryRecurrenceType recurrenceType;
 
     @NotEmpty
     private String title;
 
     @Builder
-    public Anniversary(User user, CalendarGroup group, ColorPalette colorPalette, LocalDate startDate, LocalDate endDate, RecurrenceType recurrenceType, String title) {
+    public Anniversary(User user, CalendarGroup group, ColorPalette colorPalette, LocalDate startDate, LocalDate endDate, AnniversaryRecurrenceType recurrenceType, String title) {
         this.user = user;
         this.group = group;
         this.colorPalette = colorPalette;
@@ -64,7 +64,7 @@ public class Anniversary {
         this.title = title;
     }
 
-    public void updateAnniversary(CalendarGroup group, ColorPalette palette, LocalDate startDate, LocalDate endDate, RecurrenceType recurrenceType, String title) {
+    public void updateAnniversary(CalendarGroup group, ColorPalette palette, LocalDate startDate, LocalDate endDate, AnniversaryRecurrenceType recurrenceType, String title) {
 
         if (group != null) {
             this.group = group;

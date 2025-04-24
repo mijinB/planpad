@@ -8,7 +8,7 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.Anniversary;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
-import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
+import planpad.planpadapp.domain.calendar.enums.AnniversaryRecurrenceType;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryResponse;
@@ -107,7 +107,7 @@ public class AnniversaryService {
         anniversaryRepository.delete(anniversary);
     }
 
-    private LocalDate calculateNextDate(LocalDate startDate, RecurrenceType recurrenceType) {
+    private LocalDate calculateNextDate(LocalDate startDate, AnniversaryRecurrenceType recurrenceType) {
 
         return switch (recurrenceType) {
             case YEARLY -> getNextYearlyDate(startDate);

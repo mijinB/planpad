@@ -26,6 +26,9 @@ public class ScheduleRequest {
     @Schema(description = "일정 종료 일시", example = "2025-04-14T22:15:30 (필수)")
     private LocalDateTime endDateTime;
 
+    @Schema(description = "기념일 반복 주기 정보")
+    private ScheduleRecurrenceDto recurrence;
+
     @NotEmpty
     @Schema(description = "일정 제목", example = "동물병원 상담 (필수)")
     private String title;

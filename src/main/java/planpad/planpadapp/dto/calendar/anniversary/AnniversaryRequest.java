@@ -4,7 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
-import planpad.planpadapp.domain.calendar.enums.RecurrenceType;
+import planpad.planpadapp.domain.calendar.enums.AnniversaryRecurrenceType;
 
 import java.time.LocalDate;
 
@@ -29,7 +29,7 @@ public class AnniversaryRequest {
 
     @NotNull
     @Schema(description = "기념일 반복 주기", example = "YEARLY or D100 or D1000 (中 1, 필수)")
-    private RecurrenceType recurrenceType;
+    private AnniversaryRecurrenceType recurrenceType;
 
     @NotEmpty
     @Schema(description = "기념일 제목", example = "생일 (필수)")

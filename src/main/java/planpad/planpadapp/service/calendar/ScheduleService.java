@@ -8,6 +8,7 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
+import planpad.planpadapp.domain.calendar.ScheduleRecurrenceRule;
 import planpad.planpadapp.dto.calendar.schedule.*;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
@@ -34,6 +35,14 @@ public class ScheduleService {
 
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette colorPalette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
+        ScheduleRecurrenceRule recurrenceRule = new ScheduleRecurrenceRule(
+                data.getRecurrence().getInterval(),
+                data.getRecurrence().getMonthOfYear(),
+                data.getRecurrence().getWeekOfMonth(),
+                data.getRecurrence().getDayOfMonth(),
+                data.getRecurrence().getDayOfWeek(),
+                data.getRecurrence().getDaysOfWeek()
+        );
 
         Schedule schedule = Schedule.builder()
                 .user(user)
@@ -41,6 +50,8 @@ public class ScheduleService {
                 .colorPalette(colorPalette)
                 .startDateTime(data.getStartDateTime())
                 .endDateTime(data.getEndDateTime())
+                .recurrenceType(data.getRecurrence().getRecurrenceType())
+                .recurrenceRule(recurrenceRule)
                 .title(data.getTitle())
                 .description(data.getDescription())
                 .build();
@@ -97,12 +108,22 @@ public class ScheduleService {
 
     public ScheduleResponse getSchedule(User user, Long id) {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
+        ScheduleRecurrenceDto recurrence = new ScheduleRecurrenceDto(
+                schedule.getRecurrenceType(),
+                schedule.getRecurrenceRule().getInterval(),
+                schedule.getRecurrenceRule().getMonthOfYear(),
+                schedule.getRecurrenceRule().getWeekOfMonth(),
+                schedule.getRecurrenceRule().getDayOfMonth(),
+                schedule.getRecurrenceRule().getDayOfWeek(),
+                schedule.getRecurrenceRule().getDaysOfWeek()
+        );
 
         return new ScheduleResponse(
                 schedule.getGroup().getGroupId(),
                 schedule.getColorPalette().getColorId(),
                 schedule.getStartDateTime(),
                 schedule.getEndDateTime(),
+                recurrence,
                 schedule.getTitle(),
                 schedule.getDescription()
         );
@@ -113,12 +134,22 @@ public class ScheduleService {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette palette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
+        ScheduleRecurrenceRule recurrenceRule = new ScheduleRecurrenceRule(
+                data.getRecurrence().getInterval(),
+                data.getRecurrence().getMonthOfYear(),
+                data.getRecurrence().getWeekOfMonth(),
+                data.getRecurrence().getDayOfMonth(),
+                data.getRecurrence().getDayOfWeek(),
+                data.getRecurrence().getDaysOfWeek()
+        );
 
         schedule.updateSchedule(
                 group,
                 palette,
                 data.getStartDateTime(),
                 data.getEndDateTime(),
+                data.getRecurrence().getRecurrenceType(),
+                recurrenceRule,
                 data.getTitle(),
                 data.getDescription()
         );

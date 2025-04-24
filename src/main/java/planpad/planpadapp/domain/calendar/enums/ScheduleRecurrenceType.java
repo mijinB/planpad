@@ -2,15 +2,17 @@ package planpad.planpadapp.domain.calendar.enums;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum RecurrenceType {
+public enum ScheduleRecurrenceType {
 
-    YEARLY("매년"),
-    D100("100일"),
-    D1000("1000일");
+    DAILY("매일"),
+    WEEKDAYS("주중"),
+    WEEKLY("매주"),
+    MONTHLY("매월"),
+    YEARLY("매년");
 
     private final String label;
 
-    RecurrenceType(String label) {
+    ScheduleRecurrenceType(String label) {
         this.label = label;
     }
 

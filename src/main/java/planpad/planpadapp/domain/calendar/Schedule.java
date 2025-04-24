@@ -8,6 +8,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.User;
+import planpad.planpadapp.domain.calendar.enums.ScheduleRecurrenceType;
 
 import java.time.LocalDateTime;
 
@@ -44,6 +45,13 @@ public class Schedule {
     @Column(name = "end_datetime")
     private LocalDateTime endDateTime;
 
+    @Enumerated(EnumType.STRING)
+    @Column(name = "recurrence_type")
+    private ScheduleRecurrenceType recurrenceType;
+
+    @Embedded
+    private ScheduleRecurrenceRule recurrenceRule;
+
     @NotEmpty
     private String title;
 
@@ -51,17 +59,19 @@ public class Schedule {
     private String description;
 
     @Builder
-    public Schedule(User user, CalendarGroup group, ColorPalette colorPalette, LocalDateTime startDateTime, LocalDateTime endDateTime, String title, String description) {
+    public Schedule(User user, CalendarGroup group, ColorPalette colorPalette, LocalDateTime startDateTime, LocalDateTime endDateTime, ScheduleRecurrenceType recurrenceType, ScheduleRecurrenceRule recurrenceRule, String title, String description) {
         this.user = user;
         this.group = group;
         this.colorPalette = colorPalette;
         this.startDateTime = startDateTime;
         this.endDateTime = endDateTime;
+        this.recurrenceType = recurrenceType;
+        this.recurrenceRule = recurrenceRule;
         this.title = title;
         this.description = description;
     }
 
-    public void updateSchedule(CalendarGroup group, ColorPalette palette, LocalDateTime startDateTime, LocalDateTime endDateTime, String title, String description) {
+    public void updateSchedule(CalendarGroup group, ColorPalette palette, LocalDateTime startDateTime, LocalDateTime endDateTime, ScheduleRecurrenceType recurrenceType, ScheduleRecurrenceRule recurrenceRule, String title, String description) {
 
         if (group != null) {
             this.group = group;
@@ -74,6 +84,12 @@ public class Schedule {
         }
         if (endDateTime != null) {
             this.endDateTime = endDateTime;
+        }
+        if (recurrenceType != null) {
+            this.recurrenceType = recurrenceType;
+        }
+        if (recurrenceRule != null) {
+            this.recurrenceRule = recurrenceRule;
         }
         if (title != null && !title.isBlank()) {
             this.title = title;
