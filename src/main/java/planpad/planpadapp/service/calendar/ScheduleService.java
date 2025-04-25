@@ -13,7 +13,6 @@ import planpad.planpadapp.dto.calendar.schedule.*;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
@@ -63,13 +62,16 @@ public class ScheduleService {
     }
 
     public Map<Integer, List<SchedulesResponse>> getSchedulesByMonth(User user, MonthSchedulesRequest data) {
+        LocalDate monthStart = LocalDate.of(data.getYear(), data.getMonth(), 1);
+        LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());      // 다음달 1일 0시
 
         Stream<Schedule> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
-                    LocalDateTime start = schedule.getStartDateTime();
-                    boolean isSameMonth = start.getYear() == data.getYear() && start.getMonthValue() == data.getMonth();
+                    LocalDate start = schedule.getStartDateTime().toLocalDate();
+                    LocalDate end = schedule.getEndDateTime().toLocalDate();
+                    boolean isOverlapping = !start.isAfter(monthEnd) && !end.isBefore(monthStart);
 
-                    return isSameMonth && isInGroup(data.getGroupIds(), schedule);
+                    return isOverlapping && isInGroup(data.getGroupIds(), schedule);
                 });
 
         return toGroupedScheduleMap(filtered);
@@ -79,10 +81,11 @@ public class ScheduleService {
 
         Stream<Schedule> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
-                    LocalDate date = schedule.getStartDateTime().toLocalDate();
-                    boolean isWithinRange = (!date.isBefore(data.getStartDate())) && (!date.isAfter(data.getEndDate()));
+                    LocalDate startDate = schedule.getStartDateTime().toLocalDate();
+                    LocalDate endDate = schedule.getEndDateTime().toLocalDate();
+                    boolean isOverlapping = !startDate.isAfter(data.getEndDate()) && !endDate.isBefore(data.getStartDate());
 
-                    return isWithinRange && isInGroup(data.getGroupIds(), schedule);
+                    return isOverlapping && isInGroup(data.getGroupIds(), schedule);
                 });
 
         return toGroupedScheduleMap(filtered);
@@ -92,10 +95,11 @@ public class ScheduleService {
 
         return user.getSchedules().stream()
                 .filter(schedule -> {
-                    LocalDate date = schedule.getStartDateTime().toLocalDate();
-                    boolean isSameDate = date.equals(data.getDate());
+                    LocalDate startDate = schedule.getStartDateTime().toLocalDate();
+                    LocalDate endDate = schedule.getEndDateTime().toLocalDate();
+                    boolean isOverlapping = !startDate.isAfter(data.getDate()) && !endDate.isBefore(data.getDate());
 
-                    return isSameDate && isInGroup(data.getGroupIds(), schedule);
+                    return isOverlapping && isInGroup(data.getGroupIds(), schedule);
                 })
                 .map(schedule -> {
                     String colorCode = schedule.getColorPalette().getColorCode();
