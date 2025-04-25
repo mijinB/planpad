@@ -8,12 +8,17 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 public class ScheduleRecurrenceRule {
+
+    private LocalTime startTime;
+
+    private LocalTime endTime;
 
     private Integer interval;       // _일 | _번째 주 | _개월 마다 반복
 

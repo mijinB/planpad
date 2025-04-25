@@ -36,6 +36,8 @@ public class ScheduleService {
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette colorPalette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
         ScheduleRecurrenceRule recurrenceRule = new ScheduleRecurrenceRule(
+                data.getRecurrence().getStartTime(),
+                data.getRecurrence().getEndTime(),
                 data.getRecurrence().getInterval(),
                 data.getRecurrence().getMonthOfYear(),
                 data.getRecurrence().getWeekOfMonth(),
@@ -110,6 +112,8 @@ public class ScheduleService {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
         ScheduleRecurrenceDto recurrence = new ScheduleRecurrenceDto(
                 schedule.getRecurrenceType(),
+                schedule.getRecurrenceRule().getStartTime(),
+                schedule.getRecurrenceRule().getEndTime(),
                 schedule.getRecurrenceRule().getInterval(),
                 schedule.getRecurrenceRule().getMonthOfYear(),
                 schedule.getRecurrenceRule().getWeekOfMonth(),
@@ -135,6 +139,8 @@ public class ScheduleService {
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette palette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
         ScheduleRecurrenceRule recurrenceRule = new ScheduleRecurrenceRule(
+                data.getRecurrence().getStartTime(),
+                data.getRecurrence().getEndTime(),
                 data.getRecurrence().getInterval(),
                 data.getRecurrence().getMonthOfYear(),
                 data.getRecurrence().getWeekOfMonth(),

@@ -15,10 +15,10 @@ public class SchedulesResponse {
     @Schema(description = "색상 코드", example = "#FFFFFF")
     private String colorCode;
 
-    @Schema(description = "일정 시작 시간", example = "08:10")
+    @Schema(description = "일정 시작 시간", example = "Time 타입")
     private LocalTime startTime;
 
-    @Schema(description = "일정 종료 시간", example = "22:15")
+    @Schema(description = "일정 종료 시간", example = "Time 타입")
     private LocalTime endTime;
 
     @Schema(description = "일정 제목", example = "동물병원 상담")

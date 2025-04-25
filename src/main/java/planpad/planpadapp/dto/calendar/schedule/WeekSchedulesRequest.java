@@ -15,10 +15,10 @@ public class WeekSchedulesRequest {
     private List<Long> groupIds;
 
     @NotNull
-    @Schema(description = "조회 시작 일자", example = "2025-03-30 (필수)")
+    @Schema(description = "조회 시작 일자", example = "Date 타입 (필수)")
     private LocalDate startDate;
 
     @NotNull
-    @Schema(description = "조회 종료 일자", example = "2025-04-05 (필수)")
+    @Schema(description = "조회 종료 일자", example = "Date 타입 (필수)")
     private LocalDate endDate;
 }

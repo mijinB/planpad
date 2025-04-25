@@ -15,10 +15,10 @@ public class UpdateAnniversaryRequest {
     @Schema(description = "색상 팔레트 id", example = "#000000")
     private Long paletteId;
 
-    @Schema(description = "기념일 시작 일자", example = "2019-12-25")
+    @Schema(description = "기념일 시작 일자", example = "Date 타입")
     private LocalDate startDate;
 
-    @Schema(description = "기념일 종료 일자", example = "2026-01-01")
+    @Schema(description = "기념일 종료 일자", example = "Date 타입")
     private LocalDate endDate;
 
     @Schema(description = "기념일 반복 주기", example = "YEARLY or D100 or D1000")

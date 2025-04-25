@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.calendar.enums.ScheduleRecurrenceType;
 
 import java.time.DayOfWeek;
+import java.time.LocalTime;
 import java.util.List;
 
 @Getter
@@ -14,8 +15,14 @@ import java.util.List;
 @AllArgsConstructor
 public class ScheduleRecurrenceDto {
 
-    @Schema(description = "기념일 반복 주기", example = "YEARLY or D100 or D1000 (中 1, 필수)")
+    @Schema(description = "일정 반복 주기", example = "YEARLY or D100 or D1000")
     private ScheduleRecurrenceType recurrenceType;
+    
+    @Schema(description = "반복 일정 시작 시간", example = "Time 타입")
+    private LocalTime startTime;
+
+    @Schema(description = "반복 일정 종료 시간", example = "Time 타입")
+    private LocalTime endTime;
 
     @Schema(description = "_일 | _번째 주 | _개월 마다 반복", example = "3")
     private Integer interval;

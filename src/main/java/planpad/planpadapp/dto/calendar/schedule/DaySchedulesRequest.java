@@ -15,6 +15,6 @@ public class DaySchedulesRequest {
     private List<Long> groupIds;
 
     @NotNull
-    @Schema(description = "조회 일자", example = "2025-04-17 (필수)")
+    @Schema(description = "조회 일자", example = "Date 타입 (필수)")
     private LocalDate date;
 }

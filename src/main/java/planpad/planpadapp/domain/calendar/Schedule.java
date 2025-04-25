@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.enums.ScheduleRecurrenceType;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity
@@ -97,5 +98,19 @@ public class Schedule {
         if (description != null) {
             this.description = description;
         }
+    }
+
+    public Schedule copyWithNewStartDateTime(LocalDateTime newStartDateTime) {
+        return Schedule.builder()
+                .user(this.user)
+                .group(this.group)
+                .colorPalette(this.colorPalette)
+                .startDateTime(newStartDateTime)
+                .endDateTime(newStartDateTime.plus(Duration.between(this.startDateTime, this.endDateTime)))
+                .recurrenceType(this.recurrenceType)
+                .recurrenceRule(this.recurrenceRule)
+                .title(this.title)
+                .description(this.description)
+                .build();
     }
 }

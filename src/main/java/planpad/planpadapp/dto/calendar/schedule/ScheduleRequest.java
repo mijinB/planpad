@@ -19,14 +19,14 @@ public class ScheduleRequest {
     private Long paletteId;
 
     @NotNull
-    @Schema(description = "일정 시작 일시", example = "2025-04-14T08:10:25 (필수)")
+    @Schema(description = "일정 시작 일시", example = "DateTime 타입 (필수)")
     private LocalDateTime startDateTime;
 
     @NotNull
-    @Schema(description = "일정 종료 일시", example = "2025-04-14T22:15:30 (필수)")
+    @Schema(description = "일정 종료 일시", example = "DateTime 타입 (필수)")
     private LocalDateTime endDateTime;
 
-    @Schema(description = "기념일 반복 주기 정보")
+    @Schema(description = "일정 반복 주기 정보")
     private ScheduleRecurrenceDto recurrence;
 
     @NotEmpty

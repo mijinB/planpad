@@ -15,10 +15,10 @@ public class AnniversariesResponse {
     @Schema(description = "그룹 id", example = "1")
     private Long groupId;
 
-    @Schema(description = "기념일 시작 일자", example = "2019-12-25")
+    @Schema(description = "기념일 시작 일자", example = "Date 타입")
     private LocalDate startDate;
 
-    @Schema(description = "다음 기념일 일자", example = "2025-12-25")
+    @Schema(description = "다음 기념일 일자", example = "Date 타입")
     private LocalDate nextDate;
 
     @Schema(description = "다음 기념일까지 남은 d-day", example = "234")
