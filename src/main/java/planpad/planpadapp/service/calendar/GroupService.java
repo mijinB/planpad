@@ -48,8 +48,9 @@ public class GroupService {
     }
 
     public List<GroupsResponse> getGroups(User user) {
+        List<CalendarGroup> groups = groupRepository.findAllByUser(user);
 
-        return user.getGroups().stream()
+        return groups.stream()
                 .map(GroupsResponse::new)
                 .collect(Collectors.toList());
     }
