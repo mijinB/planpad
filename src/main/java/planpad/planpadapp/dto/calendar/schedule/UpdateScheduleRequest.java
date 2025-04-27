@@ -1,9 +1,12 @@
 package planpad.planpadapp.dto.calendar.schedule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 @Getter
 public class UpdateScheduleRequest {
@@ -14,11 +17,17 @@ public class UpdateScheduleRequest {
     @Schema(description = "색상 팔레트 id", example = "#000000")
     private Long paletteId;
 
-    @Schema(description = "일정 시작 일시", example = "DateTime 타입")
-    private LocalDateTime startDateTime;
+    @Schema(description = "일정 시작 일자", example = "Date 타입")
+    private LocalDate startDate;
 
-    @Schema(description = "일정 종료 일시", example = "DateTime 타입")
-    private LocalDateTime endDateTime;
+    @Schema(description = "일정 시작 시간", example = "Time 타입")
+    private LocalTime startTime;
+
+    @Schema(description = "일정 종료 일자", example = "Date 타입")
+    private LocalDate endDate;
+
+    @Schema(description = "일정 종료 시간", example = "Time 타입")
+    private LocalTime endTime;
 
     @Schema(description = "일정 반복 주기 정보")
     private ScheduleRecurrenceDto recurrence;

@@ -16,10 +16,6 @@ import java.util.List;
 @AllArgsConstructor
 public class ScheduleRecurrenceRule {
 
-    private LocalTime startTime;
-
-    private LocalTime endTime;
-
     private Integer interval;       // _일 | _번째 주 | _개월 마다 반복
 
     private Integer monthOfYear;    // _월

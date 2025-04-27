@@ -5,7 +5,8 @@ import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
+import java.time.LocalTime;
 
 @Getter
 public class ScheduleRequest {
@@ -19,12 +20,17 @@ public class ScheduleRequest {
     private Long paletteId;
 
     @NotNull
-    @Schema(description = "일정 시작 일시", example = "DateTime 타입 (필수)")
-    private LocalDateTime startDateTime;
+    @Schema(description = "일정 시작 일자", example = "Date 타입 (필수)")
+    private LocalDate startDate;
 
-    @NotNull
-    @Schema(description = "일정 종료 일시", example = "DateTime 타입 (필수)")
-    private LocalDateTime endDateTime;
+    @Schema(description = "일정 시작 시간", example = "Time 타입")
+    private LocalTime startTime;
+
+    @Schema(description = "일정 종료 일자", example = "Date 타입")
+    private LocalDate endDate;
+
+    @Schema(description = "일정 종료 시간", example = "Time 타입")
+    private LocalTime endTime;
 
     @Schema(description = "일정 반복 주기 정보")
     private ScheduleRecurrenceDto recurrence;
