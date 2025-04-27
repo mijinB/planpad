@@ -43,6 +43,8 @@ public class GroupService {
                 .user(user)
                 .name("내 캘린더")
                 .build();
+
+        groupRepository.save(group);
     }
 
     public List<GroupsResponse> getGroups(User user) {
