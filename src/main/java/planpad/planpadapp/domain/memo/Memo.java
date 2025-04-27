@@ -92,7 +92,7 @@ public class Memo {
         if (content != null) {
             this.content = content;
         }
-        if (isFixed != null) {
+        if (fixed != null) {
             this.isFixed = fixed;
         }
     }
