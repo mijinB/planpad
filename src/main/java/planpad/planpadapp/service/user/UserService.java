@@ -10,6 +10,7 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.dto.user.UserDto;
 import planpad.planpadapp.provider.JwtTokenProvider;
 import planpad.planpadapp.repository.UserRepository;
+import planpad.planpadapp.service.calendar.GroupService;
 import planpad.planpadapp.service.memo.FolderService;
 
 import java.util.Collections;
@@ -27,6 +28,7 @@ public class UserService {
     private final NaverService naverService;
     private final GoogleService googleService;
     private final FolderService folderService;
+    private final GroupService groupService;
 
     public String join(User user) {
         userRepository.save(user);
@@ -87,6 +89,7 @@ public class UserService {
             User newUser = new User(socialUser);
             join(newUser);
             folderService.createDefaultFolder(newUser);
+            groupService.createDefaultGroup(newUser);
 
             return newUser;
         }

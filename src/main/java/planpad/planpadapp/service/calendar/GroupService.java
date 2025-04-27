@@ -37,6 +37,14 @@ public class GroupService {
         return group.getGroupId();
     }
 
+    @Transactional
+    public void createDefaultGroup(User user) {
+        CalendarGroup group = CalendarGroup.builder()
+                .user(user)
+                .name("내 캘린더")
+                .build();
+    }
+
     public List<GroupsResponse> getGroups(User user) {
 
         return user.getGroups().stream()
