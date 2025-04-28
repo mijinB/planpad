@@ -9,7 +9,7 @@ import java.time.LocalDate;
 import java.time.LocalTime;
 
 @Getter
-public class ScheduleRequest {
+public class ScheduleRequest implements RecurrenceRequest {
 
     @NotNull
     @Schema(description = "그룹 id", example = "1 (필수)")
@@ -41,4 +41,9 @@ public class ScheduleRequest {
 
     @Schema(description = "일정 설명", example = "동물병원 업무시간 : AM09:00 ~ PM06:00")
     private String description;
+
+    @Override
+    public ScheduleRecurrenceDto getRecurrence() {
+        return recurrence;
+    }
 }

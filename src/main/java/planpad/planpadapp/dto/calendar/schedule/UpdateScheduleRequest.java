@@ -1,15 +1,13 @@
 package planpad.planpadapp.dto.calendar.schedule;
 
 import io.swagger.v3.oas.annotations.media.Schema;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Getter
-public class UpdateScheduleRequest {
+public class UpdateScheduleRequest implements RecurrenceRequest {
 
     @Schema(description = "그룹 id", example = "1")
     private Long groupId;
@@ -37,4 +35,9 @@ public class UpdateScheduleRequest {
 
     @Schema(description = "일정 설명", example = "동물병원 업무시간 : AM09:00 ~ PM06:00")
     private String description;
+
+    @Override
+    public ScheduleRecurrenceDto getRecurrence() {
+        return recurrence;
+    }
 }

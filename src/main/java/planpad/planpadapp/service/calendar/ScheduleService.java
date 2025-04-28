@@ -35,14 +35,7 @@ public class ScheduleService {
 
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette colorPalette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
-        ScheduleRecurrenceRule recurrenceRule = new ScheduleRecurrenceRule(
-                data.getRecurrence().getInterval(),
-                data.getRecurrence().getMonthOfYear(),
-                data.getRecurrence().getWeekOfMonth(),
-                data.getRecurrence().getDayOfMonth(),
-                data.getRecurrence().getDayOfWeek(),
-                data.getRecurrence().getDaysOfWeek()
-        );
+        ScheduleRecurrenceRule recurrenceRule = toRecurrenceRule(data);
 
         Schedule schedule = Schedule.builder()
                 .user(user)
@@ -121,15 +114,7 @@ public class ScheduleService {
 
     public ScheduleResponse getSchedule(User user, Long id) {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
-        ScheduleRecurrenceDto recurrence = new ScheduleRecurrenceDto(
-                schedule.getRecurrenceType(),
-                schedule.getRecurrenceRule().getInterval(),
-                schedule.getRecurrenceRule().getMonthOfYear(),
-                schedule.getRecurrenceRule().getWeekOfMonth(),
-                schedule.getRecurrenceRule().getDayOfMonth(),
-                schedule.getRecurrenceRule().getDayOfWeek(),
-                schedule.getRecurrenceRule().getDaysOfWeek()
-        );
+        ScheduleRecurrenceDto recurrence = toRecurrenceDto(schedule);
 
         return new ScheduleResponse(
                 schedule.getGroup().getGroupId(),
@@ -149,14 +134,7 @@ public class ScheduleService {
         Schedule schedule = getAuthorizedScheduleOrThrow(user, id);
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
         ColorPalette palette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
-        ScheduleRecurrenceRule recurrenceRule = new ScheduleRecurrenceRule(
-                data.getRecurrence().getInterval(),
-                data.getRecurrence().getMonthOfYear(),
-                data.getRecurrence().getWeekOfMonth(),
-                data.getRecurrence().getDayOfMonth(),
-                data.getRecurrence().getDayOfWeek(),
-                data.getRecurrence().getDaysOfWeek()
-        );
+        ScheduleRecurrenceRule recurrenceRule = toRecurrenceRule(data);
 
         schedule.updateSchedule(
                 group,
@@ -210,7 +188,17 @@ public class ScheduleService {
     }
 
     private List<Schedule> expandMonthlyOccurrences(Schedule schedule, LocalDate start, LocalDate end) {
-        ScheduleRecurrenceDto recurrence = new ScheduleRecurrenceDto(
+        ScheduleRecurrenceDto recurrence = toRecurrenceDto(schedule);
+
+        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(recurrence, schedule.getStartDate(), start, end);
+        return occurrences.stream()
+                .map(schedule::copyWithNewStartDateTime)
+                .collect(Collectors.toList());
+    }
+
+    private ScheduleRecurrenceDto toRecurrenceDto(Schedule schedule) {
+
+        return new ScheduleRecurrenceDto(
                 schedule.getRecurrenceType(),
                 schedule.getRecurrenceRule().getInterval(),
                 schedule.getRecurrenceRule().getMonthOfYear(),
@@ -219,11 +207,18 @@ public class ScheduleService {
                 schedule.getRecurrenceRule().getDayOfWeek(),
                 schedule.getRecurrenceRule().getDaysOfWeek()
         );
+    }
 
-        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(recurrence, schedule.getStartDate(), start, end);
-        return occurrences.stream()
-                .map(schedule::copyWithNewStartDateTime)
-                .collect(Collectors.toList());
+    private ScheduleRecurrenceRule toRecurrenceRule(RecurrenceRequest data) {
+
+        return new ScheduleRecurrenceRule(
+                data.getRecurrence().getInterval(),
+                data.getRecurrence().getMonthOfYear(),
+                data.getRecurrence().getWeekOfMonth(),
+                data.getRecurrence().getDayOfMonth(),
+                data.getRecurrence().getDayOfWeek(),
+                data.getRecurrence().getDaysOfWeek()
+        );
     }
 
     private Schedule getAuthorizedScheduleOrThrow(User user, Long id) {
