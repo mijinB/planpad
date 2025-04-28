@@ -42,7 +42,6 @@ public class Anniversary {
     @Column(name = "start_date")
     private LocalDate startDate;
 
-    @NotNull
     @Column(name = "end_date")
     private LocalDate endDate;
 

@@ -19,11 +19,11 @@ import java.util.List;
 public class RecurrenceService {
 
     // Schedule
-    public List<LocalDate> getOccurrencesBetween(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate from, LocalDate to) {
+    public List<LocalDate> getOccurrencesBetween(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate endDate, LocalDate from, LocalDate to) {
         List<LocalDate> occurrences = new ArrayList<>();
-        LocalDate current = from;
+        LocalDate current = from.isBefore(startDate) ? startDate : from;
 
-        while (!current.isAfter(to)) {
+        while (!current.isAfter(to) && (endDate == null || !current.isAfter(endDate))) {
             if (matchesRecurrence(recurrence, startDate, current)) {
                 occurrences.add(current);
             }
@@ -93,11 +93,11 @@ public class RecurrenceService {
     }
 
     // Anniversary
-    public List<LocalDate> getOccurrencesBetween(AnniversaryRecurrenceType type, LocalDate startDate, LocalDate from, LocalDate to) {
+    public List<LocalDate> getOccurrencesBetween(AnniversaryRecurrenceType type, LocalDate startDate, LocalDate endDate, LocalDate from, LocalDate to) {
         List<LocalDate> occurrences = new ArrayList<>();
-        LocalDate current = from;
+        LocalDate current = from.isBefore(startDate) ? startDate : from;
 
-        while (!current.isAfter(to)) {
+        while (!current.isAfter(to) && (endDate == null || !current.isAfter(endDate))) {
             if (matchesAnniversaryRecurrence(type, startDate, current)) {
                 occurrences.add(current);
             }

@@ -164,7 +164,7 @@ public class AnniversaryService {
     }
 
     private List<Anniversary> expandMonthlyAnniversaries(Anniversary anniversary, LocalDate start, LocalDate end) {
-        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(anniversary.getRecurrenceType(), anniversary.getStartDate(), start, end);
+        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(anniversary.getRecurrenceType(), anniversary.getStartDate(), anniversary.getEndDate(), start, end);
 
         return occurrences.stream()
                 .map(anniversary::copyWithNewStartDate)

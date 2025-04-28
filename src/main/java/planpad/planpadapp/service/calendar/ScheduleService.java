@@ -193,7 +193,7 @@ public class ScheduleService {
     private List<Schedule> expandMonthlySchedules(Schedule schedule, LocalDate start, LocalDate end) {
         ScheduleRecurrenceDto recurrence = toRecurrenceDto(schedule);
 
-        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(recurrence, schedule.getStartDate(), start, end);
+        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(recurrence, schedule.getStartDate(), schedule.getEndDate(), start, end);
         return occurrences.stream()
                 .map(schedule::copyWithNewStartDate)
                 .collect(Collectors.toList());
