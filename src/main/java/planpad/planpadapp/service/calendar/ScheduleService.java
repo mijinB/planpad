@@ -17,6 +17,7 @@ import java.time.LocalTime;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -26,6 +27,7 @@ import java.util.stream.Stream;
 public class ScheduleService {
 
     private final ScheduleRepository scheduleRepository;
+    private final AnniversaryService anniversaryService;
     private final GroupService groupService;
     private final ColorPaletteService colorPaletteService;
     private final RecurrenceService recurrenceService;
@@ -59,34 +61,40 @@ public class ScheduleService {
         LocalDate monthStart = LocalDate.of(data.getYear(), data.getMonth(), 1);
         LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());      // 다음달 1일 0시
 
-        Stream<Schedule> singleSchedules = user.getSchedules().stream()
+        Stream<SchedulesResponse> singleSchedules = user.getSchedules().stream()
                 .filter(schedule -> {
                     LocalDate start = schedule.getStartDate();
                     LocalDate end = schedule.getEndDate();
                     boolean isOverlapping = !start.isAfter(monthEnd) && !end.isBefore(monthStart);
 
                     return isOverlapping && isInGroup(data.getGroupIds(), schedule);
-                });
+                })
+                .map(this::toSchedulesResponse);
 
-        Stream<Schedule> recurringSchedules = user.getSchedules().stream()
+        Stream<SchedulesResponse> recurringSchedules = user.getSchedules().stream()
                 .filter(schedule -> schedule.getRecurrenceType() != null && isInGroup(data.getGroupIds(), schedule))
-                .flatMap(schedule -> expandMonthlyOccurrences(schedule, monthStart, monthEnd).stream());
+                .flatMap(schedule -> expandMonthlySchedules(schedule, monthStart, monthEnd).stream())
+                .map(this::toSchedulesResponse);
 
-        Stream<Schedule> allSchedules = Stream.concat(singleSchedules, recurringSchedules);
+        // 기념일 추가
+        Stream<SchedulesResponse> allAnniversaries = anniversaryService.getAnniversariesByMonth(user, data);
+
+        Stream<SchedulesResponse> allSchedules = Stream.concat(Stream.concat(singleSchedules, recurringSchedules), allAnniversaries);
 
         return toGroupedScheduleMap(allSchedules);
     }
 
     public Map<Integer, List<SchedulesResponse>> getSchedulesByWeek(User user, WeekSchedulesRequest data) {
 
-        Stream<Schedule> filtered = user.getSchedules().stream()
+        Stream<SchedulesResponse> filtered = user.getSchedules().stream()
                 .filter(schedule -> {
                     LocalDate startDate = schedule.getStartDate();
                     LocalDate endDate = schedule.getEndDate();
                     boolean isOverlapping = !startDate.isAfter(data.getEndDate()) && !endDate.isBefore(data.getStartDate());
 
                     return isOverlapping && isInGroup(data.getGroupIds(), schedule);
-                });
+                })
+                .map(this::toSchedulesResponse);
 
         return toGroupedScheduleMap(filtered);
     }
@@ -103,10 +111,12 @@ public class ScheduleService {
                 })
                 .map(schedule -> {
                     String colorCode = schedule.getColorPalette().getColorCode();
+                    LocalDate startDate = schedule.getStartDate();
                     LocalTime startTime = schedule.getStartTime();
+                    LocalDate endDate = schedule.getEndDate();
                     LocalTime endTime = schedule.getEndTime();
 
-                    return new SchedulesResponse(colorCode, startTime, endTime, schedule.getTitle());
+                    return new SchedulesResponse(colorCode, startDate, startTime, endDate, endTime, schedule.getTitle());
                 })
                 .sorted(Comparator.comparing(SchedulesResponse::getStartTime))
                 .collect(Collectors.toList());
@@ -156,27 +166,20 @@ public class ScheduleService {
         scheduleRepository.delete(schedule);
     }
 
-    private Map<Integer, List<SchedulesResponse>> toGroupedScheduleMap(Stream<Schedule> scheduleStream) {
+    private Map<Integer, List<SchedulesResponse>> toGroupedScheduleMap(Stream<SchedulesResponse> responseStream) {
 
-        return scheduleStream
-                .map(schedule -> {
-                    String colorCode = schedule.getColorPalette().getColorCode();
-                    int day = schedule.getStartDate().getDayOfMonth();
-                    LocalTime startTime = schedule.getStartTime();
-                    LocalTime endTime = schedule.getEndTime();
-
-                    return Map.entry(day, new SchedulesResponse(colorCode, startTime, endTime, schedule.getTitle()));
-                })
+        return responseStream
                 .collect(Collectors.groupingBy(
-                        Map.Entry::getKey,
-                        Collectors.mapping(
-                                Map.Entry::getValue,
-                                Collectors.collectingAndThen(
-                                        Collectors.toList(),
-                                        list -> list.stream()
-                                                .sorted(Comparator.comparing(SchedulesResponse::getStartTime))
-                                                .collect(Collectors.toList())
-                                )
+                        response -> response.getStartDate().getDayOfMonth(),
+                        Collectors.collectingAndThen(
+                                Collectors.toList(),
+                                list -> list.stream()
+                                        .sorted(Comparator.comparing(response ->
+                                                // startTime 이 null 이면 00:00으로 대체
+                                                Optional.ofNullable(response.getStartTime())
+                                                        .orElse(LocalTime.MIDNIGHT)
+                                        ))
+                                        .collect(Collectors.toList())
                         )
                 ));
     }
@@ -187,13 +190,25 @@ public class ScheduleService {
                 .anyMatch(groupId -> groupId.equals(schedule.getGroup().getGroupId()));
     }
 
-    private List<Schedule> expandMonthlyOccurrences(Schedule schedule, LocalDate start, LocalDate end) {
+    private List<Schedule> expandMonthlySchedules(Schedule schedule, LocalDate start, LocalDate end) {
         ScheduleRecurrenceDto recurrence = toRecurrenceDto(schedule);
 
         List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(recurrence, schedule.getStartDate(), start, end);
         return occurrences.stream()
-                .map(schedule::copyWithNewStartDateTime)
+                .map(schedule::copyWithNewStartDate)
                 .collect(Collectors.toList());
+    }
+
+    private SchedulesResponse toSchedulesResponse(Schedule schedule) {
+
+        return new SchedulesResponse(
+                schedule.getColorPalette().getColorCode(),
+                schedule.getStartDate(),
+                schedule.getStartTime(),
+                schedule.getEndDate(),
+                schedule.getEndTime(),
+                schedule.getTitle()
+        );
     }
 
     private ScheduleRecurrenceDto toRecurrenceDto(Schedule schedule) {

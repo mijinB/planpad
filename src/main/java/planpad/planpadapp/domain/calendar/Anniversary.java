@@ -11,6 +11,7 @@ import planpad.planpadapp.domain.User;
 import planpad.planpadapp.domain.calendar.enums.AnniversaryRecurrenceType;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 
 @Entity
 @Getter
@@ -84,5 +85,19 @@ public class Anniversary {
         if (title != null && !title.isBlank()) {
             this.title = title;
         }
+    }
+
+    public Anniversary copyWithNewStartDate(LocalDate newStartDate) {
+        long daysBetween = ChronoUnit.DAYS.between(this.startDate, newStartDate);
+
+        return Anniversary.builder()
+                .user(this.user)
+                .group(this.group)
+                .colorPalette(this.colorPalette)
+                .startDate(newStartDate)
+                .endDate(newStartDate.plusDays(daysBetween))
+                .recurrenceType(this.recurrenceType)
+                .title(this.title)
+                .build();
     }
 }

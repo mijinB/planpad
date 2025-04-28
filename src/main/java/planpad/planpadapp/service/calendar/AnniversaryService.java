@@ -13,12 +13,15 @@ import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryResponse;
 import planpad.planpadapp.dto.calendar.anniversary.UpdateAnniversaryRequest;
+import planpad.planpadapp.dto.calendar.schedule.MonthSchedulesRequest;
+import planpad.planpadapp.dto.calendar.schedule.SchedulesResponse;
 import planpad.planpadapp.repository.calendar.AnniversaryRepository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 @Transactional(readOnly = true)
@@ -28,6 +31,7 @@ public class AnniversaryService {
     private final AnniversaryRepository anniversaryRepository;
     private final GroupService groupService;
     private final ColorPaletteService colorPaletteService;
+    private final RecurrenceService recurrenceService;
 
     @Transactional
     public Long createAnniversary(User user, AnniversaryRequest data) {
@@ -70,6 +74,28 @@ public class AnniversaryService {
                     );
                 })
                 .collect(Collectors.toList());
+    }
+
+    public Stream<SchedulesResponse> getAnniversariesByMonth(User user, MonthSchedulesRequest data) {
+        LocalDate monthStart = LocalDate.of(data.getYear(), data.getMonth(), 1);
+        LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());
+
+        Stream<SchedulesResponse> singleAnniversaries = user.getAnniversaries().stream()
+                .filter(anniversary -> {
+                    LocalDate start = anniversary.getStartDate();
+                    LocalDate end = anniversary.getEndDate();
+                    boolean isOverlapping = !start.isAfter(monthEnd) && !end.isBefore(monthStart);
+
+                    return isOverlapping && isAnniversaryInGroup(data.getGroupIds(), anniversary);
+                })
+                .map(this::toSchedulesResponse);
+
+        Stream<SchedulesResponse> recurringAnniversaries = user.getAnniversaries().stream()
+                .filter(anniversary -> isAnniversaryInGroup(data.getGroupIds(), anniversary))
+                .flatMap(anniversary -> expandMonthlyAnniversaries(anniversary, monthStart, monthEnd).stream())
+                .map(this::toSchedulesResponse);
+
+        return Stream.concat(singleAnniversaries, recurringAnniversaries);
     }
 
     public AnniversaryResponse getAnniversary(User user, Long id) {
@@ -129,6 +155,32 @@ public class AnniversaryService {
         long nextInterval = (daysBetween / intervalDays) + 1;
 
         return startDate.plusDays(nextInterval * intervalDays);
+    }
+
+    private boolean isAnniversaryInGroup(List<Long> groupIds, Anniversary anniversary) {
+
+        return groupIds.stream()
+                .anyMatch(groupId -> groupId.equals(anniversary.getGroup().getGroupId()));
+    }
+
+    private List<Anniversary> expandMonthlyAnniversaries(Anniversary anniversary, LocalDate start, LocalDate end) {
+        List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(anniversary.getRecurrenceType(), anniversary.getStartDate(), start, end);
+
+        return occurrences.stream()
+                .map(anniversary::copyWithNewStartDate)
+                .collect(Collectors.toList());
+    }
+
+    private SchedulesResponse toSchedulesResponse(Anniversary anniversary) {
+
+        return new SchedulesResponse(
+                anniversary.getColorPalette().getColorCode(),
+                anniversary.getStartDate(),
+                null,
+                anniversary.getEndDate(),
+                null,
+                anniversary.getTitle()
+        );
     }
 
     private Anniversary getAuthorizedAnniversaryOrThrow(User user, Long id) {

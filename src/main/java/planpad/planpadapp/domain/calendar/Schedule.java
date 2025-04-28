@@ -114,7 +114,7 @@ public class Schedule {
         }
     }
 
-    public Schedule copyWithNewStartDateTime(LocalDate newStartDate) {
+    public Schedule copyWithNewStartDate(LocalDate newStartDate) {
         long daysBetween = ChronoUnit.DAYS.between(this.startDate, this.endDate);
 
         return Schedule.builder()
