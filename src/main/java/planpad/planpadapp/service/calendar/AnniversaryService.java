@@ -13,7 +13,6 @@ import planpad.planpadapp.dto.calendar.anniversary.AnniversariesResponse;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryRequest;
 import planpad.planpadapp.dto.calendar.anniversary.AnniversaryResponse;
 import planpad.planpadapp.dto.calendar.anniversary.UpdateAnniversaryRequest;
-import planpad.planpadapp.dto.calendar.schedule.MonthSchedulesRequest;
 import planpad.planpadapp.dto.calendar.schedule.SchedulesResponse;
 import planpad.planpadapp.repository.calendar.AnniversaryRepository;
 
