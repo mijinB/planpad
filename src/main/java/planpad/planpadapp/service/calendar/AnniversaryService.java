@@ -76,23 +76,21 @@ public class AnniversaryService {
                 .collect(Collectors.toList());
     }
 
-    public Stream<SchedulesResponse> getAnniversariesByMonth(User user, MonthSchedulesRequest data) {
-        LocalDate monthStart = LocalDate.of(data.getYear(), data.getMonth(), 1);
-        LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());
+    public Stream<SchedulesResponse> getAnniversariesByPeriod(User user, List<Long> groupIds, LocalDate searchStart, LocalDate searchEnd) {
 
         Stream<SchedulesResponse> singleAnniversaries = user.getAnniversaries().stream()
                 .filter(anniversary -> {
                     LocalDate start = anniversary.getStartDate();
                     LocalDate end = anniversary.getEndDate();
-                    boolean isOverlapping = !start.isAfter(monthEnd) && !end.isBefore(monthStart);
+                    boolean isOverlapping = !start.isAfter(searchEnd) && !end.isBefore(searchStart);
 
-                    return isOverlapping && isAnniversaryInGroup(data.getGroupIds(), anniversary);
+                    return isOverlapping && isAnniversaryInGroup(groupIds, anniversary);
                 })
                 .map(this::toSchedulesResponse);
 
         Stream<SchedulesResponse> recurringAnniversaries = user.getAnniversaries().stream()
-                .filter(anniversary -> isAnniversaryInGroup(data.getGroupIds(), anniversary))
-                .flatMap(anniversary -> expandMonthlyAnniversaries(anniversary, monthStart, monthEnd).stream())
+                .filter(anniversary -> isAnniversaryInGroup(groupIds, anniversary))
+                .flatMap(anniversary -> expandAnniversaries(anniversary, searchStart, searchEnd).stream())
                 .map(this::toSchedulesResponse);
 
         return Stream.concat(singleAnniversaries, recurringAnniversaries);
@@ -163,7 +161,7 @@ public class AnniversaryService {
                 .anyMatch(groupId -> groupId.equals(anniversary.getGroup().getGroupId()));
     }
 
-    private List<Anniversary> expandMonthlyAnniversaries(Anniversary anniversary, LocalDate start, LocalDate end) {
+    private List<Anniversary> expandAnniversaries(Anniversary anniversary, LocalDate start, LocalDate end) {
         List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(anniversary.getRecurrenceType(), anniversary.getStartDate(), anniversary.getEndDate(), start, end);
 
         return occurrences.stream()

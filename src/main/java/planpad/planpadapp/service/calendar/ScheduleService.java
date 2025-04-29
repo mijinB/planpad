@@ -58,10 +58,11 @@ public class ScheduleService {
     }
 
     public Map<Integer, List<SchedulesResponse>> getSchedulesByMonth(User user, MonthSchedulesRequest data) {
+        List<Schedule> schedules = user.getSchedules();
         LocalDate monthStart = LocalDate.of(data.getYear(), data.getMonth(), 1);
         LocalDate monthEnd = monthStart.withDayOfMonth(monthStart.lengthOfMonth());      // 다음달 1일 0시
 
-        Stream<SchedulesResponse> singleSchedules = user.getSchedules().stream()
+        Stream<SchedulesResponse> singleSchedules = schedules.stream()
                 .filter(schedule -> {
                     LocalDate start = schedule.getStartDate();
                     LocalDate end = schedule.getEndDate();
@@ -71,13 +72,13 @@ public class ScheduleService {
                 })
                 .map(this::toSchedulesResponse);
 
-        Stream<SchedulesResponse> recurringSchedules = user.getSchedules().stream()
+        Stream<SchedulesResponse> recurringSchedules = schedules.stream()
                 .filter(schedule -> schedule.getRecurrenceType() != null && isInGroup(data.getGroupIds(), schedule))
-                .flatMap(schedule -> expandMonthlySchedules(schedule, monthStart, monthEnd).stream())
+                .flatMap(schedule -> expandSchedules(schedule, monthStart, monthEnd).stream())
                 .map(this::toSchedulesResponse);
 
         // 기념일 추가
-        Stream<SchedulesResponse> allAnniversaries = anniversaryService.getAnniversariesByMonth(user, data);
+        Stream<SchedulesResponse> allAnniversaries = anniversaryService.getAnniversariesByPeriod(user, data.getGroupIds(), monthStart, monthEnd);
 
         Stream<SchedulesResponse> allSchedules = Stream.concat(Stream.concat(singleSchedules, recurringSchedules), allAnniversaries);
 
@@ -85,23 +86,36 @@ public class ScheduleService {
     }
 
     public Map<Integer, List<SchedulesResponse>> getSchedulesByWeek(User user, WeekSchedulesRequest data) {
+        List<Schedule> schedules = user.getSchedules();
+        LocalDate weekStart = data.getStartDate();
+        LocalDate weekEnd = data.getEndDate();
 
-        Stream<SchedulesResponse> filtered = user.getSchedules().stream()
+        Stream<SchedulesResponse> singleSchedules = schedules.stream()
                 .filter(schedule -> {
-                    LocalDate startDate = schedule.getStartDate();
-                    LocalDate endDate = schedule.getEndDate();
-                    boolean isOverlapping = !startDate.isAfter(data.getEndDate()) && !endDate.isBefore(data.getStartDate());
+                    LocalDate start = schedule.getStartDate();
+                    LocalDate end = schedule.getEndDate();
+                    boolean isOverlapping = !start.isAfter(weekEnd) && !end.isBefore(weekStart);
 
                     return isOverlapping && isInGroup(data.getGroupIds(), schedule);
                 })
                 .map(this::toSchedulesResponse);
 
-        return toGroupedScheduleMap(filtered);
+        Stream<SchedulesResponse> recurringSchedules = schedules.stream()
+                .filter(schedule -> schedule.getRecurrenceType() != null && isInGroup(data.getGroupIds(), schedule))
+                .flatMap(schedule -> expandSchedules(schedule, weekStart, weekEnd).stream())
+                .map(this::toSchedulesResponse);
+
+        Stream<SchedulesResponse> allAnniversaries = anniversaryService.getAnniversariesByPeriod(user, data.getGroupIds(), weekStart, weekEnd);
+
+        Stream<SchedulesResponse> allSchedules = Stream.concat(Stream.concat(singleSchedules, recurringSchedules), allAnniversaries);
+
+        return toGroupedScheduleMap(allSchedules);
     }
 
     public List<SchedulesResponse> getSchedulesByDay(User user, DaySchedulesRequest data) {
+        List<Schedule> schedules = user.getSchedules();
 
-        return user.getSchedules().stream()
+        Stream<SchedulesResponse> singleSchedules = schedules.stream()
                 .filter(schedule -> {
                     LocalDate startDate = schedule.getStartDate();
                     LocalDate endDate = schedule.getEndDate();
@@ -109,15 +123,18 @@ public class ScheduleService {
 
                     return isOverlapping && isInGroup(data.getGroupIds(), schedule);
                 })
-                .map(schedule -> {
-                    String colorCode = schedule.getColorPalette().getColorCode();
-                    LocalDate startDate = schedule.getStartDate();
-                    LocalTime startTime = schedule.getStartTime();
-                    LocalDate endDate = schedule.getEndDate();
-                    LocalTime endTime = schedule.getEndTime();
+                .map(this::toSchedulesResponse);
 
-                    return new SchedulesResponse(colorCode, startDate, startTime, endDate, endTime, schedule.getTitle());
-                })
+        Stream<SchedulesResponse> recurringSchedules = schedules.stream()
+                .filter(schedule -> schedule.getRecurrenceType() != null && isInGroup(data.getGroupIds(), schedule))
+                .flatMap(schedule -> expandSchedules(schedule, data.getDate(), data.getDate()).stream())
+                .map(this::toSchedulesResponse);
+
+        Stream<SchedulesResponse> allAnniversaries = anniversaryService.getAnniversariesByPeriod(user, data.getGroupIds(), data.getDate(), data.getDate());
+
+        Stream<SchedulesResponse> allSchedules = Stream.concat(Stream.concat(singleSchedules, recurringSchedules), allAnniversaries);
+
+        return allSchedules
                 .sorted(Comparator.comparing(SchedulesResponse::getStartTime))
                 .collect(Collectors.toList());
     }
@@ -190,7 +207,7 @@ public class ScheduleService {
                 .anyMatch(groupId -> groupId.equals(schedule.getGroup().getGroupId()));
     }
 
-    private List<Schedule> expandMonthlySchedules(Schedule schedule, LocalDate start, LocalDate end) {
+    private List<Schedule> expandSchedules(Schedule schedule, LocalDate start, LocalDate end) {
         ScheduleRecurrenceDto recurrence = toRecurrenceDto(schedule);
 
         List<LocalDate> occurrences = recurrenceService.getOccurrencesBetween(recurrence, schedule.getStartDate(), schedule.getEndDate(), start, end);
