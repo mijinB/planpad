@@ -38,7 +38,7 @@ public class RecurrenceService {
 
         switch (type) {
             case DAILY:
-                return matchesDaily(recurrence, startDate, current);
+                return isMatchingInterval(recurrence, startDate, current, ChronoUnit.DAYS);
             case WEEKDAYS:
                 return matchesWeekdays(recurrence, startDate, current);
             case WEEKLY:
@@ -52,26 +52,8 @@ public class RecurrenceService {
         }
     }
 
-    private boolean matchesDaily(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
-        Integer interval = recurrence.getInterval();
-        boolean isInterval = false;
-
-        if (interval != null) {
-            long daysBetween = ChronoUnit.DAYS.between(startDate, current);
-            isInterval = daysBetween % interval == 0;
-        }
-
-        return isInterval;
-    }
-
     private boolean matchesWeekdays(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
-        Integer interval = recurrence.getInterval();
-        boolean isInterval = false;
-
-        if (interval != null) {
-            long daysBetween = ChronoUnit.WEEKS.between(startDate, current);
-            isInterval = daysBetween % interval == 0;
-        }
+        boolean isInterval = isMatchingInterval(recurrence, startDate, current, ChronoUnit.WEEKS);
 
         DayOfWeek dayOfWeek = current.getDayOfWeek();
         boolean isWeekday = dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
@@ -80,13 +62,7 @@ public class RecurrenceService {
     }
 
     private boolean matchesWeekly(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
-        Integer interval = recurrence.getInterval();
-        boolean isInterval = false;
-
-        if (interval != null) {
-            long daysBetween = ChronoUnit.WEEKS.between(startDate, current);
-            isInterval = daysBetween % interval == 0;
-        }
+        boolean isInterval = isMatchingInterval(recurrence, startDate, current, ChronoUnit.WEEKS);
 
         List<DayOfWeek> daysOfWeek = recurrence.getDaysOfWeek();
         boolean isWeekly = daysOfWeek != null && daysOfWeek.contains(current.getDayOfWeek());
@@ -95,13 +71,7 @@ public class RecurrenceService {
     }
 
     private boolean matchesMonthly(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
-        Integer interval = recurrence.getInterval();
-        boolean isInterval = false;
-
-        if (interval != null) {
-            long daysBetween = ChronoUnit.MONTHS.between(startDate, current);
-            isInterval = daysBetween % interval == 0;
-        }
+        boolean isInterval = isMatchingInterval(recurrence, startDate, current, ChronoUnit.MONTHS);
 
         Integer dayOfMonth = recurrence.getDayOfMonth();
         Integer weekOfMonth = recurrence.getWeekOfMonth();
@@ -138,6 +108,18 @@ public class RecurrenceService {
         }
 
         return false;
+    }
+
+    private boolean isMatchingInterval(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current, ChronoUnit unit) {
+        Integer interval = recurrence.getInterval();
+        boolean isInterval = false;
+
+        if (interval != null) {
+            long daysBetween = unit.between(startDate, current);
+            isInterval = daysBetween % interval == 0;
+        }
+
+        return isInterval;
     }
 
     // Anniversary
