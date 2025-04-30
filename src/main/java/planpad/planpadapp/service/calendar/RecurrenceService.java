@@ -38,16 +38,13 @@ public class RecurrenceService {
 
         switch (type) {
             case DAILY:
-                long daysBetween = ChronoUnit.DAYS.between(startDate, current);
-                return daysBetween % recurrence.getInterval() == 0;
+                return matchesDaily(recurrence, startDate, current);
             case WEEKDAYS:
-                DayOfWeek dayOfWeek = current.getDayOfWeek();
-                return dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+                return matchesWeekdays(recurrence, startDate, current);
             case WEEKLY:
-                List<DayOfWeek> daysOfWeek = recurrence.getDaysOfWeek();
-                return daysOfWeek != null && daysOfWeek.contains(current.getDayOfWeek());
+                return matchesWeekly(recurrence, startDate, current);
             case MONTHLY:
-                return matchesMonthly(recurrence, current);
+                return matchesMonthly(recurrence, startDate, current);
             case YEARLY:
                 return matchesYearly(recurrence, current);
             default:
@@ -55,20 +52,71 @@ public class RecurrenceService {
         }
     }
 
-    private boolean matchesMonthly(ScheduleRecurrenceDto recurrence, LocalDate current) {
+    private boolean matchesDaily(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
+        Integer interval = recurrence.getInterval();
+        boolean isInterval = false;
+
+        if (interval != null) {
+            long daysBetween = ChronoUnit.DAYS.between(startDate, current);
+            isInterval = daysBetween % interval == 0;
+        }
+
+        return isInterval;
+    }
+
+    private boolean matchesWeekdays(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
+        Integer interval = recurrence.getInterval();
+        boolean isInterval = false;
+
+        if (interval != null) {
+            long daysBetween = ChronoUnit.WEEKS.between(startDate, current);
+            isInterval = daysBetween % interval == 0;
+        }
+
+        DayOfWeek dayOfWeek = current.getDayOfWeek();
+        boolean isWeekday = dayOfWeek != DayOfWeek.SATURDAY && dayOfWeek != DayOfWeek.SUNDAY;
+
+        return isInterval && isWeekday;
+    }
+
+    private boolean matchesWeekly(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
+        Integer interval = recurrence.getInterval();
+        boolean isInterval = false;
+
+        if (interval != null) {
+            long daysBetween = ChronoUnit.WEEKS.between(startDate, current);
+            isInterval = daysBetween % interval == 0;
+        }
+
+        List<DayOfWeek> daysOfWeek = recurrence.getDaysOfWeek();
+        boolean isWeekly = daysOfWeek != null && daysOfWeek.contains(current.getDayOfWeek());
+
+        return isInterval && isWeekly;
+    }
+
+    private boolean matchesMonthly(ScheduleRecurrenceDto recurrence, LocalDate startDate, LocalDate current) {
+        Integer interval = recurrence.getInterval();
+        boolean isInterval = false;
+
+        if (interval != null) {
+            long daysBetween = ChronoUnit.MONTHS.between(startDate, current);
+            isInterval = daysBetween % interval == 0;
+        }
+
         Integer dayOfMonth = recurrence.getDayOfMonth();
         Integer weekOfMonth = recurrence.getWeekOfMonth();
         DayOfWeek dayOfWeek = recurrence.getDayOfWeek();
+        boolean isMonthly = false;
 
         if (dayOfMonth != null) {
-            return dayOfMonth == current.getDayOfMonth();
+            isMonthly = dayOfMonth == current.getDayOfMonth();
         }
         if (weekOfMonth != null && dayOfWeek != null) {
             int fromWeekOfMonth = (current.getDayOfMonth() - 1) / 7 + 1;
-            return weekOfMonth == fromWeekOfMonth && dayOfWeek == current.getDayOfWeek();
+            isMonthly = weekOfMonth == fromWeekOfMonth && dayOfWeek == current.getDayOfWeek();
         }
 
-        return false;
+        return isInterval && isMonthly;
     }
 
     private boolean matchesYearly(ScheduleRecurrenceDto recurrence, LocalDate current) {
