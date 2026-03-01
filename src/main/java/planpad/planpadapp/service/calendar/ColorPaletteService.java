@@ -39,6 +39,23 @@ public class ColorPaletteService {
         return colorPalette.getColorId();
     }
 
+    @Transactional
+    public void createDefaultColor(User user) {
+        List<String> colorCodes = List.of(
+                "#b32839", "#bf5718", "#a87910", "#107a51", "#233fa1", "#5e1ba8", "#4b5059", "#e75871", "#de7043",
+                "#e09e25", "#33a772", "#4b6add", "#8442d8", "#737a85", "#f88f9e", "#f1a182", "#eed160", "#7fd3a5", "#88a3f1",
+                "#b78af1", "#a6abb2", "#fad5db", "#fce1d4", "#fdf3c6", "#cceddb", "#d3dffb", "#e9d7fb", "#cfd2d6");
+
+        for (String code : colorCodes) {
+            ColorPalette colorPalette = ColorPalette.builder()
+                    .user(user)
+                    .colorCode(code)
+                    .colorName("")
+                    .build();
+            colorPaletteRepository.save(colorPalette);
+        }
+    }
+
     public List<ColorPalettesResponse> getColors(User user) {
 
         return user.getColorPalettes().stream()
