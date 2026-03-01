@@ -1,5 +1,6 @@
 package planpad.planpadapp.domain.calendar;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -16,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 public class ScheduleRecurrenceRule {
 
+    @Column(name = "recurrence_interval")
     private Integer interval;       // _일 | _번째 주 | _개월 마다 반복
 
     private Integer monthOfYear;    // _월

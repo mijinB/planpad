@@ -34,9 +34,8 @@ public class Schedule {
     @JoinColumn(name = "group_id", nullable = false)
     private CalendarGroup group;
 
-    @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "palette_id", nullable = false)
+    @JoinColumn(name = "palette_id")
     private ColorPalette colorPalette;
 
     @NotNull

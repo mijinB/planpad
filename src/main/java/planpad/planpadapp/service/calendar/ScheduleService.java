@@ -9,6 +9,7 @@ import planpad.planpadapp.domain.calendar.CalendarGroup;
 import planpad.planpadapp.domain.calendar.ColorPalette;
 import planpad.planpadapp.domain.calendar.Schedule;
 import planpad.planpadapp.domain.calendar.ScheduleRecurrenceRule;
+import planpad.planpadapp.domain.calendar.enums.ScheduleRecurrenceType;
 import planpad.planpadapp.dto.calendar.schedule.*;
 import planpad.planpadapp.repository.calendar.ScheduleRepository;
 
@@ -36,8 +37,16 @@ public class ScheduleService {
     public Long createSchedule(User user, ScheduleRequest data) {
 
         CalendarGroup group = groupService.getAuthorizedGroupOrThrow(user, data.getGroupId());
-        ColorPalette colorPalette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
-        ScheduleRecurrenceRule recurrenceRule = toRecurrenceRule(data);
+        ColorPalette colorPalette = null;
+        if (data.getPaletteId() != null) {
+            colorPalette = colorPaletteService.getAuthorizedPaletteOrThrow(user, data.getPaletteId());
+        }
+        ScheduleRecurrenceDto recurrence = data.getRecurrence();
+        ScheduleRecurrenceType recurrenceType = (recurrence != null) ? recurrence.getRecurrenceType() : null;
+        ScheduleRecurrenceRule recurrenceRule = null;
+        if (recurrence != null) {
+            recurrenceRule = toRecurrenceRule(data);
+        }
 
         Schedule schedule = Schedule.builder()
                 .user(user)
@@ -47,7 +56,7 @@ public class ScheduleService {
                 .startTime(data.getStartTime())
                 .endDate(data.getEndDate())
                 .endTime(data.getEndTime())
-                .recurrenceType(data.getRecurrence().getRecurrenceType())
+                .recurrenceType(recurrenceType)
                 .recurrenceRule(recurrenceRule)
                 .title(data.getTitle())
                 .description(data.getDescription())

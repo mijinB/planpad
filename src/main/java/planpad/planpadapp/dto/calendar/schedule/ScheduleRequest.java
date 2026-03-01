@@ -15,7 +15,7 @@ public class ScheduleRequest implements RecurrenceRequest {
     @Schema(description = "그룹 id", example = "1 (필수)")
     private Long groupId;
 
-    @NotNull
+    // @NotNull
     @Schema(description = "색상 팔레트 id", example = "1 (필수)")
     private Long paletteId;
 
