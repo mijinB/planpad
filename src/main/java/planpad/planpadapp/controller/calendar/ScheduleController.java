@@ -57,17 +57,11 @@ public class ScheduleController {
             @ApiResponse(responseCode = "200", description = "월별 일정 조회 성공", content = @Content(mediaType = "application/json", schema = @Schema(implementation = SchedulesResponseWrapper.class))),
             @ApiResponse(responseCode = "400", description = "월별 일정 조회 실패", content = @Content(mediaType = "application/json", schema = @Schema(implementation = OnlyMessageResponseDto.class)))
     })
-    public ResponseEntity<Object> getSchedulesByMonth(@RequestHeader("Authorization") String bearerToken, @RequestBody @Valid MonthSchedulesRequest request) {
+    public ResponseEntity<Object> getSchedulesByMonth(@RequestHeader("Authorization") String bearerToken, @Valid @ModelAttribute MonthSchedulesRequest request) {
+        User user = userService.getUserByBearerToken(bearerToken);
+        Map<Integer, List<SchedulesResponse>> monthSchedules = scheduleService.getSchedulesByMonth(user, request);
 
-        try {
-            User user = userService.getUserByBearerToken(bearerToken);
-            Map<Integer, List<SchedulesResponse>> monthSchedules = scheduleService.getSchedulesByMonth(user, request);
-
-            return ResponseEntity.ok(new SchedulesResponseWrapper(monthSchedules, "월별 일정 조회에 성공하였습니다."));
-
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(new OnlyMessageResponseDto("월별 일정 조회에 실패하였습니다."));
-        }
+        return ResponseEntity.ok(new SchedulesResponseWrapper(monthSchedules, "월별 일정 조회에 성공하였습니다."));
     }
 
     @GetMapping("/schedules/week")

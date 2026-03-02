@@ -181,9 +181,12 @@ public class ScheduleService {
     }
 
     private SchedulesResponse toSchedulesResponse(Schedule schedule) {
+        String colorCode = Optional.ofNullable(schedule.getColorPalette())
+                .map(ColorPalette::getColorCode)
+                .orElse(null);
 
         return new SchedulesResponse(
-                schedule.getColorPalette().getColorCode(),
+                colorCode,
                 schedule.getStartDate(),
                 schedule.getStartTime(),
                 schedule.getEndDate(),
